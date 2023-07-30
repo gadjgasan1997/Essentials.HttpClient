@@ -396,7 +396,7 @@ public class RequestBuilder
     /// <returns>Билдер</returns>
     private RequestBuilder ModifyRequest(Action modifyRequestAction)
     {
-        if (CheckRequestParams())
+        if (!CheckRequestParams())
             return this;
 
         _ = Prelude
