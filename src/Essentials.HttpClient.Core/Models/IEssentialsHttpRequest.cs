@@ -3,7 +3,7 @@
 /// <summary>
 /// Http запрос
 /// </summary>
-public interface IHttpRequest
+public interface IEssentialsHttpRequest
 {
     /// <summary>
     /// Название Http клиента, с помощью которого отправляется запрос
@@ -14,4 +14,9 @@ public interface IHttpRequest
     /// Сообщение запроса
     /// </summary>
     HttpRequestMessage RequestMessage { get; }
+    
+    /// <summary>
+    /// Таймаут запроса
+    /// </summary>
+    TimeSpan? Timeout { get; }
 }
