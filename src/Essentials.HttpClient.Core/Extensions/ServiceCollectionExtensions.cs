@@ -4,6 +4,7 @@ using Essentials.HttpClient.Serialization;
 using Essentials.HttpClient.Serialization.Implementations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using static Essentials.HttpClient.Dictionaries.KnownMediaTypes;
 using static Essentials.HttpClient.Serialization.SerializersCreator;
 
@@ -14,6 +15,14 @@ namespace Essentials.HttpClient.Extensions;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Настраивает Http клиент
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration">Опции конфигурации</param>
+    /// <param name="serializers">Список сериалайзеров</param>
+    /// <param name="deserializers">Список десериалайзеров</param>
+    /// <returns></returns>
     public static IServiceCollection ConfigureEssentialsHttpClient(
         this IServiceCollection services,
         IConfiguration configuration,
@@ -21,46 +30,37 @@ public static class ServiceCollectionExtensions
         List<(string, IEssentialsDeserializer)>? deserializers = null)
     {
         services.AddHttpClient(nameof(IEssentialsHttpClient));
-        services.AddTransient<IEssentialsHttpClient, EssentialsHttpClient>();
-        services.AddTransient<IGetHttpClient, EssentialsHttpClient>();
-        services.AddTransient<IPostHttpClient, EssentialsHttpClient>();
+        services.TryAddTransient<IEssentialsHttpClient, EssentialsHttpClient>();
+        services.TryAddTransient<IGetHttpClient, EssentialsHttpClient>();
+        services.TryAddTransient<IPostHttpClient, EssentialsHttpClient>();
         
-        return services
-            .AddOrUpdateSerializers(serializers)
-            .AddOrUpdateDeserializers(deserializers);
+        AddOrUpdateSerializers(serializers);
+        AddOrUpdateDeserializers(deserializers);
+
+        return services;
     }
 
     /// <summary>
     /// Добаляет или изменяет сериалайзеры
     /// </summary>
-    /// <param name="services"></param>
     /// <param name="serializers">Список сериалайзеров</param>
     /// <returns></returns>
-    private static IServiceCollection AddOrUpdateSerializers(
-        this IServiceCollection services,
-        List<(string, IEssentialsSerializer)>? serializers)
+    private static void AddOrUpdateSerializers(List<(string, IEssentialsSerializer)>? serializers)
     {
         AddOrUpdateSerializer(JSON, new NewtonsoftJsonSerializer());
         AddOrUpdateSerializer(XML, new XmlSerializer());
         serializers?.ForEach(tuple => AddOrUpdateSerializer(tuple.Item1, tuple.Item2));
-        
-        return services;
     }
 
     /// <summary>
     /// Добаляет или изменяет десериалайзеры
     /// </summary>
-    /// <param name="services"></param>
     /// <param name="deserializers">Список десериалайзеров</param>
     /// <returns></returns>
-    private static IServiceCollection AddOrUpdateDeserializers(
-        this IServiceCollection services,
-        List<(string, IEssentialsDeserializer)>? deserializers)
+    private static void AddOrUpdateDeserializers(List<(string, IEssentialsDeserializer)>? deserializers)
     {
         AddOrUpdateDeserializer(JSON, new NewtonsoftJsonSerializer());
         AddOrUpdateDeserializer(XML, new XmlSerializer());
         deserializers?.ForEach(tuple => AddOrUpdateDeserializer(tuple.Item1, tuple.Item2));
-        
-        return services;
     }
 }

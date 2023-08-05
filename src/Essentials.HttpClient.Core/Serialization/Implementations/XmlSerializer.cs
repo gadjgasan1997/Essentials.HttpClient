@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using System.Xml;
 using Essentials.Func.Utils.Helpers;
 
@@ -7,6 +8,7 @@ namespace Essentials.HttpClient.Serialization.Implementations;
 /// <summary>
 /// Сериалайзер Xml с использованием System.Xml.Serialization
 /// </summary>
+[SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
 public class XmlSerializer : IEssentialsBothSerializer
 {
     /// <summary>

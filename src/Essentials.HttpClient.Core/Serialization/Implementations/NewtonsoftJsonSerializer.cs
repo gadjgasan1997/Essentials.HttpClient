@@ -1,4 +1,5 @@
-﻿using Essentials.Func.Utils.Helpers;
+﻿using System.Diagnostics.CodeAnalysis;
+using Essentials.Func.Utils.Helpers;
 using Newtonsoft.Json;
 
 namespace Essentials.HttpClient.Serialization.Implementations;
@@ -6,6 +7,7 @@ namespace Essentials.HttpClient.Serialization.Implementations;
 /// <summary>
 /// Сериалайзер Json с использованием Newtonsoft.Json
 /// </summary>
+[SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
 public class NewtonsoftJsonSerializer : IEssentialsBothSerializer
 {
     /// <summary>
