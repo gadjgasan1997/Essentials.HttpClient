@@ -133,6 +133,13 @@ public class EssentialsRequestBuilder
     }
     
     /// <summary>
+    /// Устанавливает таймаут запроса
+    /// </summary>
+    /// <param name="timeout">Таймаут</param>
+    /// <returns></returns>
+    public EssentialsRequestBuilder SetTimeout(TimeSpan timeout) => ModifyRequest(() => _timeout = timeout);
+    
+    /// <summary>
     /// Настраивает Basic авторизацию
     /// </summary>
     /// <param name="userName">Логин</param>
