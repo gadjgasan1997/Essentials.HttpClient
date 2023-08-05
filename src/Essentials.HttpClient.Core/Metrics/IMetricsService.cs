@@ -3,7 +3,7 @@
 /// <summary>
 /// Сервис для отдачи метрик
 /// </summary>
-internal interface IMetricsService
+public interface IMetricsService
 {
     /// <summary>
     /// Запускает таймер
