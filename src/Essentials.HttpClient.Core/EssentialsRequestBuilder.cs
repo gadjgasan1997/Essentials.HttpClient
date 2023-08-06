@@ -21,6 +21,11 @@ public class EssentialsRequestBuilder
     /// Таймаут запроса, необязательный
     /// </summary>
     private TimeSpan? _timeout;
+
+    /// <summary>
+    /// Кодировка содержимого запроса
+    /// </summary>
+    private Encoding? _encoding;
     
     /// <summary>
     /// Сообщение запроса
@@ -139,6 +144,13 @@ public class EssentialsRequestBuilder
     public EssentialsRequestBuilder SetTimeout(TimeSpan timeout) => ModifyRequest(() => _timeout = timeout);
     
     /// <summary>
+    /// Устанавливает кодировку содержимого запроса
+    /// </summary>
+    /// <param name="encoding">Кодировка</param>
+    /// <returns></returns>
+    public EssentialsRequestBuilder SetEncoding(Encoding encoding) => ModifyRequest(() => _encoding = encoding);
+    
+    /// <summary>
     /// Настраивает Basic авторизацию
     /// </summary>
     /// <param name="userName">Логин</param>
@@ -243,7 +255,11 @@ public class EssentialsRequestBuilder
         }
 
         // TODO Log Trace
-        return new EssentialsHttpRequest(clientName, RequestMessage, _timeout);
+        return new EssentialsHttpRequest(
+            clientName,
+            RequestMessage,
+            _timeout,
+            _encoding ?? Encoding.UTF8);
     }
 
     /// <summary>
