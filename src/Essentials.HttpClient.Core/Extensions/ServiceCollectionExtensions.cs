@@ -1,5 +1,7 @@
 ﻿using Essentials.HttpClient.Clients;
 using Essentials.HttpClient.Clients.Implementations;
+using Essentials.HttpClient.Metrics.Extensions;
+using Essentials.HttpClient.Options;
 using Essentials.HttpClient.Serialization;
 using Essentials.HttpClient.Serialization.Implementations;
 using Microsoft.Extensions.Configuration;
@@ -37,7 +39,11 @@ public static class ServiceCollectionExtensions
         AddOrUpdateSerializers(serializers);
         AddOrUpdateDeserializers(deserializers);
 
-        return services;
+        var options = new ClientsOptions();
+        var section = configuration.GetSection(ClientsOptions.Section);
+        section.Bind(options);
+        
+        return services.ConfigureMetrics(options.Metrics);
     }
 
     /// <summary>

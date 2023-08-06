@@ -90,7 +90,7 @@ public class EssentialsUriBuilder
     /// Добавляет сегменты к адресу
     /// </summary>
     /// <param name="segments">Сегменты</param>
-    public EssentialsUriBuilder WithSegments(IEnumerable<string> segments)
+    public EssentialsUriBuilder WithSegments(params string[] segments)
     {
         return ModifyRequest(() =>
         {
@@ -125,7 +125,7 @@ public class EssentialsUriBuilder
     /// <param name="name">Название параметра</param>
     /// <param name="value">Значение</param>
     /// <returns>Билдер</returns>
-    public EssentialsUriBuilder WithNotEmptyUriParam(string name, string value)
+    public EssentialsUriBuilder WithNotEmptyUriParam(string name, string? value)
     {
         return ModifyRequest(() =>
         {
@@ -141,7 +141,7 @@ public class EssentialsUriBuilder
     /// </summary>
     /// <param name="parameters">Список параметров</param>
     /// <returns>Билдер</returns>
-    public EssentialsUriBuilder WithUriParams(IEnumerable<(string, string?)> parameters)
+    public EssentialsUriBuilder WithUriParams(params (string, string?)[] parameters)
     {
         return ModifyRequest(() =>
         {
@@ -155,7 +155,7 @@ public class EssentialsUriBuilder
     /// </summary>
     /// <param name="parameters">Список параметров</param>
     /// <returns>Билдер</returns>
-    public EssentialsUriBuilder WithNotEmptyUriParams(IEnumerable<(string, string)> parameters)
+    public EssentialsUriBuilder WithNotEmptyUriParams(params (string, string?)[] parameters)
     {
         return ModifyRequest(() =>
         {
@@ -223,22 +223,22 @@ public class EssentialsUriBuilder
     /// <summary>
     /// Меняет адрес запроса
     /// </summary>
-    /// <param name="modifyAction">Действие изменения адреса</param>
+    /// <param name="modifyAddressAction">Действие изменения адреса</param>
     /// <returns></returns>
-    private EssentialsUriBuilder ModifyRequest(Action modifyAction)
+    private EssentialsUriBuilder ModifyRequest(Action modifyAddressAction)
     {
         if (UriBuilder is null || Query is null)
             return this;
 
-        try
-        {
-            modifyAction();
-        }
-        catch (Exception ex)
-        {
-            // TODO Log
-        }
-
+        // TODO Log if fail
+        _ = Try(() =>
+            {
+                modifyAddressAction();
+                return this;
+            })
+            .Try()
+            .IfFail(_ => { });
+        
         return this;
     }
 }

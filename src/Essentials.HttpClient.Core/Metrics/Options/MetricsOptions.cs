@@ -6,6 +6,9 @@ namespace Essentials.HttpClient.Metrics.Options;
 /// Опции метрик
 /// </summary>
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("ReSharper", "CollectionNeverUpdated.Global")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+[SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
 internal class MetricsOptions
 {
     /// <summary>

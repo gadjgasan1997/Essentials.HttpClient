@@ -7,7 +7,6 @@ using Essentials.HttpClient.Models.Implementations;
 using LanguageExt;
 using LanguageExt.Common;
 using static Essentials.HttpClient.Dictionaries.KnownAuthenticationSchemes;
-using static Essentials.HttpClient.Dictionaries.Loggers;
 using static LanguageExt.Prelude;
 
 namespace Essentials.HttpClient;
@@ -26,7 +25,7 @@ public class EssentialsRequestBuilder
     /// <summary>
     /// Сообщение запроса
     /// </summary>
-    public HttpRequestMessage? RequestMessage { get; private set; }
+    public HttpRequestMessage? RequestMessage { get; private init; }
     
     private EssentialsRequestBuilder() { }
     
@@ -73,7 +72,7 @@ public class EssentialsRequestBuilder
     /// <param name="name">Название заголовка</param>
     /// <param name="value">Значение заголовка</param>
     /// <returns>Билдер</returns>
-    public EssentialsRequestBuilder WithNotEmptyHeader(string name, string value)
+    public EssentialsRequestBuilder WithNotEmptyHeader(string name, string? value)
     {
         return ModifyRequest(() =>
         {
@@ -103,7 +102,7 @@ public class EssentialsRequestBuilder
     /// </summary>
     /// <param name="headers">Список заголовков</param>
     /// <returns>Билдер</returns>
-    public EssentialsRequestBuilder WithNotEmptyHeaders(IEnumerable<(string, string)> headers)
+    public EssentialsRequestBuilder WithNotEmptyHeaders(params (string, string?)[] headers)
     {
         return ModifyRequest(() =>
         {
@@ -257,10 +256,14 @@ public class EssentialsRequestBuilder
         if (RequestMessage is null)
             return this;
 
-        _ = Try(modifyRequestAction)
+        // TODO Log if fail
+        _ = Try(() =>
+            {
+                modifyRequestAction();
+                return this;
+            })
             .Try()
-            .IfFail(() =>
-                MainLogger.Error("An exception occurred during the request modification"));
+            .IfFail(_ => { });
         
         return this;
     }
