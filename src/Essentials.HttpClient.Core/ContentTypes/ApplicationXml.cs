@@ -3,8 +3,8 @@
 namespace Essentials.HttpClient.ContentTypes;
 
 /// <inheritdoc cref="IContentType" />
-public class XmlContentType : IContentType
+public class ApplicationXml : IContentType
 {
     /// <inheritdoc cref="IContentType.ContentTypeName" />
-    public string ContentTypeName => "Xml";
+    public string ContentTypeName => "application/xml";
 }

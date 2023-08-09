@@ -1,4 +1,7 @@
-﻿namespace Essentials.HttpClient.Sample.Implementations;
+﻿using Essentials.HttpClient.Common.Models.Requests;
+using Essentials.HttpClient.ContentTypes;
+
+namespace Essentials.HttpClient.Sample.Implementations;
 
 public class SamplesService : ISamplesService
 {
@@ -17,20 +20,49 @@ public class SamplesService : ISamplesService
     
     public async Task RunSamples()
     {
-
-        
+        await RunGetRequestsSamples();
+        await RunPostRequestsSamples();
     }
 
-    private async Task RunSample_GetJson()
+    private async Task RunGetRequestsSamples()
     {
-        _logger.LogInformation(nameof(RunSample_GetJson));
+        await RunSample_GetJson();
+    }
+
+    private async Task RunPostRequestsSamples()
+    {
+        var request = new GetPersonsInJsonRequest
+        {
+            Name = "as"
+        };
         
         var uriValidation = await EssentialsUriBuilder
             .CreateBuilder(SERVER_URL)
+            .WithSegments("post", "GetPersonsInJson")
             .BuildAsync();
 
         var requestValidation = await EssentialsRequestBuilder
             .CreateBuilder(uriValidation)
             .BuildAsync<SamplesService>();
+
+        var response = await _httpClient
+            .PostDataAsync(requestValidation, request, new ApplicationJson());
+    }
+
+    private async Task RunSample_GetJson()
+    {
+        var uriValidation = await EssentialsUriBuilder
+            .CreateBuilder(SERVER_URL)
+            .WithSegments("get", "GetPersonsInJson")
+            .WithUriParam("age", "26")
+            .BuildAsync();
+
+        var requestValidation = await EssentialsRequestBuilder
+            .CreateBuilder(uriValidation)
+            .WithHeader("personName", "as")
+            .BuildAsync<SamplesService>();
+
+        var response = await _httpClient
+            .GetAsync(requestValidation, CancellationToken.None);
     }
 }

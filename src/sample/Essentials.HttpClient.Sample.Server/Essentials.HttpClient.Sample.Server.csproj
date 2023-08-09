@@ -7,9 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Essentials.HttpClient.Common\Essentials.HttpClient.Common.csproj" />
       <ProjectReference Include="..\..\Essentials.HttpClient.Core\Essentials.HttpClient.Core.csproj" />
     </ItemGroup>
-
-
-
+    
 </Project>

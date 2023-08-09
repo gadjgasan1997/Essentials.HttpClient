@@ -7,9 +7,9 @@ namespace Essentials.HttpClient.Sample.Server.Helpers;
 
 public static class SerializationHelpers
 {
-    public static string SerializeJson<T>(T? obj) => JsonSerializer.Serialize(obj);
+    public static string SerializeInJson<T>(T? obj) => JsonSerializer.Serialize(obj);
 
-    public static string SerializeXml<T>(T? obj)
+    public static string SerializeInXml<T>(T? obj)
     {
         using var textWriter = new Utf8StringWriter();
         using var writer = XmlWriter.Create(textWriter);

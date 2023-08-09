@@ -3,8 +3,8 @@
 namespace Essentials.HttpClient.ContentTypes;
 
 /// <inheritdoc cref="IContentType" />
-public class JsonContentType : IContentType
+public class ApplicationJson : IContentType
 {
     /// <inheritdoc cref="IContentType.ContentTypeName" />
-    public string ContentTypeName => "Json";
+    public string ContentTypeName => "application/json";
 }

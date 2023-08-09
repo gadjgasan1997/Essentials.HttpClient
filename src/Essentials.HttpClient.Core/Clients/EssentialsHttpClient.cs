@@ -18,7 +18,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     protected IMetricsService Metrics { get; }
     protected IHttpClientFactory Factory { get; }
 
-    protected EssentialsHttpClient(
+    public EssentialsHttpClient(
         IMetricsService metricsService,
         IHttpClientFactory factory)
     {
@@ -40,7 +40,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         CancellationToken? token = default)
     {
         request.RequestMessage.Method = HttpMethod.Get;
-        return await CreateClient(request.ClientName).DefaultBindAsync(client => SendAsync(request, client, token));
+        return await CreateClient(request).DefaultBindAsync(client => SendAsync(request, client, token));
     }
     
     public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TContentType>(
@@ -71,7 +71,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
             return Error.New("Передан пустой тип содержимого запроса");
         
         return await (
-                CreateClient(request.ClientName),
+                CreateClient(request),
                 BuildStringContent(content, encoding ?? Encoding.UTF8, contentType.ContentTypeName))
             .Apply((client, stringContent) =>
             {
@@ -151,12 +151,17 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         return new EssentialsHttpResponse(responseMessage);
     }
 
-    protected Validation<Error, SystemHttpClient> CreateClient(string clientName)
+    protected Validation<Error, SystemHttpClient> CreateClient(IEssentialsHttpRequest request)
     {
-        return Try(() => Factory.CreateClient(clientName))
+        return Try(() => Factory.CreateClient(request.ClientName))
             .Try()
             .Match(
-                Succ: client => client,
+                Succ: client =>
+                {
+                    if (request.Timeout.HasValue)
+                        client.Timeout = request.Timeout.Value;
+                    return client;
+                },
                 Fail: exception => Fail<Error, SystemHttpClient>(exception));
     }
 
@@ -180,7 +185,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     {
         return Try(() => serializer.Serialize(content)).Try()
             .Match(
-                Succ: serializedString => serializedString,
+                Succ: Success<Error, string>,
                 Fail: exception =>
                 {
                     // TODO Log
