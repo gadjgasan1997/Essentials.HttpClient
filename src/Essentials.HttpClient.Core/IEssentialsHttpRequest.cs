@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace Essentials.HttpClient.Models;
+﻿namespace Essentials.HttpClient;
 
 /// <summary>
 /// Http запрос
@@ -21,9 +19,4 @@ public interface IEssentialsHttpRequest
     /// Таймаут запроса
     /// </summary>
     TimeSpan? Timeout { get; }
-    
-    /// <summary>
-    /// Кодировка содержимого запроса
-    /// </summary>
-    Encoding Encoding { get; }
 }

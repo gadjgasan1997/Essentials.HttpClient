@@ -1,5 +1,4 @@
 ﻿using Essentials.HttpClient.Clients;
-using Essentials.HttpClient.Clients.Implementations;
 using Essentials.HttpClient.Metrics.Extensions;
 using Essentials.HttpClient.Options;
 using Essentials.HttpClient.Serialization;
@@ -33,8 +32,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddHttpClient(nameof(IEssentialsHttpClient));
         services.TryAddTransient<IEssentialsHttpClient, EssentialsHttpClient>();
-        services.TryAddTransient<IGetHttpClient, EssentialsHttpClient>();
-        services.TryAddTransient<IPostHttpClient, EssentialsHttpClient>();
         
         AddOrUpdateSerializers(serializers);
         AddOrUpdateDeserializers(deserializers);

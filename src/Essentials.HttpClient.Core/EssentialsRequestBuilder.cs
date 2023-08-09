@@ -3,7 +3,6 @@ using System.Diagnostics.Contracts;
 using System.Net.Http.Headers;
 using System.Text;
 using Essentials.HttpClient.Models;
-using Essentials.HttpClient.Models.Implementations;
 using LanguageExt;
 using LanguageExt.Common;
 using static Essentials.HttpClient.Dictionaries.KnownAuthenticationSchemes;
@@ -21,18 +20,16 @@ public class EssentialsRequestBuilder
     /// Таймаут запроса, необязательный
     /// </summary>
     private TimeSpan? _timeout;
-
-    /// <summary>
-    /// Кодировка содержимого запроса
-    /// </summary>
-    private Encoding? _encoding;
     
     /// <summary>
     /// Сообщение запроса
     /// </summary>
-    public HttpRequestMessage? RequestMessage { get; private init; }
-    
-    private EssentialsRequestBuilder() { }
+    public HttpRequestMessage? RequestMessage { get; }
+
+    private EssentialsRequestBuilder(HttpRequestMessage? requestMessage = null)
+    {
+        RequestMessage = requestMessage;
+    }
     
     /// <summary>
     /// Создает экземпляр билдера
@@ -40,15 +37,15 @@ public class EssentialsRequestBuilder
     /// <param name="uri">Адрес запроса</param>
     public static EssentialsRequestBuilder CreateBuilder(Uri uri)
     {
+        // TODO Log
         if (Uri.IsWellFormedUriString(uri.ToString(), UriKind.RelativeOrAbsolute))
         {
-            return new EssentialsRequestBuilder
+            var message = new HttpRequestMessage
             {
-                RequestMessage = new HttpRequestMessage
-                {
-                    RequestUri = uri
-                }
+                RequestUri = uri
             };
+
+            return new EssentialsRequestBuilder(message);
         }
 
         // TODO Log
@@ -142,13 +139,6 @@ public class EssentialsRequestBuilder
     /// <param name="timeout">Таймаут</param>
     /// <returns></returns>
     public EssentialsRequestBuilder SetTimeout(TimeSpan timeout) => ModifyRequest(() => _timeout = timeout);
-    
-    /// <summary>
-    /// Устанавливает кодировку содержимого запроса
-    /// </summary>
-    /// <param name="encoding">Кодировка</param>
-    /// <returns></returns>
-    public EssentialsRequestBuilder SetEncoding(Encoding encoding) => ModifyRequest(() => _encoding = encoding);
     
     /// <summary>
     /// Настраивает Basic авторизацию
@@ -255,11 +245,7 @@ public class EssentialsRequestBuilder
         }
 
         // TODO Log Trace
-        return new EssentialsHttpRequest(
-            clientName,
-            RequestMessage,
-            _timeout,
-            _encoding ?? Encoding.UTF8);
+        return new EssentialsHttpRequest(clientName, RequestMessage, _timeout);
     }
 
     /// <summary>

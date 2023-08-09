@@ -12,6 +12,10 @@ builder.Host.ConfigureServices(services =>
 
 var app = builder.Build();
 
+var service = app.Services.GetRequiredService<ISamplesService>();
+
+await service.RunSamples();
+
 app.MapGet("/", () => "Hello World!");
 
 app.Run();

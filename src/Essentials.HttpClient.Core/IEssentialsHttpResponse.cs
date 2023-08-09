@@ -1,4 +1,4 @@
-﻿namespace Essentials.HttpClient.Models;
+﻿namespace Essentials.HttpClient;
 
 /// <summary>
 /// Http ответ

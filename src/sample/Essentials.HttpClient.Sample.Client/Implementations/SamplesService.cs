@@ -1,8 +1,4 @@
-﻿using Essentials.Func.Utils.Extensions;
-using Essentials.HttpClient.Clients;
-using Microsoft.Extensions.Logging;
-
-namespace Essentials.HttpClient.Sample.Implementations;
+﻿namespace Essentials.HttpClient.Sample.Implementations;
 
 public class SamplesService : ISamplesService
 {

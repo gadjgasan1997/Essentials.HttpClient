@@ -1,6 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.Net.Http.Headers;
 using Essentials.Func.Utils.Extensions;
+using LanguageExt;
+using LanguageExt.Common;
+using static LanguageExt.Prelude;
 using static Essentials.HttpClient.Dictionaries.KnownMediaTypes;
 
 namespace Essentials.HttpClient.Serialization;
@@ -73,10 +76,18 @@ internal static class SerializersCreator
     /// </summary>
     /// <param name="contentType">Тип содержимого</param>
     /// <returns></returns>
-    public static IEssentialsSerializer GetSerializer(string contentType)
+    public static Validation<Error, IEssentialsSerializer> GetSerializer(string contentType)
     {
-        var key = ResolveContentType(contentType);
-        return _serializersMap[key];
+        try
+        {
+            var key = ResolveContentType(contentType);
+            return Success<Error, IEssentialsSerializer>(_serializersMap[key]);
+        }
+        catch (Exception ex)
+        {
+            // TODO Log
+            return Error.New(ex);
+        }
     }
 
     /// <summary>
@@ -84,10 +95,18 @@ internal static class SerializersCreator
     /// </summary>
     /// <param name="contentType">Тип содержимого</param>
     /// <returns></returns>
-    public static IEssentialsDeserializer GetDeserializer(string contentType)
+    public static Validation<Error, IEssentialsDeserializer> GetDeserializer(string contentType)
     {
-        var key = ResolveContentType(contentType);
-        return _deserializersMap[key];
+        try
+        {
+            var key = ResolveContentType(contentType);
+            return Success<Error, IEssentialsDeserializer>(_deserializersMap[key]);
+        }
+        catch (Exception ex)
+        {
+            // TODO Log
+            return Error.New(ex);
+        }
     }
 
     /// <summary>
