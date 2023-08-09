@@ -5,6 +5,7 @@ using Essentials.HttpClient.ContentTypes.Interfaces;
 using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Models;
 using Essentials.HttpClient.Serialization;
+using Essentials.HttpClient.Serialization.Extensions;
 using LanguageExt;
 using LanguageExt.Common;
 using SystemHttpClient = System.Net.Http.HttpClient;
@@ -46,33 +47,28 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TContentType>(
         Validation<Error, IEssentialsHttpRequest> validation,
         string content,
-        TContentType contentType,
         Encoding? encoding = null,
         CancellationToken? token = null)
-        where TContentType : IContentType
+        where TContentType : IContentType, new()
     {
         return await validation.DefaultBindAsync(request =>
-            PostStringAsync(request, content, contentType, encoding, token));
+            PostStringAsync<TContentType>(request, content, encoding, token));
     }
 
     public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TContentType>(
         IEssentialsHttpRequest request,
         string content,
-        TContentType contentType,
         Encoding? encoding = null,
         CancellationToken? token = null)
-        where TContentType : IContentType
+        where TContentType : IContentType, new()
     {
         // TODO Log
         if (string.IsNullOrWhiteSpace(content))
             return Error.New("Передана пустая строка запроса");
-        
-        if (string.IsNullOrWhiteSpace(contentType?.ContentTypeName))
-            return Error.New("Передан пустой тип содержимого запроса");
-        
+
         return await (
                 CreateClient(request),
-                BuildStringContent(content, encoding ?? Encoding.UTF8, contentType.ContentTypeName))
+                BuildStringContent<TContentType>(content, encoding ?? Encoding.UTF8))
             .Apply((client, stringContent) =>
             {
                 request.RequestMessage.Method = HttpMethod.Post;
@@ -85,33 +81,29 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     public async Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TContentType, TContent>(
         Validation<Error, IEssentialsHttpRequest> validation,
         TContent data,
-        TContentType contentType,
         Encoding? encoding = null,
         CancellationToken? token = null)
-        where TContentType : IContentType
+        where TContentType : IContentType, new()
     {
-        return await validation.DefaultBindAsync(request => PostDataAsync(request, data, contentType, encoding, token));
+        return await validation.DefaultBindAsync(request =>
+            PostDataAsync<TContentType, TContent>(request, data, encoding, token));
     }
 
     public async Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TContentType, TContent>(
         IEssentialsHttpRequest request,
         TContent data,
-        TContentType contentType,
         Encoding? encoding = null,
         CancellationToken? token = null)
-        where TContentType : IContentType
+        where TContentType : IContentType, new()
     {
         // TODO Log
         if (data is null)
             return Error.New("Передано пустое содержимое запроса");
-        
-        if (string.IsNullOrWhiteSpace(contentType?.ContentTypeName))
-            return Error.New("Передан пустой тип содержимого запроса");
 
         return await SerializersCreator
-            .GetSerializer(contentType.ContentTypeName)
-            .DefaultBindAsync(serializer => Serialize(serializer, data))
-            .DefaultBindAsync(requestString => PostStringAsync(request, requestString, contentType, encoding, token));
+            .GetSerializer(new TContentType())
+            .DefaultBindAsync(serializer => serializer.SerializeObject(data))
+            .DefaultBindAsync(requestString => PostStringAsync<TContentType>(request, requestString, encoding, token));
     }
 
     #region Protected and private
@@ -132,9 +124,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         HttpResponseMessage responseMessage;
         try
         {
-            responseMessage = token is null
-                ? await httpClient.SendAsync(request.RequestMessage)
-                : await httpClient.SendAsync(request.RequestMessage, token.Value);
+            responseMessage = await httpClient.SendAsync(request.RequestMessage, token ?? CancellationToken.None);
         }
         catch (TimeoutException ex)
         {
@@ -154,7 +144,6 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     protected Validation<Error, SystemHttpClient> CreateClient(IEssentialsHttpRequest request)
     {
         return Try(() => Factory.CreateClient(request.ClientName))
-            .Try()
             .Match(
                 Succ: client =>
                 {
@@ -180,25 +169,17 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         
         return result;
     }
-    
-    private static Validation<Error, string> Serialize<T>(IEssentialsSerializer serializer, T content)
-    {
-        return Try(() => serializer.Serialize(content)).Try()
-            .Match(
-                Succ: Success<Error, string>,
-                Fail: exception =>
-                {
-                    // TODO Log
-                    return Error.New(exception);
-                });
-    }
 
-    private static Validation<Error, StringContent> BuildStringContent(
+    private static Validation<Error, StringContent> BuildStringContent<TContentType>(
         string requestSting,
-        Encoding encoding,
-        string contentType)
+        Encoding encoding)
+        where TContentType : IContentType, new()
     {
-        return Try(() => new StringContent(requestSting, encoding, contentType)).Try()
+        return Try(() =>
+            {
+                var contentType = new TContentType();
+                return new StringContent(requestSting, encoding, contentType.ContentTypeName);
+            })
             .Match(
                 Succ: Success<Error, StringContent>,
                 Fail: exception =>

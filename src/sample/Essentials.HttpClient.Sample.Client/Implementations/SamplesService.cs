@@ -1,5 +1,7 @@
-﻿using Essentials.HttpClient.Common.Models.Requests;
-using Essentials.HttpClient.ContentTypes;
+﻿using Essentials.HttpClient.Common.Models;
+using Essentials.HttpClient.Common.Models.Requests;
+using Essentials.HttpClient.ContentTypes.Application;
+using Essentials.HttpClient.Extensions;
 
 namespace Essentials.HttpClient.Sample.Implementations;
 
@@ -46,7 +48,8 @@ public class SamplesService : ISamplesService
             .BuildAsync<SamplesService>();
 
         var response = await _httpClient
-            .PostDataAsync(requestValidation, request, new ApplicationJson());
+            .PostJsonDataAsync(requestValidation, request)
+            .ReceiveContentAsync<List<Person>, Json>();
     }
 
     private async Task RunSample_GetJson()
@@ -62,7 +65,8 @@ public class SamplesService : ISamplesService
             .WithHeader("personName", "as")
             .BuildAsync<SamplesService>();
 
-        var response = await _httpClient
-            .GetAsync(requestValidation, CancellationToken.None);
+        var persons = await _httpClient
+            .GetAsync(requestValidation)
+            .ReceiveContentUnsafeAsync<List<Person>, Json>();
     }
 }

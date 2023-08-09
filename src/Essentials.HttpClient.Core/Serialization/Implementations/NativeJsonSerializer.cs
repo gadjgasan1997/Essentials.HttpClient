@@ -52,14 +52,14 @@ public class NativeJsonSerializer : IEssentialsBothSerializer
     /// <inheritdoc cref="IEssentialsBothSerializer.Deserialize{T}" />
     public T Deserialize<T>(string @string)
     {
-        if (JsonSerializer.Deserialize(@string, typeof(T), DeserializeOptions) is not T obj)
+        if (JsonSerializer.Deserialize(@string, typeof(T), DeserializeOptions) is not { } obj)
         {
             // TODO Check message
             throw new InvalidCastException(
-                "Не удалось десерилизовать строку в объект. " +
+                "Объект после десерилизации равен null. " +
                 $"Исходная строка: '{@string}'");
         }
 
-        return obj;
+        return (T) obj;
     }
 }

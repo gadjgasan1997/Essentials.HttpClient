@@ -1,10 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.Net.Http.Headers;
-using Essentials.Func.Utils.Extensions;
+using Essentials.HttpClient.ContentTypes.Interfaces;
 using LanguageExt;
 using LanguageExt.Common;
 using static LanguageExt.Prelude;
-using static Essentials.HttpClient.Dictionaries.KnownMediaTypes;
 
 namespace Essentials.HttpClient.Serialization;
 
@@ -16,12 +15,12 @@ internal static class SerializersCreator
     ///<summary>
     /// Мапа названий типа контента на сериалайзеры
     /// </summary>
-    private static readonly ConcurrentDictionary<string, IEssentialsSerializer> _serializersMap = new();
+    private static readonly ConcurrentDictionary<IContentType, IEssentialsSerializer> _serializersMap = new();
     
     ///<summary>
     /// Мапа названий типа контента на десериалайзеры
     /// </summary>
-    private static readonly ConcurrentDictionary<string, IEssentialsDeserializer> _deserializersMap = new();
+    private static readonly ConcurrentDictionary<IContentType, IEssentialsDeserializer> _deserializersMap = new();
 
     /// <summary>
     /// Добавляет или заменяет сериалайзер
@@ -29,22 +28,18 @@ internal static class SerializersCreator
     /// <param name="contentType">Тип содержимого</param>
     /// <param name="serializer">Сериалайзер</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public static void AddOrUpdateSerializer(string contentType, IEssentialsSerializer serializer)
+    public static void AddOrUpdateSerializer(IContentType contentType, IEssentialsSerializer serializer)
     {
-        var resolvedType = ResolveContentType(contentType);
-        if (string.IsNullOrWhiteSpace(resolvedType))
-            throw new ArgumentNullException(nameof(contentType));
-
-        if (!CheckContentType(resolvedType))
+        if (!CheckContentType(contentType.ContentTypeName))
             return;
 
-        if (_serializersMap.ContainsKey(resolvedType))
+        if (_serializersMap.ContainsKey(contentType))
         {
-            _serializersMap[resolvedType] = serializer;
+            _serializersMap[contentType] = serializer;
             return;
         }
 
-        _serializersMap.TryAdd(resolvedType, serializer);
+        _serializersMap.TryAdd(contentType, serializer);
     }
     
     /// <summary>
@@ -53,22 +48,18 @@ internal static class SerializersCreator
     /// <param name="contentType">Тип содержимого</param>
     /// <param name="deserializer">Десериалайзер</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public static void AddOrUpdateDeserializer(string contentType, IEssentialsDeserializer deserializer)
+    public static void AddOrUpdateDeserializer(IContentType contentType, IEssentialsDeserializer deserializer)
     {
-        var resolvedType = ResolveContentType(contentType);
-        if (string.IsNullOrWhiteSpace(resolvedType))
-            throw new ArgumentNullException(nameof(contentType));
-
-        if (!CheckContentType(resolvedType))
+        if (!CheckContentType(contentType.ContentTypeName))
             return;
 
-        if (_deserializersMap.ContainsKey(resolvedType))
+        if (_deserializersMap.ContainsKey(contentType))
         {
-            _deserializersMap[resolvedType] = deserializer;
+            _deserializersMap[contentType] = deserializer;
             return;
         }
 
-        _deserializersMap.TryAdd(resolvedType, deserializer);
+        _deserializersMap.TryAdd(contentType, deserializer);
     }
 
     /// <summary>
@@ -76,18 +67,13 @@ internal static class SerializersCreator
     /// </summary>
     /// <param name="contentType">Тип содержимого</param>
     /// <returns></returns>
-    public static Validation<Error, IEssentialsSerializer> GetSerializer(string contentType)
+    public static Validation<Error, IEssentialsSerializer> GetSerializer(IContentType contentType)
     {
-        try
-        {
-            var key = ResolveContentType(contentType);
-            return Success<Error, IEssentialsSerializer>(_serializersMap[key]);
-        }
-        catch (Exception ex)
-        {
-            // TODO Log
-            return Error.New(ex);
-        }
+        // TODO Log
+        return Try(() => _serializersMap[contentType])
+            .ToValidation(exception =>
+                Error.New($"Во время получения сериалайзера для содержимого с типом '{contentType}' произошло исключение",
+                    exception));
     }
 
     /// <summary>
@@ -95,18 +81,13 @@ internal static class SerializersCreator
     /// </summary>
     /// <param name="contentType">Тип содержимого</param>
     /// <returns></returns>
-    public static Validation<Error, IEssentialsDeserializer> GetDeserializer(string contentType)
+    public static Validation<Error, IEssentialsDeserializer> GetDeserializer(IContentType contentType)
     {
-        try
-        {
-            var key = ResolveContentType(contentType);
-            return Success<Error, IEssentialsDeserializer>(_deserializersMap[key]);
-        }
-        catch (Exception ex)
-        {
-            // TODO Log
-            return Error.New(ex);
-        }
+        // TODO Log
+        return Try(() => _deserializersMap[contentType])
+            .ToValidation(exception =>
+                Error.New($"Во время получения десериалайзера для содержимого с типом '{contentType}' произошло исключение",
+                    exception));
     }
 
     /// <summary>
@@ -126,21 +107,5 @@ internal static class SerializersCreator
             // TODO Log
             return false;
         }
-    }
-
-    /// <summary>
-    /// Возвращает подходящий тип содержимого
-    /// </summary>
-    /// <param name="contentType">Исходный тип содержимого</param>
-    /// <returns></returns>
-    private static string ResolveContentType(string contentType)
-    {
-        var type = contentType.FullTrim().ToLower();
-        return type switch
-        {
-            "json" => JSON,
-            "xml" => XML,
-            _ => type
-        };
     }
 }

@@ -1,9 +1,9 @@
 ﻿using Essentials.HttpClient.ContentTypes.Interfaces;
 
-namespace Essentials.HttpClient.ContentTypes;
+namespace Essentials.HttpClient.ContentTypes.Application;
 
 /// <inheritdoc cref="IContentType" />
-public class ApplicationXml : IContentType
+public record Xml : IContentType
 {
     /// <inheritdoc cref="IContentType.ContentTypeName" />
     public string ContentTypeName => "application/xml";

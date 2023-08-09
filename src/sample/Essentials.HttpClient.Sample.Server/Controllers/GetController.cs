@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Essentials.HttpClient.Dictionaries;
 using Microsoft.AspNetCore.Mvc;
 using static Essentials.HttpClient.Common.Models.PersonsStorage;
 using static Essentials.HttpClient.Sample.Server.Helpers.SerializationHelpers;
+using static Essentials.HttpClient.ContentTypes.Storage;
 
 namespace Essentials.HttpClient.Sample.Server.Controllers;
 
@@ -22,7 +22,7 @@ public class GetController
         return new ContentResult
         {
             Content = SerializeInJson(persons),
-            ContentType = KnownMediaTypes.JSON
+            ContentType = Application.Json.ToString()
         };
     }
 }

@@ -79,15 +79,15 @@ public class XmlSerializer : IEssentialsBothSerializer
         using var reader = XmlReader.Create(textReader, DeserializeOptions);
 
         var xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
-        if (xmlSerializer.Deserialize(reader) is not T obj)
+        if (xmlSerializer.Deserialize(reader) is not { } obj)
         {
             // TODO Check message
             throw new InvalidCastException(
-                "Не удалось десерилизовать строку в объект. " +
+                "Объект после десерилизации равен null. " +
                 $"Исходная строка: '{@string}'");
         }
 
-        return obj;
+        return (T) obj;
     }
 
     private class Utf8StringWriter : StringWriter
