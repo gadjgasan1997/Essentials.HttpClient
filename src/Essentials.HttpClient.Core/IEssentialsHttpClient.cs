@@ -5,6 +5,9 @@ using LanguageExt.Common;
 
 namespace Essentials.HttpClient;
 
+/// <summary>
+/// Http клиент
+/// </summary>
 public interface IEssentialsHttpClient
 {
     /// <summary>

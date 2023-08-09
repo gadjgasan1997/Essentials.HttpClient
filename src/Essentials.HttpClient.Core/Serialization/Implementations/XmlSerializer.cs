@@ -51,7 +51,7 @@ public class XmlSerializer : IEssentialsBothSerializer
     /// <returns></returns>
     protected virtual Func<string, TextReader> TextReaderGetter { get; }
 
-    /// <inheritdoc cref="IEssentialsBothSerializer.Serialize{T}" />
+    /// <inheritdoc cref="IEssentialsSerializer.Serialize{T}" />
     public virtual string Serialize<T>(T? obj)
     {
         using var textWriter = TextWriterGetter();
@@ -72,7 +72,7 @@ public class XmlSerializer : IEssentialsBothSerializer
         return result;
     }
 
-    /// <inheritdoc cref="IEssentialsBothSerializer.Deserialize{T}" />
+    /// <inheritdoc cref="IEssentialsDeserializer.Deserialize{T}" />
     public virtual T Deserialize<T>(string @string)
     {
         using var textReader = TextReaderGetter(@string);

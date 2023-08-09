@@ -149,8 +149,7 @@ public class EssentialsRequestBuilder
     public EssentialsRequestBuilder WithBasicAuthentication(string userName, string password)
     {
         var authenticationString = Try(() => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{userName}:{password}")))
-            .Try()
-            .Match<string>(
+            .Match(
                 Succ: @string => @string,
                 Fail: exception =>
                 {
@@ -197,7 +196,6 @@ public class EssentialsRequestBuilder
     {
         // TODO Rename default client
         return Try(() => BuildPrivate(clientName ?? nameof(EssentialsRequestBuilder)))
-            .Try()
             .Match(
                 Succ: validation => validation,
                 Fail: exception =>

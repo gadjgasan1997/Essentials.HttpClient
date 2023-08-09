@@ -15,6 +15,7 @@
         <Description>
             Http клиент для отправки запросов
         </Description>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>

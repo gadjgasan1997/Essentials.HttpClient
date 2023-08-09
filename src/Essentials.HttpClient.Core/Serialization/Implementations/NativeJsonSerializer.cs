@@ -34,7 +34,7 @@ public class NativeJsonSerializer : IEssentialsBothSerializer
     /// </summary>
     protected virtual JsonSerializerOptions DeserializeOptions { get; }
     
-    /// <inheritdoc cref="IEssentialsBothSerializer.Serialize{T}" />
+    /// <inheritdoc cref="IEssentialsSerializer.Serialize{T}" />
     public string Serialize<T>(T obj)
     {
         var result = JsonSerializer.Serialize(obj, SerializeOptions);
@@ -49,7 +49,7 @@ public class NativeJsonSerializer : IEssentialsBothSerializer
         return result;
     }
 
-    /// <inheritdoc cref="IEssentialsBothSerializer.Deserialize{T}" />
+    /// <inheritdoc cref="IEssentialsDeserializer.Deserialize{T}" />
     public T Deserialize<T>(string @string)
     {
         if (JsonSerializer.Deserialize(@string, typeof(T), DeserializeOptions) is not { } obj)

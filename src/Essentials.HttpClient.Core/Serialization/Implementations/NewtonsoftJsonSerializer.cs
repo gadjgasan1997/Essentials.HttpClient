@@ -36,7 +36,7 @@ public class NewtonsoftJsonSerializer : IEssentialsBothSerializer
     /// </summary>
     protected virtual JsonSerializerSettings DeserializeOptions { get; }
 
-    /// <inheritdoc cref="IEssentialsBothSerializer.Serialize{T}" />
+    /// <inheritdoc cref="IEssentialsSerializer.Serialize{T}" />
     public virtual string Serialize<T>(T? obj)
     {
         var result = JsonConvert.SerializeObject(obj, SerializeOptions);
@@ -51,7 +51,7 @@ public class NewtonsoftJsonSerializer : IEssentialsBothSerializer
         return result;
     }
 
-    /// <inheritdoc cref="IEssentialsBothSerializer.Deserialize{T}" />
+    /// <inheritdoc cref="IEssentialsDeserializer.Deserialize{T}" />
     public virtual T Deserialize<T>(string @string)
     {
         if (JsonConvert.DeserializeObject(@string, DeserializeOptions) is not { } obj)

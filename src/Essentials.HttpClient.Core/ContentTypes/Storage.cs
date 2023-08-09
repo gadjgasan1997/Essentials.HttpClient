@@ -7,6 +7,9 @@ namespace Essentials.HttpClient.ContentTypes;
 /// </summary>
 public static class Storage
 {
+    /// <summary>
+    /// Application
+    /// </summary>
     public static class Application
     {
         /// <summary>

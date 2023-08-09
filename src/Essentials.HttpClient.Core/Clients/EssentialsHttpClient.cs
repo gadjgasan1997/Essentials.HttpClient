@@ -13,18 +13,27 @@ using static LanguageExt.Prelude;
 
 namespace Essentials.HttpClient.Clients;
 
+/// <inheritdoc cref="IEssentialsHttpClient" />
 [SuppressMessage("ReSharper", "ConditionalAccessQualifierIsNonNullableAccordingToAPIContract")]
+[SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+[SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
 public class EssentialsHttpClient : IEssentialsHttpClient
 {
-    protected IMetricsService Metrics { get; }
-    protected IHttpClientFactory Factory { get; }
+    private readonly IMetricsService _metrics;
+    private readonly IHttpClientFactory _factory;
 
+    /// <summary>
+    /// Конструктор
+    /// </summary>
+    /// <param name="metricsService"></param>
+    /// <param name="factory"></param>
+    /// <exception cref="ArgumentNullException"></exception>
     public EssentialsHttpClient(
         IMetricsService metricsService,
         IHttpClientFactory factory)
     {
-        Metrics = metricsService ?? throw new ArgumentNullException(nameof(metricsService));
-        Factory = factory ?? throw new ArgumentNullException(nameof(factory));
+        _metrics = metricsService ?? throw new ArgumentNullException(nameof(metricsService));
+        _factory = factory ?? throw new ArgumentNullException(nameof(factory));
     }
     
     /// <inheritdoc cref="IEssentialsHttpClient.GetAsync(Validation{Error, IEssentialsHttpRequest}, CancellationToken?)" />
@@ -41,9 +50,11 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         CancellationToken? token = default)
     {
         request.RequestMessage.Method = HttpMethod.Get;
-        return await CreateClient(request).DefaultBindAsync(client => SendAsync(request, client, token));
+        return await CreateClient(request).DefaultBindAsync(client =>
+            SendWithMetricsAsync(request, () => SendAsync(request, client, token)));
     }
     
+    /// <inheritdoc cref="IEssentialsHttpClient.PostStringAsync{TContentType}(Validation{Error, IEssentialsHttpRequest}, string, Encoding?, CancellationToken?)" />
     public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TContentType>(
         Validation<Error, IEssentialsHttpRequest> validation,
         string content,
@@ -55,6 +66,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
             PostStringAsync<TContentType>(request, content, encoding, token));
     }
 
+    /// <inheritdoc cref="IEssentialsHttpClient.PostStringAsync{TContentType}(IEssentialsHttpRequest, string, Encoding?, CancellationToken?)" />
     public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TContentType>(
         IEssentialsHttpRequest request,
         string content,
@@ -73,11 +85,12 @@ public class EssentialsHttpClient : IEssentialsHttpClient
             {
                 request.RequestMessage.Method = HttpMethod.Post;
                 request.RequestMessage.Content = stringContent;
-                return SendAsync(request, client, token);
+                return SendWithMetricsAsync(request, () => SendAsync(request, client, token));
             })
             .DefaultBindAsync(task => task);
     }
 
+    /// <inheritdoc cref="IEssentialsHttpClient.PostDataAsync{TContentType, TContent}(Validation{Error, IEssentialsHttpRequest}, TContent, Encoding?, CancellationToken?)" />
     public async Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TContentType, TContent>(
         Validation<Error, IEssentialsHttpRequest> validation,
         TContent data,
@@ -89,6 +102,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
             PostDataAsync<TContentType, TContent>(request, data, encoding, token));
     }
 
+    /// <inheritdoc cref="IEssentialsHttpClient.PostDataAsync{TContentType, TContent}(IEssentialsHttpRequest, TContent, Encoding?, CancellationToken?)" />
     public async Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TContentType, TContent>(
         IEssentialsHttpRequest request,
         TContent data,
@@ -106,17 +120,38 @@ public class EssentialsHttpClient : IEssentialsHttpClient
             .DefaultBindAsync(requestString => PostStringAsync<TContentType>(request, requestString, encoding, token));
     }
 
-    #region Protected and private
-    
-    protected virtual async Task<Validation<Error, IEssentialsHttpResponse>> SendAsync(
+    #region Additional Methods
+
+    /// <summary>
+    /// Отправляет запрос с добавлением метрик
+    /// </summary>
+    /// <param name="request">Http запрос</param>
+    /// <param name="sendFunc">Делегат отправки запроса</param>
+    /// <returns>Http ответ</returns>
+    protected virtual async Task<Validation<Error, IEssentialsHttpResponse>> SendWithMetricsAsync(
         IEssentialsHttpRequest request,
-        SystemHttpClient httpClient,
-        CancellationToken? token = default)
+        Func<Task<Validation<Error, IEssentialsHttpResponse>>> sendFunc)
     {
-        return await SendWithMetricsAsync(request, () => SendAsyncCore(request, httpClient, token));
+        using var timer = _metrics.StartRequestTimer(request.ClientName);
+        _metrics.HttpRequestSent(request.ClientName, request.RequestMessage.Method);
+        
+        var result = await sendFunc();
+        
+        result.Match(
+            Succ: _ => _metrics.HttpRequestSuccessSent(request.ClientName, request.RequestMessage.Method),
+            Fail: _ => _metrics.HttpRequestErrorSent(request.ClientName, request.RequestMessage.Method));
+        
+        return result;
     }
 
-    protected static async Task<Validation<Error, IEssentialsHttpResponse>> SendAsyncCore(
+    /// <summary>
+    /// Отправляет Http запрос
+    /// </summary>
+    /// <param name="request">Http запрос</param>
+    /// <param name="httpClient">Http клиент</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Http ответ</returns>
+    protected virtual async Task<Validation<Error, IEssentialsHttpResponse>> SendAsync(
         IEssentialsHttpRequest request,
         SystemHttpClient httpClient,
         CancellationToken? token = default)
@@ -136,41 +171,19 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         }
 
         if (!responseMessage.IsSuccessStatusCode)
-            return Error.New("Ошибочный Http код ответа");
+            return Error.New($"Ошибочный Http код ответа: '{responseMessage.StatusCode}'.");
 
         return new EssentialsHttpResponse(responseMessage);
     }
 
-    protected Validation<Error, SystemHttpClient> CreateClient(IEssentialsHttpRequest request)
-    {
-        return Try(() => Factory.CreateClient(request.ClientName))
-            .Match(
-                Succ: client =>
-                {
-                    if (request.Timeout.HasValue)
-                        client.Timeout = request.Timeout.Value;
-                    return client;
-                },
-                Fail: exception => Fail<Error, SystemHttpClient>(exception));
-    }
-
-    private async Task<Validation<Error, IEssentialsHttpResponse>> SendWithMetricsAsync(
-        IEssentialsHttpRequest request,
-        Func<Task<Validation<Error, IEssentialsHttpResponse>>> sendFunc)
-    {
-        using var timer = Metrics.StartRequestTimer(request.ClientName);
-        Metrics.HttpRequestSent(request.ClientName, request.RequestMessage.Method);
-        
-        var result = await sendFunc();
-        
-        result.Match(
-            Succ: _ => Metrics.HttpRequestSuccessSent(request.ClientName, request.RequestMessage.Method),
-            Fail: _ => Metrics.HttpRequestErrorSent(request.ClientName, request.RequestMessage.Method));
-        
-        return result;
-    }
-
-    private static Validation<Error, StringContent> BuildStringContent<TContentType>(
+    /// <summary>
+    /// Создает контент для отправки
+    /// </summary>
+    /// <param name="requestSting">Строка запроса</param>
+    /// <param name="encoding">Кодировка</param>
+    /// <typeparam name="TContentType">Тип содержимого запроса</typeparam>
+    /// <returns>Контент</returns>
+    protected virtual Validation<Error, StringContent> BuildStringContent<TContentType>(
         string requestSting,
         Encoding encoding)
         where TContentType : IContentType, new()
@@ -187,6 +200,24 @@ public class EssentialsHttpClient : IEssentialsHttpClient
                     // TODO Log
                     return Error.New(exception);
                 });
+    }
+
+    /// <summary>
+    /// Создает Http клиент
+    /// </summary>
+    /// <param name="request">Http запрос</param>
+    /// <returns>Http клиент</returns>
+    protected virtual Validation<Error, SystemHttpClient> CreateClient(IEssentialsHttpRequest request)
+    {
+        return Try(() => _factory.CreateClient(request.ClientName))
+            .Match(
+                Succ: client =>
+                {
+                    if (request.Timeout.HasValue)
+                        client.Timeout = request.Timeout.Value;
+                    return client;
+                },
+                Fail: exception => Fail<Error, SystemHttpClient>(exception));
     }
 
     #endregion
