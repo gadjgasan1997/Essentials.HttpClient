@@ -9,10 +9,11 @@ using LanguageExt.Common;
 namespace Essentials.HttpClient.Extensions;
 
 /// <summary>
-/// Методы расширения для <see cref="IEssentialsHttpResponse" />
+/// Методы расширения для обработки полученного Http ответа
 /// </summary>
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-public static class EssentialsHttpResponseExtensions
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+public static class ResponseExtensions
 {
     /// <summary>
     /// Возвращает сообщение ответа
@@ -131,8 +132,8 @@ public static class EssentialsHttpResponseExtensions
     /// <typeparam name="TData">Тип объекта</typeparam>
     /// <typeparam name="TContentType">Тип содержимого</typeparam>
     /// <returns></returns>
-    private static async Task<Validation<Error, TData>> DeserializeResponseAsync<TData, TContentType>(
-        IEssentialsHttpResponse response,
+    internal static async Task<Validation<Error, TData>> DeserializeResponseAsync<TData, TContentType>(
+        this IEssentialsHttpResponse response,
         TContentType contentType)
     where TContentType : IContentType
     {

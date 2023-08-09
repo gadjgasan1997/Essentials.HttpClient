@@ -54,14 +54,9 @@ public class NewtonsoftJsonSerializer : IEssentialsBothSerializer
     /// <inheritdoc cref="IEssentialsDeserializer.Deserialize{T}" />
     public virtual T Deserialize<T>(string @string)
     {
-        if (JsonConvert.DeserializeObject(@string, DeserializeOptions) is not { } obj)
-        {
-            // TODO Check message
-            throw new InvalidCastException(
-                "Объект после десерилизации равен null. " +
-                $"Исходная строка: '{@string}'");
-        }
-
-        return (T) obj;
+        return JsonConvert.DeserializeObject<T>(@string, DeserializeOptions)
+               ?? throw new InvalidDataException(
+                   "Объект после десерилизации равен null. " +
+                   $"Исходная строка: '{@string}'");
     }
 }

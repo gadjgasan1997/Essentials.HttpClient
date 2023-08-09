@@ -82,7 +82,7 @@ public class XmlSerializer : IEssentialsBothSerializer
         if (xmlSerializer.Deserialize(reader) is not { } obj)
         {
             // TODO Check message
-            throw new InvalidCastException(
+            throw new InvalidDataException(
                 "Объект после десерилизации равен null. " +
                 $"Исходная строка: '{@string}'");
         }

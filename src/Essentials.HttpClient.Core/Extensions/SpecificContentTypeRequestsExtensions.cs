@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Essentials.HttpClient.ContentTypes.Application;
 using LanguageExt;
 using LanguageExt.Common;
@@ -6,8 +7,9 @@ using LanguageExt.Common;
 namespace Essentials.HttpClient.Extensions;
 
 /// <summary>
-/// Вспомогательные методы расширения для отправки запросов с определенным типом данных в теле
+/// Методы расширения для отправки Http запросов с определенным типом данных в теле
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class SpecificContentTypeRequestsExtensions
 {
     #region Json
