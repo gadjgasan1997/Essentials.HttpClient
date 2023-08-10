@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using static Essentials.HttpClient.Common.Models.PersonsStorage;
 using static Essentials.HttpClient.Sample.Server.Helpers.SerializationHelpers;
-using static Essentials.HttpClient.ContentTypes.Storage;
+using static Essentials.HttpClient.MediaTypes.Storage;
 
 namespace Essentials.HttpClient.Sample.Server.Controllers;
 

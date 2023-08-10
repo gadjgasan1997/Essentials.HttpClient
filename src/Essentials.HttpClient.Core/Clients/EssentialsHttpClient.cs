@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Essentials.Func.Utils.Extensions;
-using Essentials.HttpClient.ContentTypes.Interfaces;
+using Essentials.HttpClient.MediaTypes.Interfaces;
 using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Models;
 using Essentials.HttpClient.Serialization;
@@ -54,25 +54,27 @@ public class EssentialsHttpClient : IEssentialsHttpClient
             SendWithMetricsAsync(request, () => SendAsync(request, client, token)));
     }
     
-    /// <inheritdoc cref="IEssentialsHttpClient.PostStringAsync{TContentType}(Validation{Error, IEssentialsHttpRequest}, string, Encoding?, CancellationToken?)" />
-    public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TContentType>(
+    /// <inheritdoc cref="IEssentialsHttpClient.PostStringAsync{TMediaType, TSerializer}(Validation{Error, IEssentialsHttpRequest}, string, Encoding?, CancellationToken?)" />
+    public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TMediaType, TSerializer>(
         Validation<Error, IEssentialsHttpRequest> validation,
         string content,
         Encoding? encoding = null,
         CancellationToken? token = null)
-        where TContentType : IContentType, new()
+        where TMediaType : IMediaType, new()
+        where TSerializer : IEssentialsSerializer
     {
         return await validation.DefaultBindAsync(request =>
-            PostStringAsync<TContentType>(request, content, encoding, token));
+            PostStringAsync<TMediaType, TSerializer>(request, content, encoding, token));
     }
 
-    /// <inheritdoc cref="IEssentialsHttpClient.PostStringAsync{TContentType}(IEssentialsHttpRequest, string, Encoding?, CancellationToken?)" />
-    public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TContentType>(
+    /// <inheritdoc cref="IEssentialsHttpClient.PostStringAsync{TMediaType, TSerializer}(IEssentialsHttpRequest, string, Encoding?, CancellationToken?)" />
+    public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TMediaType, TSerializer>(
         IEssentialsHttpRequest request,
         string content,
         Encoding? encoding = null,
         CancellationToken? token = null)
-        where TContentType : IContentType, new()
+        where TMediaType : IMediaType, new()
+        where TSerializer : IEssentialsSerializer
     {
         // TODO Log
         if (string.IsNullOrWhiteSpace(content))
@@ -80,7 +82,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
 
         return await (
                 CreateClient(request),
-                BuildStringContent<TContentType>(content, encoding ?? Encoding.UTF8))
+                BuildStringContent<TMediaType>(content, encoding ?? Encoding.UTF8))
             .Apply((client, stringContent) =>
             {
                 request.RequestMessage.Method = HttpMethod.Post;
@@ -90,34 +92,36 @@ public class EssentialsHttpClient : IEssentialsHttpClient
             .DefaultBindAsync(task => task);
     }
 
-    /// <inheritdoc cref="IEssentialsHttpClient.PostDataAsync{TContentType, TContent}(Validation{Error, IEssentialsHttpRequest}, TContent, Encoding?, CancellationToken?)" />
-    public async Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TContentType, TContent>(
+    /// <inheritdoc cref="IEssentialsHttpClient.PostDataAsync{TMediaType, TData, TSerializer}(Validation{Error, IEssentialsHttpRequest}, TData, Encoding?, CancellationToken?)" />
+    public async Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TMediaType, TData, TSerializer>(
         Validation<Error, IEssentialsHttpRequest> validation,
-        TContent data,
+        TData data,
         Encoding? encoding = null,
         CancellationToken? token = null)
-        where TContentType : IContentType, new()
+        where TMediaType : IMediaType, new()
+        where TSerializer : IEssentialsSerializer
     {
         return await validation.DefaultBindAsync(request =>
-            PostDataAsync<TContentType, TContent>(request, data, encoding, token));
+            PostDataAsync<TMediaType, TData, TSerializer>(request, data, encoding, token));
     }
 
-    /// <inheritdoc cref="IEssentialsHttpClient.PostDataAsync{TContentType, TContent}(IEssentialsHttpRequest, TContent, Encoding?, CancellationToken?)" />
-    public async Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TContentType, TContent>(
+    /// <inheritdoc cref="IEssentialsHttpClient.PostDataAsync{TMediaType, TData, TSerializer}(IEssentialsHttpRequest, TData, Encoding?, CancellationToken?)" />
+    public async Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TMediaType, TData, TSerializer>(
         IEssentialsHttpRequest request,
-        TContent data,
+        TData data,
         Encoding? encoding = null,
         CancellationToken? token = null)
-        where TContentType : IContentType, new()
+        where TMediaType : IMediaType, new()
+        where TSerializer : IEssentialsSerializer
     {
         // TODO Log
         if (data is null)
             return Error.New("Передано пустое содержимое запроса");
 
         return await SerializersCreator
-            .GetSerializer(new TContentType())
+            .GetSerializer<TSerializer>()
             .DefaultBindAsync(serializer => serializer.SerializeObject(data))
-            .DefaultBindAsync(requestString => PostStringAsync<TContentType>(request, requestString, encoding, token));
+            .DefaultBindAsync(requestString => PostStringAsync<TMediaType, TSerializer>(request, requestString, encoding, token));
     }
 
     #region Additional Methods
@@ -181,17 +185,17 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     /// </summary>
     /// <param name="requestSting">Строка запроса</param>
     /// <param name="encoding">Кодировка</param>
-    /// <typeparam name="TContentType">Тип содержимого запроса</typeparam>
+    /// <typeparam name="TMediaType">Тип содержимого запроса</typeparam>
     /// <returns>Контент</returns>
-    protected virtual Validation<Error, StringContent> BuildStringContent<TContentType>(
+    protected virtual Validation<Error, StringContent> BuildStringContent<TMediaType>(
         string requestSting,
         Encoding encoding)
-        where TContentType : IContentType, new()
+        where TMediaType : IMediaType, new()
     {
         return Try(() =>
             {
-                var contentType = new TContentType();
-                return new StringContent(requestSting, encoding, contentType.ContentTypeName);
+                var mediaType = new TMediaType();
+                return new StringContent(requestSting, encoding, mediaType.TypeName);
             })
             .Match(
                 Succ: Success<Error, StringContent>,

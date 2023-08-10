@@ -48,7 +48,7 @@ public class SamplesService : ISamplesService
 
         var response = await _httpClient
             .PostJsonDataAsync(requestValidation, request)
-            .ReceiveJsonContentAsync<List<Person>>();
+            .ReceiveNativeJsonContentAsync<List<Person>>();
     }
 
     private async Task RunSample_GetJson()
@@ -66,6 +66,6 @@ public class SamplesService : ISamplesService
 
         var persons = await _httpClient
             .GetAsync(requestValidation)
-            .ReceiveJsonContentUnsafeAsync<List<Person>>();
+            .ReceiveNativeJsonContentUnsafeAsync<List<Person>>();
     }
 }

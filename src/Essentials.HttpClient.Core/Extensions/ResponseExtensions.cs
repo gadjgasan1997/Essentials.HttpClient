@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Essentials.Func.Utils.Extensions;
-using Essentials.HttpClient.ContentTypes.Interfaces;
 using Essentials.HttpClient.Serialization;
 using Essentials.HttpClient.Serialization.Extensions;
 using LanguageExt;
@@ -67,45 +66,44 @@ public static class ResponseExtensions
     /// Возвращает содержимое ответа
     /// </summary>
     /// <param name="validation">Объект Validation с Http ответом</param>
-    /// <typeparam name="TData"></typeparam>
-    /// <typeparam name="TContentType"></typeparam>
+    /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
+    /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
-    public static async Task<Validation<Error, TData>> ReceiveContentAsync<TData, TContentType>(
+    public static async Task<Validation<Error, TData>> ReceiveContentAsync<TData, TDeserializer>(
         this Validation<Error, IEssentialsHttpResponse> validation)
-        where TContentType : IContentType, new()
+        where TDeserializer : IEssentialsDeserializer
     {
-        return await validation.DefaultBindAsync(response =>
-            DeserializeResponseAsync<TData, TContentType>(response, new TContentType()));
+        return await validation.DefaultBindAsync(DeserializeResponseAsync<TData, TDeserializer>);
     }
 
     /// <summary>
     /// Возвращает содержимое ответа
     /// </summary>
     /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
-    /// <typeparam name="TData"></typeparam>
-    /// <typeparam name="TContentType"></typeparam>
+    /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
+    /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
-    public static async Task<Validation<Error, TData>> ReceiveContentAsync<TData, TContentType>(
+    public static async Task<Validation<Error, TData>> ReceiveContentAsync<TData, TDeserializer>(
         this Task<Validation<Error, IEssentialsHttpResponse>> task)
-        where TContentType : IContentType, new()
+        where TDeserializer : IEssentialsDeserializer
     {
         var validation = await task;
-        return await validation.ReceiveContentAsync<TData, TContentType>();
+        return await validation.ReceiveContentAsync<TData, TDeserializer>();
     }
     
     /// <summary>
     /// Возвращает содержимое ответа
     /// </summary>
     /// <param name="validation">Объект Validation с Http ответом</param>
-    /// <typeparam name="TData"></typeparam>
-    /// <typeparam name="TContentType"></typeparam>
+    /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
+    /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
-    public static async Task<TData?> ReceiveContentUnsafeAsync<TData, TContentType>(
+    public static async Task<TData?> ReceiveContentUnsafeAsync<TData, TDeserializer>(
         this Validation<Error, IEssentialsHttpResponse> validation)
-        where TContentType : IContentType, new()
+        where TDeserializer : IEssentialsDeserializer
     {
         return await validation
-            .ReceiveContentAsync<TData, TContentType>()
+            .ReceiveContentAsync<TData, TDeserializer>()
             .DefaultMatchUnsafeAsync(data => data, _ => default);
     }
     
@@ -113,33 +111,31 @@ public static class ResponseExtensions
     /// Возвращает содержимое ответа
     /// </summary>
     /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
-    /// <typeparam name="TData"></typeparam>
-    /// <typeparam name="TContentType"></typeparam>
+    /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
+    /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
-    public static async Task<TData?> ReceiveContentUnsafeAsync<TData, TContentType>(
+    public static async Task<TData?> ReceiveContentUnsafeAsync<TData, TDeserializer>(
         this Task<Validation<Error, IEssentialsHttpResponse>> task)
-        where TContentType : IContentType, new()
+        where TDeserializer : IEssentialsDeserializer
     {
         var validation = await task;
-        return await validation.ReceiveContentUnsafeAsync<TData, TContentType>();
+        return await validation.ReceiveContentUnsafeAsync<TData, TDeserializer>();
     }
     
     /// <summary>
     /// Десерилизует ответ в объект
     /// </summary>
     /// <param name="response">Ответ</param>
-    /// <param name="contentType">Тип содержимого</param>
-    /// <typeparam name="TData">Тип объекта</typeparam>
-    /// <typeparam name="TContentType">Тип содержимого</typeparam>
+    /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
+    /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
-    internal static async Task<Validation<Error, TData>> DeserializeResponseAsync<TData, TContentType>(
-        this IEssentialsHttpResponse response,
-        TContentType contentType)
-    where TContentType : IContentType
+    internal static async Task<Validation<Error, TData>> DeserializeResponseAsync<TData, TDeserializer>(
+        this IEssentialsHttpResponse response)
+        where TDeserializer : IEssentialsDeserializer
     {
         return await (
                 response.ResponseMessage.ReceiveStringAsync().Result,
-                SerializersCreator.GetDeserializer(contentType))
+                SerializersCreator.GetDeserializer<TDeserializer>())
             .Apply((content, deserializer) => deserializer.DeserializeString<TData>(content))
             .DefaultBindAsync(task => task);
     }

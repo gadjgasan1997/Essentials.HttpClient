@@ -1,5 +1,6 @@
 ﻿using System.Text;
-using Essentials.HttpClient.ContentTypes.Interfaces;
+using Essentials.HttpClient.MediaTypes.Interfaces;
+using Essentials.HttpClient.Serialization;
 using LanguageExt;
 using LanguageExt.Common;
 
@@ -37,14 +38,16 @@ public interface IEssentialsHttpClient
     /// <param name="content">Строка с содержимым</param>
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
-    /// <typeparam name="TContentType">Тип контента содержимого (Json, Xml, ...)</typeparam>
+    /// <typeparam name="TMediaType">Тип содержимого запроса (Json, Xml, ...)</typeparam>
+    /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns>Http ответ</returns>
-    Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TContentType>(
+    Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TMediaType, TSerializer>(
         Validation<Error, IEssentialsHttpRequest> validation,
         string content,
         Encoding? encoding = null,
         CancellationToken? token = null)
-        where TContentType : IContentType, new();
+        where TMediaType : IMediaType, new()
+        where TSerializer : IEssentialsSerializer;
 
     /// <summary>
     /// Отправляет Post запрос
@@ -53,14 +56,16 @@ public interface IEssentialsHttpClient
     /// <param name="content">Строка с содержимым</param>
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
-    /// <typeparam name="TContentType">Тип контента содержимого (Json, Xml, ...)</typeparam>
+    /// <typeparam name="TMediaType">Тип содержимого запроса (Json, Xml, ...)</typeparam>
+    /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns>Http ответ</returns>
-    Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TContentType>(
+    Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TMediaType, TSerializer>(
         IEssentialsHttpRequest request,
         string content,
         Encoding? encoding = null,
         CancellationToken? token = null)
-        where TContentType : IContentType, new();
+        where TMediaType : IMediaType, new()
+        where TSerializer : IEssentialsSerializer;
 
     /// <summary>
     /// Отправляет Post запрос
@@ -69,15 +74,17 @@ public interface IEssentialsHttpClient
     /// <param name="data">Содержимое</param>
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
+    /// <typeparam name="TMediaType">Тип содержимого запроса (Json, Xml, ...)</typeparam>
     /// <typeparam name="TData">Тип содержимого</typeparam>
-    /// <typeparam name="TContentType">Тип контента содержимого (Json, Xml, ...)</typeparam>
+    /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns>Http ответ</returns>
-    Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TContentType, TData>(
+    Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TMediaType, TData, TSerializer>(
         Validation<Error, IEssentialsHttpRequest> validation,
         TData data,
         Encoding? encoding = null,
         CancellationToken? token = null)
-        where TContentType : IContentType, new();
+        where TMediaType : IMediaType, new()
+        where TSerializer : IEssentialsSerializer;
 
     /// <summary>
     /// Отправляет Post запрос
@@ -86,13 +93,15 @@ public interface IEssentialsHttpClient
     /// <param name="data">Содержимое</param>
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
+    /// <typeparam name="TMediaType">Тип содержимого запроса (Json, Xml, ...)</typeparam>
     /// <typeparam name="TData">Тип содержимого</typeparam>
-    /// <typeparam name="TContentType">Тип контента содержимого (Json, Xml, ...)</typeparam>
+    /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns>Http ответ</returns>
-    Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TContentType, TData>(
+    Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TMediaType, TData, TSerializer>(
         IEssentialsHttpRequest request,
         TData data,
         Encoding? encoding = null,
         CancellationToken? token = null)
-        where TContentType : IContentType, new();
+        where TMediaType : IMediaType, new()
+        where TSerializer : IEssentialsSerializer;
 }
