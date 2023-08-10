@@ -54,27 +54,25 @@ public class EssentialsHttpClient : IEssentialsHttpClient
             SendWithMetricsAsync(request, () => SendAsync(request, client, token)));
     }
     
-    /// <inheritdoc cref="IEssentialsHttpClient.PostStringAsync{TMediaType, TSerializer}(Validation{Error, IEssentialsHttpRequest}, string, Encoding?, CancellationToken?)" />
-    public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TMediaType, TSerializer>(
+    /// <inheritdoc cref="IEssentialsHttpClient.PostStringAsync{TMediaType}(Validation{Error, IEssentialsHttpRequest}, string, Encoding?, CancellationToken?)" />
+    public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TMediaType>(
         Validation<Error, IEssentialsHttpRequest> validation,
         string content,
         Encoding? encoding = null,
         CancellationToken? token = null)
         where TMediaType : IMediaType, new()
-        where TSerializer : IEssentialsSerializer
     {
         return await validation.DefaultBindAsync(request =>
-            PostStringAsync<TMediaType, TSerializer>(request, content, encoding, token));
+            PostStringAsync<TMediaType>(request, content, encoding, token));
     }
 
-    /// <inheritdoc cref="IEssentialsHttpClient.PostStringAsync{TMediaType, TSerializer}(IEssentialsHttpRequest, string, Encoding?, CancellationToken?)" />
-    public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TMediaType, TSerializer>(
+    /// <inheritdoc cref="IEssentialsHttpClient.PostStringAsync{TMediaType}(IEssentialsHttpRequest, string, Encoding?, CancellationToken?)" />
+    public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TMediaType>(
         IEssentialsHttpRequest request,
         string content,
         Encoding? encoding = null,
         CancellationToken? token = null)
         where TMediaType : IMediaType, new()
-        where TSerializer : IEssentialsSerializer
     {
         // TODO Log
         if (string.IsNullOrWhiteSpace(content))
@@ -121,7 +119,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         return await SerializersCreator
             .GetSerializer<TSerializer>()
             .DefaultBindAsync(serializer => serializer.SerializeObject(data))
-            .DefaultBindAsync(requestString => PostStringAsync<TMediaType, TSerializer>(request, requestString, encoding, token));
+            .DefaultBindAsync(requestString => PostStringAsync<TMediaType>(request, requestString, encoding, token));
     }
 
     #region Additional Methods
@@ -160,6 +158,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         SystemHttpClient httpClient,
         CancellationToken? token = default)
     {
+        // TODO Log
         HttpResponseMessage responseMessage;
         try
         {

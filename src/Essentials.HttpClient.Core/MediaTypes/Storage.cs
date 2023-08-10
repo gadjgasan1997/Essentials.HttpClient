@@ -1,14 +1,18 @@
-﻿using Essentials.HttpClient.MediaTypes.Application;
+﻿using System.Diagnostics.CodeAnalysis;
+using Essentials.HttpClient.MediaTypes.Application;
+using ApplicationXml = Essentials.HttpClient.MediaTypes.Application.Xml;
 
 namespace Essentials.HttpClient.MediaTypes;
 
 /// <summary>
 /// Известные типы содержимого
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public static class Storage
 {
     /// <summary>
-    /// Application
+    /// Внутренний формат прикладной программы
     /// </summary>
     public static class Application
     {
@@ -20,6 +24,6 @@ public static class Storage
         /// <summary>
         /// application/xml
         /// </summary>
-        public static Xml Xml { get; } = new();
+        public static ApplicationXml Xml { get; } = new();
     }
 }
