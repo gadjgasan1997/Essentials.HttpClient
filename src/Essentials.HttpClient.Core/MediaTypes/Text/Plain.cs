@@ -1,4 +1,5 @@
-﻿using Essentials.HttpClient.MediaTypes.Interfaces;
+﻿using System.Net.Mime;
+using Essentials.HttpClient.MediaTypes.Interfaces;
 
 namespace Essentials.HttpClient.MediaTypes.Text;
 
@@ -6,5 +7,5 @@ namespace Essentials.HttpClient.MediaTypes.Text;
 public record Plain : IMediaType
 {
     /// <inheritdoc cref="IMediaType.TypeName" />
-    public string TypeName => "text/plain";
+    public string TypeName => MediaTypeNames.Text.Plain;
 }
