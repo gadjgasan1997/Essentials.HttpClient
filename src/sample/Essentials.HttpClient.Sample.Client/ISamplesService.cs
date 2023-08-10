@@ -2,5 +2,6 @@
 
 public interface ISamplesService
 {
-    Task RunSamples();
+    Task RunGetSamples();
+    Task RunPostSamples();
 }

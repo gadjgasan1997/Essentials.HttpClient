@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{10C184
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Essentials.HttpClient.Sample.Server", "src\sample\Essentials.HttpClient.Sample.Server\Essentials.HttpClient.Sample.Server.csproj", "{92DC6123-1753-4EA0-B4BB-F055070B5D9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Essentials.HttpClient.Common", "src\Essentials.HttpClient.Common\Essentials.HttpClient.Common.csproj", "{7F477948-6803-4C06-91D1-8FA558E37D71}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Essentials.HttpClient.Common", "src\sample\Essentials.HttpClient.Common\Essentials.HttpClient.Common.csproj", "{7F477948-6803-4C06-91D1-8FA558E37D71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,7 +40,7 @@ Global
 		{10C18428-EA9F-42E2-B415-A9C216C1EAAD} = {B75976E1-DBCD-4707-BD59-FCB97B0131AE}
 		{D3E0DE20-1F2E-4F3A-8663-2B1723A8ED73} = {10C18428-EA9F-42E2-B415-A9C216C1EAAD}
 		{92DC6123-1753-4EA0-B4BB-F055070B5D9E} = {10C18428-EA9F-42E2-B415-A9C216C1EAAD}
-		{7F477948-6803-4C06-91D1-8FA558E37D71} = {B75976E1-DBCD-4707-BD59-FCB97B0131AE}
+		{7F477948-6803-4C06-91D1-8FA558E37D71} = {10C18428-EA9F-42E2-B415-A9C216C1EAAD}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{C4646449-94B3-4622-838F-C3ECB61F665B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

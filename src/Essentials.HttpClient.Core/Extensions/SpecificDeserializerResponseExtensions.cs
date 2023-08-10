@@ -6,12 +6,12 @@ using LanguageExt.Common;
 namespace Essentials.HttpClient.Extensions;
 
 /// <summary>
-/// Методы расширения для обработки Http ответов с определенным типом данных в теле
+/// Методы расширения для обработки Http ответов с определенным типом десериалайзера
 /// </summary>
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
-public static class SpecificMediaTypeResponseExtensions
+public static class SpecificDeserializerResponseExtensions
 {
     #region Newtonsoft Json
     

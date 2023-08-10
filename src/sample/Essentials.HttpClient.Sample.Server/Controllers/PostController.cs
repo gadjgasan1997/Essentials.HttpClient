@@ -1,29 +1,73 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Essentials.HttpClient.Common.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
-using static Essentials.HttpClient.Common.Models.PersonsStorage;
-using static Essentials.HttpClient.Sample.Server.Helpers.SerializationHelpers;
 using static Essentials.HttpClient.MediaTypes.Storage;
+using static Essentials.HttpClient.Common.Helpers.PersonsHelpers;
+using static Essentials.HttpClient.Sample.Server.Helpers.ResponseHelpers;
+using static Essentials.HttpClient.Common.Helpers.SerializationHelpers;
 
 namespace Essentials.HttpClient.Sample.Server.Controllers;
 
 [ApiController, Route("[controller]")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-public class PostController
+public class PostController : Controller
 {
     [HttpPost(nameof(GetPersonsInJson))]
     public ContentResult GetPersonsInJson([FromBody] GetPersonsInJsonRequest request)
     {
-        var persons = DefaultPersons;
-        if (!string.IsNullOrWhiteSpace(request.Name))
-            persons = persons.Where(person => person.Name.Contains(request.Name)).ToList();
-        if (request.Age.HasValue)
-            persons = persons.Where(person => person.Age == request.Age.Value).ToList();
-
-        return new ContentResult
+        try
         {
-            Content = SerializeInJson(persons),
-            ContentType = Application.Json.ToString()
-        };
+            return new ContentResult
+            {
+                Content = SerializeInJson(GetPersons(request.Name, request.Age)),
+                ContentType = Application.Json.ToString()
+            };
+        }
+        catch (Exception ex)
+        {
+            return GetErrorContent(ex);
+        }
+    }
+    
+    [HttpPost(nameof(GetPersonsInXml))]
+    public ContentResult GetPersonsInXml([FromBody] GetPersonsInXmlRequest request)
+    {
+        try
+        {
+            return new ContentResult
+            {
+                Content = SerializeInXml(GetPersons(request.Name, request.Age)),
+                ContentType = Application.Json.ToString()
+            };
+        }
+        catch (Exception ex)
+        {
+            return GetErrorContent(ex);
+        }
+    }
+    
+    [HttpPost(nameof(GetPersonsInPlainXmlText))]
+    public async Task<ContentResult> GetPersonsInPlainXmlText()
+    {
+        try
+        {
+            string xmlString;
+            using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
+            {
+                xmlString = await reader.ReadToEndAsync();
+            }
+
+            var request = DeserializeXml<GetPersonsInXmlRequest>(xmlString);
+            return new ContentResult
+            {
+                Content = SerializeInXml(GetPersons(request.Name, request.Age)),
+                ContentType = Application.Json.ToString()
+            };
+        }
+        catch (Exception ex)
+        {
+            return GetErrorContent(ex);
+        }
     }
 }

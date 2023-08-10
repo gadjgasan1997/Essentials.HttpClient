@@ -1,6 +1,8 @@
 ﻿using Essentials.HttpClient.Common.Models;
 using Essentials.HttpClient.Common.Models.Requests;
 using Essentials.HttpClient.Extensions;
+using TextPlain = Essentials.HttpClient.MediaTypes.Text.Plain;
+using static Essentials.HttpClient.Common.Helpers.SerializationHelpers;
 
 namespace Essentials.HttpClient.Sample.Implementations;
 
@@ -19,39 +21,20 @@ public class SamplesService : ISamplesService
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     }
     
-    public async Task RunSamples()
+    public async Task RunGetSamples()
     {
-        await RunGetRequestsSamples();
-        await RunPostRequestsSamples();
+        await RunGetSample_GetPersonsInJson();
+        await RunGetSample_GetPersonsInXml();
     }
 
-    private async Task RunGetRequestsSamples()
+    public async Task RunPostSamples()
     {
-        await RunSample_GetJson();
+        await RunPostSample_GetPersonsInJson();
+        await RunPostSample_GetPersonsInXml();
+        await RunPostSample_GetPersonsInText();
     }
 
-    private async Task RunPostRequestsSamples()
-    {
-        var request = new GetPersonsInJsonRequest
-        {
-            Name = "as"
-        };
-        
-        var uriValidation = await EssentialsUriBuilder
-            .CreateBuilder(SERVER_URL)
-            .WithSegments("post", "GetPersonsInJson")
-            .BuildAsync();
-
-        var requestValidation = await EssentialsRequestBuilder
-            .CreateBuilder(uriValidation)
-            .BuildAsync<SamplesService>();
-
-        var response = await _httpClient
-            .PostJsonDataAsync(requestValidation, request)
-            .ReceiveNativeJsonContentAsync<List<Person>>();
-    }
-
-    private async Task RunSample_GetJson()
+    private async Task RunGetSample_GetPersonsInJson()
     {
         var uriValidation = await EssentialsUriBuilder
             .CreateBuilder(SERVER_URL)
@@ -66,6 +49,87 @@ public class SamplesService : ISamplesService
 
         var persons = await _httpClient
             .GetAsync(requestValidation)
-            .ReceiveNativeJsonContentUnsafeAsync<List<Person>>();
+            .ReceiveNativeJsonContentAsync<List<Person>>();
+    }
+
+    private async Task RunGetSample_GetPersonsInXml()
+    {
+        var uriValidation = await EssentialsUriBuilder
+            .CreateBuilder(SERVER_URL)
+            .WithSegments("get", "GetPersonsInXml")
+            .BuildAsync();
+
+        var requestValidation = await EssentialsRequestBuilder
+            .CreateBuilder(uriValidation)
+            .BuildAsync<SamplesService>();
+
+        var persons = await _httpClient
+            .GetAsync(requestValidation)
+            .ReceiveXmlContentAsync<List<Person>>();
+    }
+
+    private async Task RunPostSample_GetPersonsInJson()
+    {
+        var data = new GetPersonsInJsonRequest
+        {
+            Name = "as"
+        };
+        
+        var uriValidation = await EssentialsUriBuilder
+            .CreateBuilder(SERVER_URL)
+            .WithSegments("post", "GetPersonsInJson")
+            .BuildAsync();
+
+        var requestValidation = await EssentialsRequestBuilder
+            .CreateBuilder(uriValidation)
+            .BuildAsync<SamplesService>();
+
+        var response = await _httpClient
+            .PostJsonDataAsync(requestValidation, data)
+            .ReceiveJsonContentAsync<List<Person>>();
+    }
+
+    private async Task RunPostSample_GetPersonsInXml()
+    {
+        var data = new GetPersonsInXmlRequest
+        {
+            Name = "mi"
+        };
+        
+        var uriValidation = await EssentialsUriBuilder
+            .CreateBuilder(SERVER_URL)
+            .WithSegments("post", "GetPersonsInXml")
+            .BuildAsync();
+
+        var requestValidation = await EssentialsRequestBuilder
+            .CreateBuilder(uriValidation)
+            .BuildAsync<SamplesService>();
+
+        var response = await _httpClient
+            .PostApplicationXmlDataAsync(requestValidation, data)
+            .ReceiveXmlContentAsync<List<Person>>();
+    }
+
+    private async Task RunPostSample_GetPersonsInText()
+    {
+        var data = new GetPersonsInXmlRequest
+        {
+            Name = "mi"
+        };
+        
+        var requestString = SerializeInXml(data);
+        
+        var uriValidation = await EssentialsUriBuilder
+            .CreateBuilder(SERVER_URL)
+            .WithSegments("post", "GetPersonsInPlainXmlText")
+            .BuildAsync();
+
+        var requestValidation = await EssentialsRequestBuilder
+            .CreateBuilder(uriValidation)
+            .BuildAsync<SamplesService>();
+
+        var response = await _httpClient
+            .PostStringAsync<TextPlain>(requestValidation, requestString)
+            .ReceiveXmlContentAsync<List<Person>>();
     }
 }
