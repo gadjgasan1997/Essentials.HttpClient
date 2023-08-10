@@ -1,6 +1,6 @@
-﻿using Essentials.HttpClient.ContentTypes.Application;
+﻿using Essentials.HttpClient.MediaTypes.Application;
 
-namespace Essentials.HttpClient.ContentTypes;
+namespace Essentials.HttpClient.MediaTypes;
 
 /// <summary>
 /// Известные типы содержимого

@@ -1,9 +1,8 @@
-﻿using System.Collections.Concurrent;
-using System.Net.Http.Headers;
-using Essentials.HttpClient.ContentTypes.Interfaces;
-using LanguageExt;
+﻿using LanguageExt;
 using LanguageExt.Common;
 using static LanguageExt.Prelude;
+using ISerializer = Essentials.HttpClient.Serialization.IEssentialsSerializer;
+using IDeserializer = Essentials.HttpClient.Serialization.IEssentialsDeserializer;
 
 namespace Essentials.HttpClient.Serialization;
 
@@ -12,100 +11,79 @@ namespace Essentials.HttpClient.Serialization;
 /// </summary>
 internal static class SerializersCreator
 {
-    ///<summary>
-    /// Мапа названий типа контента на сериалайзеры
+    /// <summary>
+    /// Список сериалайзеров
     /// </summary>
-    private static readonly ConcurrentDictionary<IContentType, IEssentialsSerializer> _serializersMap = new();
-    
-    ///<summary>
-    /// Мапа названий типа контента на десериалайзеры
-    /// </summary>
-    private static readonly ConcurrentDictionary<IContentType, IEssentialsDeserializer> _deserializersMap = new();
+    private static readonly List<ISerializer> _serializers = new();
 
+    /// <summary>
+    /// Список десериалайзеров
+    /// </summary>
+    private static readonly List<IDeserializer> _deserializers = new();
+    
     /// <summary>
     /// Добавляет или заменяет сериалайзер
     /// </summary>
-    /// <param name="contentType">Тип содержимого</param>
     /// <param name="serializer">Сериалайзер</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    public static void AddOrUpdateSerializer(IContentType contentType, IEssentialsSerializer serializer)
+    public static void AddOrUpdateSerializer(ISerializer serializer)
     {
-        if (!CheckContentType(contentType.ContentTypeName))
-            return;
-
-        if (_serializersMap.ContainsKey(contentType))
+        var existingSerializer = _serializers.FirstOrDefault(essentialsSerializer =>
+            essentialsSerializer.GetType() == typeof(ISerializer));
+        
+        if (existingSerializer is null)
         {
-            _serializersMap[contentType] = serializer;
+            _serializers.Add(serializer);
             return;
         }
 
-        _serializersMap.TryAdd(contentType, serializer);
+        var index = _serializers.IndexOf(existingSerializer);
+        _serializers[index] = serializer;
     }
     
     /// <summary>
     /// Добавляет или заменяет десериалайзер
     /// </summary>
-    /// <param name="contentType">Тип содержимого</param>
     /// <param name="deserializer">Десериалайзер</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    public static void AddOrUpdateDeserializer(IContentType contentType, IEssentialsDeserializer deserializer)
+    public static void AddOrUpdateDeserializer(IDeserializer deserializer)
     {
-        if (!CheckContentType(contentType.ContentTypeName))
-            return;
-
-        if (_deserializersMap.ContainsKey(contentType))
+        var existingDeserializer = _deserializers.FirstOrDefault(essentialsDeserializer =>
+            essentialsDeserializer.GetType() == typeof(IDeserializer));
+        
+        if (existingDeserializer is null)
         {
-            _deserializersMap[contentType] = deserializer;
+            _deserializers.Add(deserializer);
             return;
         }
 
-        _deserializersMap.TryAdd(contentType, deserializer);
+        var index = _deserializers.IndexOf(existingDeserializer);
+        _deserializers[index] = deserializer;
     }
-
+    
     /// <summary>
     /// Возвращает сериалайзер
     /// </summary>
-    /// <param name="contentType">Тип содержимого</param>
+    /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns></returns>
-    public static Validation<Error, IEssentialsSerializer> GetSerializer(IContentType contentType)
+    public static Validation<Error, ISerializer> GetSerializer<TSerializer>()
     {
         // TODO Log
-        return Try(() => _serializersMap[contentType])
+        return Try(() => _serializers.First(serializer => serializer is TSerializer))
             .ToValidation(exception =>
-                Error.New($"Во время получения сериалайзера для содержимого с типом '{contentType}' произошло исключение",
+                Error.New($"Во время получения сериалайзера с типом '{typeof(TSerializer).FullName}' произошло исключение",
                     exception));
     }
-
+    
     /// <summary>
     /// Возвращает десериалайзер
     /// </summary>
-    /// <param name="contentType">Тип содержимого</param>
+    /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
-    public static Validation<Error, IEssentialsDeserializer> GetDeserializer(IContentType contentType)
+    public static Validation<Error, IDeserializer> GetDeserializer<TDeserializer>()
     {
         // TODO Log
-        return Try(() => _deserializersMap[contentType])
+        return Try(() => _deserializers.First(deserializer => deserializer is TDeserializer))
             .ToValidation(exception =>
-                Error.New($"Во время получения десериалайзера для содержимого с типом '{contentType}' произошло исключение",
+                Error.New($"Во время получения десериалайзера с типом '{typeof(TDeserializer).FullName}' произошло исключение",
                     exception));
-    }
-
-    /// <summary>
-    /// Проверяет тип содержимого
-    /// </summary>
-    /// <param name="contentType">Тип содержимого</param>
-    /// <returns></returns>
-    private static bool CheckContentType(string contentType)
-    {
-        try
-        {
-            _ = new MediaTypeHeaderValue(contentType);
-            return true;
-        }
-        catch (FormatException ex)
-        {
-            // TODO Log
-            return false;
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using Essentials.Func.Utils.Helpers;
 
 namespace Essentials.HttpClient.Serialization.Implementations;
@@ -6,6 +7,7 @@ namespace Essentials.HttpClient.Serialization.Implementations;
 /// <summary>
 /// Сериалайзер Json с использованием System.Text.Json
 /// </summary>
+[SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
 public class NativeJsonSerializer : IEssentialsBothSerializer
 {
     /// <summary>
