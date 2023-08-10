@@ -53,7 +53,25 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         return await CreateClient(request).DefaultBindAsync(client =>
             SendWithMetricsAsync(request, () => SendAsync(request, client, token)));
     }
-    
+
+    /// <inheritdoc cref="IEssentialsHttpClient.HeadAsync(Validation{Error, IEssentialsHttpRequest}, CancellationToken?)" />
+    public async Task<Validation<Error, IEssentialsHttpResponse>> HeadAsync(
+        Validation<Error, IEssentialsHttpRequest> validation,
+        CancellationToken? token = default)
+    {
+        return await validation.DefaultBindAsync(request => HeadAsync(request, token));
+    }
+
+    /// <inheritdoc cref="IEssentialsHttpClient.HeadAsync(IEssentialsHttpRequest, CancellationToken?)" />
+    public async Task<Validation<Error, IEssentialsHttpResponse>> HeadAsync(
+        IEssentialsHttpRequest request,
+        CancellationToken? token = default)
+    {
+        request.RequestMessage.Method = HttpMethod.Head;
+        return await CreateClient(request).DefaultBindAsync(client =>
+            SendWithMetricsAsync(request, () => SendAsync(request, client, token)));
+    }
+
     /// <inheritdoc cref="IEssentialsHttpClient.PostStringAsync{TMediaType}(Validation{Error, IEssentialsHttpRequest}, string, Encoding?, CancellationToken?)" />
     public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TMediaType>(
         Validation<Error, IEssentialsHttpRequest> validation,
