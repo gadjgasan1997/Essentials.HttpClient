@@ -1,4 +1,5 @@
-﻿using Essentials.HttpClient.MediaTypes.Interfaces;
+﻿using System.Net.Mime;
+using Essentials.HttpClient.MediaTypes.Interfaces;
 
 namespace Essentials.HttpClient.MediaTypes.Application;
 
@@ -6,5 +7,5 @@ namespace Essentials.HttpClient.MediaTypes.Application;
 public record Json : IMediaType
 {
     /// <inheritdoc cref="IMediaType.TypeName" />
-    public string TypeName => "application/json";
+    public string TypeName => MediaTypeNames.Application.Json;
 }
