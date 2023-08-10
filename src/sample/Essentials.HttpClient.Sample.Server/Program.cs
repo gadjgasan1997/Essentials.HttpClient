@@ -1,6 +1,6 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.ConfigureServices(services => services.AddControllers());
+builder.Host.ConfigureServices(services => services.AddControllers().AddXmlSerializerFormatters());
 
 var app = builder.Build();
 

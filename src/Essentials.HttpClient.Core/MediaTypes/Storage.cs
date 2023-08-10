@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Essentials.HttpClient.MediaTypes.Application;
+using Essentials.HttpClient.MediaTypes.Text;
 using ApplicationXml = Essentials.HttpClient.MediaTypes.Application.Xml;
+using TextXml = Essentials.HttpClient.MediaTypes.Text.Xml;
 
 namespace Essentials.HttpClient.MediaTypes;
 
@@ -25,5 +27,21 @@ public static class Storage
         /// application/xml
         /// </summary>
         public static ApplicationXml Xml { get; } = new();
+    }
+    
+    /// <summary>
+    /// Текст
+    /// </summary>
+    public static class Text
+    {
+        /// <summary>
+        /// text/plain
+        /// </summary>
+        public static Plain Plain { get; } = new();
+        
+        /// <summary>
+        /// text/xml
+        /// </summary>
+        public static TextXml Xml { get; } = new();
     }
 }

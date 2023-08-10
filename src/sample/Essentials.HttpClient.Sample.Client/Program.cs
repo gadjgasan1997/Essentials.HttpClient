@@ -14,7 +14,8 @@ var app = builder.Build();
 
 var service = app.Services.GetRequiredService<ISamplesService>();
 
-await service.RunSamples();
+await service.RunGetSamples();
+await service.RunPostSamples();
 
 app.MapGet("/", () => "Hello World!");
 
