@@ -63,7 +63,55 @@ public static class ResponseExtensions
     }
     
     /// <summary>
-    /// Возвращает содержимое ответа
+    /// Возвращает строку ответа
+    /// </summary>
+    /// <param name="validation">Объект Validation с Http ответом</param>
+    /// <returns></returns>
+    public static async Task<Validation<Error, string>> ReceiveStringAsync(
+        this Validation<Error, IEssentialsHttpResponse> validation)
+    {
+        return await validation.DefaultBindAsync(response => response.ResponseMessage.ReceiveStringAsync());
+    }
+    
+    /// <summary>
+    /// Возвращает строку ответа
+    /// </summary>
+    /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
+    /// <returns></returns>
+    public static async Task<Validation<Error, string>> ReceiveStringAsync(
+        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+    {
+        var validation = await task;
+        return await validation.ReceiveStringAsync();
+    }
+    
+    /// <summary>
+    /// Возвращает строку ответа
+    /// </summary>
+    /// <param name="validation">Объект Validation с Http ответом</param>
+    /// <returns></returns>
+    public static async Task<string?> ReceiveStringUnsafeAsync(
+        this Validation<Error, IEssentialsHttpResponse> validation)
+    {
+        return await validation
+            .ReceiveStringAsync()
+            .DefaultMatchUnsafeAsync(@string => @string, _ => null);
+    }
+    
+    /// <summary>
+    /// Возвращает строку ответа
+    /// </summary>
+    /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
+    /// <returns></returns>
+    public static async Task<string?> ReceiveStringUnsafeAsync(
+        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+    {
+        var validation = await task;
+        return await validation.ReceiveStringUnsafeAsync();
+    }
+    
+    /// <summary>
+    /// Возвращает десериализованное содержимое ответа
     /// </summary>
     /// <param name="validation">Объект Validation с Http ответом</param>
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
@@ -77,7 +125,7 @@ public static class ResponseExtensions
     }
 
     /// <summary>
-    /// Возвращает содержимое ответа
+    /// Возвращает десериализованное содержимое ответа
     /// </summary>
     /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
@@ -92,7 +140,7 @@ public static class ResponseExtensions
     }
     
     /// <summary>
-    /// Возвращает содержимое ответа
+    /// Возвращает десериализованное содержимое ответа
     /// </summary>
     /// <param name="validation">Объект Validation с Http ответом</param>
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
@@ -108,7 +156,7 @@ public static class ResponseExtensions
     }
     
     /// <summary>
-    /// Возвращает содержимое ответа
+    /// Возвращает десериализованное содержимое ответа
     /// </summary>
     /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>

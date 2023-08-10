@@ -44,7 +44,7 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
 
         var requestValidation = await EssentialsRequestBuilder
             .CreateBuilder(uriValidation)
-            .BuildAsync<GetRequestsSamplesService>();
+            .BuildAsync<PostRequestsSamplesService>();
 
         var response = await _httpClient
             .PostJsonDataAsync(requestValidation, data)
@@ -65,7 +65,7 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
 
         var requestValidation = await EssentialsRequestBuilder
             .CreateBuilder(uriValidation)
-            .BuildAsync<GetRequestsSamplesService>();
+            .BuildAsync<PostRequestsSamplesService>();
 
         var response = await _httpClient
             .PostApplicationXmlDataAsync(requestValidation, data)
@@ -88,7 +88,7 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
 
         var requestValidation = await EssentialsRequestBuilder
             .CreateBuilder(uriValidation)
-            .BuildAsync<GetRequestsSamplesService>();
+            .BuildAsync<PostRequestsSamplesService>();
 
         var response = await _httpClient
             .PostStringAsync<TextPlain>(requestValidation, requestString)

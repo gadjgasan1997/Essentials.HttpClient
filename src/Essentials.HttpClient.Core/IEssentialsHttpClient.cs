@@ -30,6 +30,26 @@ public interface IEssentialsHttpClient
     Task<Validation<Error, IEssentialsHttpResponse>> GetAsync(
         IEssentialsHttpRequest request,
         CancellationToken? token = default);
+    
+    /// <summary>
+    /// Отправляет Head запрос
+    /// </summary>
+    /// <param name="validation">Объект Validation с Http запросом</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Http ответ</returns>
+    Task<Validation<Error, IEssentialsHttpResponse>> HeadAsync(
+        Validation<Error, IEssentialsHttpRequest> validation,
+        CancellationToken? token = default);
+    
+    /// <summary>
+    /// Отправляет Head запрос
+    /// </summary>
+    /// <param name="request">Http запрос</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Http ответ</returns>
+    Task<Validation<Error, IEssentialsHttpResponse>> HeadAsync(
+        IEssentialsHttpRequest request,
+        CancellationToken? token = default);
 
     /// <summary>
     /// Отправляет Post запрос
