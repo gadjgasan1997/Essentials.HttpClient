@@ -7,15 +7,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.ConfigureServices(services =>
 {
     services.ConfigureEssentialsHttpClient(builder.Configuration);
-    services.AddTransient<ISamplesService, SamplesService>();
+    services.AddTransient<IGetRequestsSamplesService, GetRequestsSamplesService>();
+    services.AddTransient<IPostRequestsSamplesService, PostRequestsSamplesService>();
 });
 
 var app = builder.Build();
 
-var service = app.Services.GetRequiredService<ISamplesService>();
+var getRequestsSamplesService = app.Services.GetRequiredService<IGetRequestsSamplesService>();
+var postRequestsSamplesService = app.Services.GetRequiredService<IPostRequestsSamplesService>();
 
-await service.RunGetSamples();
-await service.RunPostSamples();
+await getRequestsSamplesService.RunSamples();
+await postRequestsSamplesService.RunSamples();
 
 app.MapGet("/", () => "Hello World!");
 
