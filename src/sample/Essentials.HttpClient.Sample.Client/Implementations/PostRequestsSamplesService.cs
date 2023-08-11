@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Essentials.HttpClient.Common.Models;
-using Essentials.HttpClient.Common.Models.Requests;
 using Essentials.HttpClient.Extensions;
+using Essentials.HttpClient.Sample.Client.Models;
+using Essentials.HttpClient.Sample.Client.Models.Requests;
 using TextPlain = Essentials.HttpClient.MediaTypes.Text.Plain;
 using static Essentials.HttpClient.Common.Helpers.SerializationHelpers;
-using static Essentials.HttpClient.Sample.Dictionaries.CommonConsts;
+using static Essentials.HttpClient.Sample.Client.Dictionaries.CommonConsts;
 
-namespace Essentials.HttpClient.Sample.Implementations;
+namespace Essentials.HttpClient.Sample.Client.Implementations;
 
 [SuppressMessage("ReSharper", "UnusedVariable")]
 [SuppressMessage("ReSharper", "NotAccessedField.Local")]
@@ -48,7 +48,7 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
 
         var response = await _httpClient
             .PostJsonDataAsync(requestValidation, data)
-            .ReceiveJsonContentAsync<List<Person>>();
+            .ReceiveNativeJsonContentAsync<List<Person>>();
     }
 
     private async Task RunSample_GetPersonsInXml()

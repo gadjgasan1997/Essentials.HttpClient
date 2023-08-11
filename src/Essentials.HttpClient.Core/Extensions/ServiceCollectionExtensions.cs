@@ -26,11 +26,10 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection ConfigureEssentialsHttpClient(
         this IServiceCollection services,
         IConfiguration configuration,
-        List<IEssentialsSerializer>? serializers = null,
-        List<IEssentialsDeserializer>? deserializers = null)
+        List<SerializerInfo>? serializers = null,
+        List<SerializerInfo>? deserializers = null)
     {
         services.AddHttpClient(nameof(IEssentialsHttpClient));
-        services.TryAddTransient<IEssentialsHttpClient, EssentialsHttpClient>();
         
         AddOrUpdateSerializers(serializers);
         AddOrUpdateDeserializers(deserializers);
@@ -38,6 +37,12 @@ public static class ServiceCollectionExtensions
         var options = new ClientsOptions();
         var section = configuration.GetSection(ClientsOptions.Section);
         section.Bind(options);
+        
+        services.TryAdd(
+            ServiceDescriptor.Describe(
+                serviceType: typeof(IEssentialsHttpClient),
+                implementationType: typeof(EssentialsHttpClient),
+                lifetime: options.ServiceLifetime ?? ServiceLifetime.Transient));
         
         return services.ConfigureMetrics(options.Metrics);
     }
@@ -47,11 +52,11 @@ public static class ServiceCollectionExtensions
     /// </summary>
     /// <param name="serializers">Список сериалайзеров</param>
     /// <returns></returns>
-    private static void AddOrUpdateSerializers(List<IEssentialsSerializer>? serializers)
+    private static void AddOrUpdateSerializers(List<SerializerInfo>? serializers)
     {
-        AddOrUpdateSerializer(new NativeJsonSerializer());
-        AddOrUpdateSerializer(new NewtonsoftJsonSerializer());
-        AddOrUpdateSerializer(new XmlSerializer());
+        AddOrUpdateSerializer(new SerializerInfo(new NativeJsonSerializer()));
+        AddOrUpdateSerializer(new SerializerInfo(new NewtonsoftJsonSerializer()));
+        AddOrUpdateSerializer(new SerializerInfo(new XmlSerializer()));
         
         serializers?.ForEach(AddOrUpdateSerializer);
     }
@@ -61,11 +66,11 @@ public static class ServiceCollectionExtensions
     /// </summary>
     /// <param name="deserializers">Список десериалайзеров</param>
     /// <returns></returns>
-    private static void AddOrUpdateDeserializers(List<IEssentialsDeserializer>? deserializers)
+    private static void AddOrUpdateDeserializers(List<SerializerInfo>? deserializers)
     {
-        AddOrUpdateDeserializer(new NativeJsonSerializer());
-        AddOrUpdateDeserializer(new NewtonsoftJsonSerializer());
-        AddOrUpdateDeserializer(new XmlSerializer());
+        AddOrUpdateDeserializer(new SerializerInfo(new NativeJsonSerializer()));
+        AddOrUpdateDeserializer(new SerializerInfo(new NewtonsoftJsonSerializer()));
+        AddOrUpdateDeserializer(new SerializerInfo(new XmlSerializer()));
         
         deserializers?.ForEach(AddOrUpdateDeserializer);
     }

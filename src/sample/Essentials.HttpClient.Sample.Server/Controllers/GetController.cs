@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using static Essentials.HttpClient.MediaTypes.Storage;
-using static Essentials.HttpClient.Common.Helpers.PersonsHelpers;
+using static Essentials.HttpClient.Sample.Server.Helpers.PersonsHelpers;
 using static Essentials.HttpClient.Sample.Server.Helpers.ResponseHelpers;
 using static Essentials.HttpClient.Common.Helpers.SerializationHelpers;
 

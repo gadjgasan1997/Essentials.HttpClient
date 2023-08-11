@@ -1,5 +1,7 @@
-﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-namespace Essentials.HttpClient.Common.Models;
+﻿using System.Text.Json.Serialization;
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+namespace Essentials.HttpClient.Sample.Server.Models;
 
 public class Person
 {
@@ -11,8 +13,10 @@ public class Person
         Age = age;
     }
     
+    [JsonPropertyName("name")]
     public string Name { get; set; }
     
+    [JsonPropertyName("age")]
     public int Age { get; set; }
 }
 

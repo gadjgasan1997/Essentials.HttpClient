@@ -1,4 +1,5 @@
-﻿using LanguageExt;
+﻿using System.Collections.Concurrent;
+using LanguageExt;
 using LanguageExt.Common;
 using static LanguageExt.Prelude;
 using ISerializer = Essentials.HttpClient.Serialization.IEssentialsSerializer;
@@ -14,76 +15,76 @@ internal static class SerializersCreator
     /// <summary>
     /// Список сериалайзеров
     /// </summary>
-    private static readonly List<ISerializer> _serializers = new();
+    private static readonly ConcurrentDictionary<string, ISerializer> _serializers = new();
 
     /// <summary>
     /// Список десериалайзеров
     /// </summary>
-    private static readonly List<IDeserializer> _deserializers = new();
-    
+    private static readonly ConcurrentDictionary<string, IDeserializer> _deserializers = new();
+
     /// <summary>
     /// Добавляет или заменяет сериалайзер
     /// </summary>
-    /// <param name="serializer">Сериалайзер</param>
-    public static void AddOrUpdateSerializer(ISerializer serializer)
+    /// <param name="serializerInfo">Информация о сериалайзере</param>
+    public static void AddOrUpdateSerializer(SerializerInfo serializerInfo)
     {
-        var existingSerializer = _serializers.FirstOrDefault(essentialsSerializer =>
-            essentialsSerializer.GetType() == typeof(ISerializer));
-        
-        if (existingSerializer is null)
+        // TODO Log
+        var key = serializerInfo.GetKey();
+        if (!_serializers.TryGetValue(key, out var existingSerializer))
         {
-            _serializers.Add(serializer);
+            _serializers.TryAdd(key, serializerInfo.Serializer);
             return;
         }
 
-        var index = _serializers.IndexOf(existingSerializer);
-        _serializers[index] = serializer;
+        _serializers.TryUpdate(key, serializerInfo.Serializer, existingSerializer);
     }
     
     /// <summary>
     /// Добавляет или заменяет десериалайзер
     /// </summary>
-    /// <param name="deserializer">Десериалайзер</param>
-    public static void AddOrUpdateDeserializer(IDeserializer deserializer)
+    /// <param name="serializerInfo">Информация о десериалайзере</param>
+    public static void AddOrUpdateDeserializer(SerializerInfo serializerInfo)
     {
-        var existingDeserializer = _deserializers.FirstOrDefault(essentialsDeserializer =>
-            essentialsDeserializer.GetType() == typeof(IDeserializer));
-        
-        if (existingDeserializer is null)
+        // TODO Log
+        var key = serializerInfo.GetKey();
+        if (!_deserializers.TryGetValue(key, out var existingDeserializer))
         {
-            _deserializers.Add(deserializer);
+            _deserializers.TryAdd(key, serializerInfo.Serializer);
             return;
         }
 
-        var index = _deserializers.IndexOf(existingDeserializer);
-        _deserializers[index] = deserializer;
+        _deserializers.TryUpdate(key, serializerInfo.Serializer, existingDeserializer);
     }
     
     /// <summary>
     /// Возвращает сериалайзер
     /// </summary>
+    /// <param name="key">Необязательный ключ, по умолчанию равный полному названию типа сериалайзера</param>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns></returns>
-    public static Validation<Error, ISerializer> GetSerializer<TSerializer>()
+    public static Validation<Error, ISerializer> GetSerializer<TSerializer>(string? key = null)
     {
         // TODO Log
-        return Try(() => _serializers.First(serializer => serializer is TSerializer))
+        key ??= typeof(TSerializer).FullName!;
+        return Try(() => _serializers[key])
             .ToValidation(exception =>
-                Error.New($"Во время получения сериалайзера с типом '{typeof(TSerializer).FullName}' произошло исключение",
+                Error.New($"Во время получения сериалайзера с ключом '{key}' произошло исключение",
                     exception));
     }
     
     /// <summary>
     /// Возвращает десериалайзер
     /// </summary>
+    /// <param name="key">Необязательный ключ, по умолчанию равный полному названию типа десериалайзера</param>
     /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
-    public static Validation<Error, IDeserializer> GetDeserializer<TDeserializer>()
+    public static Validation<Error, IDeserializer> GetDeserializer<TDeserializer>(string? key = null)
     {
         // TODO Log
-        return Try(() => _deserializers.First(deserializer => deserializer is TDeserializer))
+        key ??= typeof(TDeserializer).FullName!;
+        return Try(() => _deserializers[key])
             .ToValidation(exception =>
-                Error.New($"Во время получения десериалайзера с типом '{typeof(TDeserializer).FullName}' произошло исключение",
+                Error.New($"Во время получения десериалайзера с ключом '{key}' произошло исключение",
                     exception));
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Essentials.HttpClient.Common.Models.Requests;
+﻿namespace Essentials.HttpClient.Sample.Server.Models.Requests;
 
 public class GetPersonsInXmlRequest
 {

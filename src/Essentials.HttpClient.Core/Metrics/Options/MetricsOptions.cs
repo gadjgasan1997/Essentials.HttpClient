@@ -22,6 +22,11 @@ internal class MetricsOptions
     public bool UseAllRequestsMetrics { get; set; } = true;
 
     /// <summary>
+    /// Признак необходимости отдавать метрики для Head запросов
+    /// </summary>
+    public bool UseHeadRequestsMetrics { get; set; } = true;
+
+    /// <summary>
     /// Признак необходимости отдавать метрики для Get запросов
     /// </summary>
     public bool UseGetRequestsMetrics { get; set; } = true;
@@ -30,6 +35,11 @@ internal class MetricsOptions
     /// Признак необходимости отдавать метрики для Post запросов
     /// </summary>
     public bool UsePostRequestsMetrics { get; set; } = true;
+
+    /// <summary>
+    /// Признак необходимости отдавать метрики для Put запросов
+    /// </summary>
+    public bool UsePutRequestsMetrics { get; set; } = true;
 
     /// <summary>
     /// Мапа названий клиентов на признак игнорировать отдачу метрик для них

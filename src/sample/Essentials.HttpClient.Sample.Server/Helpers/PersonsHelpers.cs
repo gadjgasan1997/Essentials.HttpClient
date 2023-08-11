@@ -1,6 +1,6 @@
-﻿using Essentials.HttpClient.Common.Models;
+﻿using Essentials.HttpClient.Sample.Server.Models;
 
-namespace Essentials.HttpClient.Common.Helpers;
+namespace Essentials.HttpClient.Sample.Server.Helpers;
 
 public static class PersonsHelpers
 {

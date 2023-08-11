@@ -1,12 +1,36 @@
-﻿using Essentials.HttpClient.Extensions;
-using Essentials.HttpClient.Sample;
-using Essentials.HttpClient.Sample.Implementations;
+﻿using System.Text.Json;
+using System.Xml;
+using Essentials.HttpClient.Extensions;
+using Essentials.HttpClient.Sample.Client;
+using Essentials.HttpClient.Sample.Client.Implementations;
+using Essentials.HttpClient.Serialization;
+using Essentials.HttpClient.Serialization.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.ConfigureServices(services =>
 {
-    services.ConfigureEssentialsHttpClient(builder.Configuration);
+    // При старте сервиса можно переопределить существующие сериалайзеры/десериалайзеры, просто передав их в метод.
+    // Каждый встроенный сериалайзер имеет конструктор с необязательными параметрами,
+    // через которые можно контролировать его поведение.
+    // Также можно передать кастомный сериалайзер
+    var customXmlSerializer = new XmlSerializer(
+        deserializeOptions: new XmlReaderSettings(), 
+        serializeOptions: new XmlWriterSettings());
+
+    // Например, можно проставить свойство PropertyNameCaseInsensitive в false и убедиться,
+    // что ответы от сервера не будут корректно десериализовываться
+    var customJsonSerializer = new NativeJsonSerializer(
+        deserializeOptions: new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+    services.ConfigureEssentialsHttpClient(
+        builder.Configuration,
+        new List<SerializerInfo> {new(customXmlSerializer)},
+        new List<SerializerInfo> {new(customXmlSerializer), new(customJsonSerializer)});
+
     services.AddTransient<IGetRequestsSamplesService, GetRequestsSamplesService>();
     services.AddTransient<IHeadRequestsSamplesService, HeadRequestsSamplesService>();
     services.AddTransient<IPostRequestsSamplesService, PostRequestsSamplesService>();
