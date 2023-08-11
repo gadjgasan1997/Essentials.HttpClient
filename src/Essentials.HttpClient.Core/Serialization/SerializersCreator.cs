@@ -25,47 +25,46 @@ internal static class SerializersCreator
     /// <summary>
     /// Добавляет или заменяет сериалайзер
     /// </summary>
-    /// <param name="serializerInfo">Информация о сериалайзере</param>
-    public static void AddOrUpdateSerializer(SerializerInfo serializerInfo)
+    /// <param name="serializer">Сериалайзер</param>
+    public static void AddOrUpdateSerializer(ISerializer serializer)
     {
         // TODO Log
-        var key = serializerInfo.GetKey();
+        var key = serializer.GetType().FullName!;
         if (!_serializers.TryGetValue(key, out var existingSerializer))
         {
-            _serializers.TryAdd(key, serializerInfo.Serializer);
+            _serializers.TryAdd(key, serializer);
             return;
         }
 
-        _serializers.TryUpdate(key, serializerInfo.Serializer, existingSerializer);
+        _serializers.TryUpdate(key, serializer, existingSerializer);
     }
     
     /// <summary>
     /// Добавляет или заменяет десериалайзер
     /// </summary>
-    /// <param name="serializerInfo">Информация о десериалайзере</param>
-    public static void AddOrUpdateDeserializer(SerializerInfo serializerInfo)
+    /// <param name="deserializer">Десериалайзер</param>
+    public static void AddOrUpdateDeserializer(IDeserializer deserializer)
     {
         // TODO Log
-        var key = serializerInfo.GetKey();
+        var key = deserializer.GetType().FullName!;
         if (!_deserializers.TryGetValue(key, out var existingDeserializer))
         {
-            _deserializers.TryAdd(key, serializerInfo.Serializer);
+            _deserializers.TryAdd(key, deserializer);
             return;
         }
 
-        _deserializers.TryUpdate(key, serializerInfo.Serializer, existingDeserializer);
+        _deserializers.TryUpdate(key, deserializer, existingDeserializer);
     }
     
     /// <summary>
     /// Возвращает сериалайзер
     /// </summary>
-    /// <param name="key">Необязательный ключ, по умолчанию равный полному названию типа сериалайзера</param>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns></returns>
-    public static Validation<Error, ISerializer> GetSerializer<TSerializer>(string? key = null)
+    public static Validation<Error, ISerializer> GetSerializer<TSerializer>()
     {
         // TODO Log
-        key ??= typeof(TSerializer).FullName!;
+        var key = typeof(TSerializer).FullName!;
         return Try(() => _serializers[key])
             .ToValidation(exception =>
                 Error.New($"Во время получения сериалайзера с ключом '{key}' произошло исключение",
@@ -75,13 +74,12 @@ internal static class SerializersCreator
     /// <summary>
     /// Возвращает десериалайзер
     /// </summary>
-    /// <param name="key">Необязательный ключ, по умолчанию равный полному названию типа десериалайзера</param>
     /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
-    public static Validation<Error, IDeserializer> GetDeserializer<TDeserializer>(string? key = null)
+    public static Validation<Error, IDeserializer> GetDeserializer<TDeserializer>()
     {
         // TODO Log
-        key ??= typeof(TDeserializer).FullName!;
+        var key = typeof(TDeserializer).FullName!;
         return Try(() => _deserializers[key])
             .ToValidation(exception =>
                 Error.New($"Во время получения десериалайзера с ключом '{key}' произошло исключение",

@@ -26,8 +26,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection ConfigureEssentialsHttpClient(
         this IServiceCollection services,
         IConfiguration configuration,
-        List<SerializerInfo>? serializers = null,
-        List<SerializerInfo>? deserializers = null)
+        List<IEssentialsSerializer>? serializers = null,
+        List<IEssentialsDeserializer>? deserializers = null)
     {
         services.AddHttpClient(nameof(IEssentialsHttpClient));
         
@@ -52,11 +52,11 @@ public static class ServiceCollectionExtensions
     /// </summary>
     /// <param name="serializers">Список сериалайзеров</param>
     /// <returns></returns>
-    private static void AddOrUpdateSerializers(List<SerializerInfo>? serializers)
+    private static void AddOrUpdateSerializers(List<IEssentialsSerializer>? serializers)
     {
-        AddOrUpdateSerializer(new SerializerInfo(new NativeJsonSerializer()));
-        AddOrUpdateSerializer(new SerializerInfo(new NewtonsoftJsonSerializer()));
-        AddOrUpdateSerializer(new SerializerInfo(new XmlSerializer()));
+        AddOrUpdateSerializer(new NativeJsonSerializer());
+        AddOrUpdateSerializer(new NewtonsoftJsonSerializer());
+        AddOrUpdateSerializer(new XmlSerializer());
         
         serializers?.ForEach(AddOrUpdateSerializer);
     }
@@ -66,11 +66,11 @@ public static class ServiceCollectionExtensions
     /// </summary>
     /// <param name="deserializers">Список десериалайзеров</param>
     /// <returns></returns>
-    private static void AddOrUpdateDeserializers(List<SerializerInfo>? deserializers)
+    private static void AddOrUpdateDeserializers(List<IEssentialsDeserializer>? deserializers)
     {
-        AddOrUpdateDeserializer(new SerializerInfo(new NativeJsonSerializer()));
-        AddOrUpdateDeserializer(new SerializerInfo(new NewtonsoftJsonSerializer()));
-        AddOrUpdateDeserializer(new SerializerInfo(new XmlSerializer()));
+        AddOrUpdateDeserializer(new NativeJsonSerializer());
+        AddOrUpdateDeserializer(new NewtonsoftJsonSerializer());
+        AddOrUpdateDeserializer(new XmlSerializer());
         
         deserializers?.ForEach(AddOrUpdateDeserializer);
     }

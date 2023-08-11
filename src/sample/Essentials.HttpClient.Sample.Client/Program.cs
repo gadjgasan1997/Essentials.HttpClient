@@ -20,7 +20,7 @@ builder.Host.ConfigureServices(services =>
 
     // Например, можно проставить свойство PropertyNameCaseInsensitive в false и убедиться,
     // что ответы от сервера не будут корректно десериализовываться
-    var customJsonSerializer = new NativeJsonSerializer(
+    var customJsonDeserializer = new NativeJsonSerializer(
         deserializeOptions: new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
@@ -28,8 +28,12 @@ builder.Host.ConfigureServices(services =>
 
     services.ConfigureEssentialsHttpClient(
         builder.Configuration,
-        new List<SerializerInfo> {new(customXmlSerializer)},
-        new List<SerializerInfo> {new(customXmlSerializer), new(customJsonSerializer)});
+        new List<IEssentialsSerializer> {customXmlSerializer},
+        new List<IEssentialsDeserializer>
+        {
+            customXmlSerializer,
+            customJsonDeserializer
+        });
 
     services.AddTransient<IGetRequestsSamplesService, GetRequestsSamplesService>();
     services.AddTransient<IHeadRequestsSamplesService, HeadRequestsSamplesService>();
