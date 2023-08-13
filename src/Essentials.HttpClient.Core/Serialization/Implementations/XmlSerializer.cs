@@ -14,20 +14,17 @@ public class XmlSerializer : IEssentialsBothSerializer
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="deserializeOptions">Опции десерилизации</param>
-    /// <param name="textReaderGetter">Делегат получения ридера для десерилизации сообщения</param>
     /// <param name="serializeOptions">Опции серилизации</param>
+    /// <param name="deserializeOptions">Опции десерилизации</param>
     /// <param name="textWriterGetter">Делегат получения райтера для серилизации события</param>
     public XmlSerializer(
-        XmlReaderSettings? deserializeOptions = null,
-        Func<string, TextReader>? textReaderGetter = null,
         XmlWriterSettings? serializeOptions = null,
+        XmlReaderSettings? deserializeOptions = null,
         Func<TextWriter>? textWriterGetter = null)
     {
         SerializeOptions = serializeOptions ?? new XmlWriterSettings();
-        TextWriterGetter = textWriterGetter ?? (() => new Utf8StringWriter());
         DeserializeOptions = deserializeOptions ?? new XmlReaderSettings();
-        TextReaderGetter = textReaderGetter ?? (message => new StringReader(message));
+        TextWriterGetter = textWriterGetter ?? (() => new Utf8StringWriter());
     }
 
     /// <summary>
@@ -36,20 +33,14 @@ public class XmlSerializer : IEssentialsBothSerializer
     protected virtual XmlWriterSettings SerializeOptions { get; }
 
     /// <summary>
-    /// Делегат получения райтера для серилизации события
-    /// </summary>
-    protected virtual Func<TextWriter> TextWriterGetter { get; }
-
-    /// <summary>
     /// Опции десерилизации
     /// </summary>
     protected virtual XmlReaderSettings DeserializeOptions { get; }
 
     /// <summary>
-    /// Делегат получения ридера для десерилизации сообщения
+    /// Делегат получения райтера для серилизации события
     /// </summary>
-    /// <returns></returns>
-    protected virtual Func<string, TextReader> TextReaderGetter { get; }
+    protected virtual Func<TextWriter> TextWriterGetter { get; }
 
     /// <inheritdoc cref="IEssentialsSerializer.Serialize{T}" />
     public virtual string Serialize<T>(T? obj)
@@ -73,18 +64,16 @@ public class XmlSerializer : IEssentialsBothSerializer
     }
 
     /// <inheritdoc cref="IEssentialsDeserializer.Deserialize{T}" />
-    public virtual T Deserialize<T>(string @string)
+    public T Deserialize<T>(ReadOnlySpan<byte> data)
     {
-        using var textReader = TextReaderGetter(@string);
-        using var reader = XmlReader.Create(textReader, DeserializeOptions);
-
+        var stream = new MemoryStream(data.ToArray());
+        using var reader = XmlReader.Create(stream, DeserializeOptions);
+        
         var xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
         if (xmlSerializer.Deserialize(reader) is not { } obj)
         {
             // TODO Check message
-            throw new InvalidDataException(
-                "Объект после десерилизации равен null. " +
-                $"Исходная строка: '{@string}'");
+            throw new InvalidDataException("Объект после десерилизации равен null.");
         }
 
         return (T) obj;

@@ -13,11 +13,11 @@ public class NativeJsonSerializer : IEssentialsBothSerializer
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="deserializeOptions">Опции десерилизации</param>
     /// <param name="serializeOptions">Опции серилизации</param>
+    /// <param name="deserializeOptions">Опции десерилизации</param>
     public NativeJsonSerializer(
-        JsonSerializerOptions? deserializeOptions = null,
-        JsonSerializerOptions? serializeOptions = null)
+        JsonSerializerOptions? serializeOptions = null,
+        JsonSerializerOptions? deserializeOptions = null)
     {
         SerializeOptions = serializeOptions ?? new JsonSerializerOptions();
         DeserializeOptions = deserializeOptions ?? new JsonSerializerOptions
@@ -52,11 +52,9 @@ public class NativeJsonSerializer : IEssentialsBothSerializer
     }
 
     /// <inheritdoc cref="IEssentialsDeserializer.Deserialize{T}" />
-    public T Deserialize<T>(string @string)
+    public T Deserialize<T>(ReadOnlySpan<byte> data)
     {
-        return JsonSerializer.Deserialize<T>(@string, DeserializeOptions)
-               ?? throw new InvalidDataException(
-                   "Объект после десерилизации равен null. " +
-                   $"Исходная строка: '{@string}'");
+        return JsonSerializer.Deserialize<T>(data, DeserializeOptions)
+               ?? throw new InvalidDataException("Объект после десерилизации равен null.");
     }
 }

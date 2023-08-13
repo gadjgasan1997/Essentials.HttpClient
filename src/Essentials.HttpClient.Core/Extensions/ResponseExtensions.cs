@@ -182,9 +182,9 @@ public static class ResponseExtensions
         where TDeserializer : IEssentialsDeserializer
     {
         return await (
-                response.ResponseMessage.ReceiveStringAsync().Result,
+                response.ResponseMessage.ReceiveStreamAsync().Result,
                 SerializersCreator.GetDeserializer<TDeserializer>())
-            .Apply((content, deserializer) => deserializer.DeserializeString<TData>(content))
+            .Apply((stream, deserializer) => deserializer.DeserializeStream<TData>(stream))
             .DefaultBindAsync(task => task);
     }
 }

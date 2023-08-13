@@ -16,8 +16,8 @@ public class NewtonsoftJsonSerializer : IEssentialsBothSerializer
     /// <param name="serializeOptions">Опции серилизации</param>
     /// <param name="deserializeOptions">Опции десерилизации</param>
     public NewtonsoftJsonSerializer(
-        JsonSerializerSettings? deserializeOptions = null,
-        JsonSerializerSettings? serializeOptions = null)
+        JsonSerializerSettings? serializeOptions = null,
+        JsonSerializerSettings? deserializeOptions = null)
     {
         SerializeOptions = serializeOptions ?? new JsonSerializerSettings
         {
@@ -52,11 +52,13 @@ public class NewtonsoftJsonSerializer : IEssentialsBothSerializer
     }
 
     /// <inheritdoc cref="IEssentialsDeserializer.Deserialize{T}" />
-    public virtual T Deserialize<T>(string @string)
+    public T Deserialize<T>(ReadOnlySpan<byte> data)
     {
-        return JsonConvert.DeserializeObject<T>(@string, DeserializeOptions)
-               ?? throw new InvalidDataException(
-                   "Объект после десерилизации равен null. " +
-                   $"Исходная строка: '{@string}'");
+        var stream = new MemoryStream(data.ToArray());
+        var reader = new JsonTextReader(new StreamReader(stream));
+
+        var serializer = JsonSerializer.CreateDefault(DeserializeOptions);
+        return serializer.Deserialize<T>(reader)
+               ?? throw new InvalidDataException("Объект после десерилизации равен null.");
     }
 }
