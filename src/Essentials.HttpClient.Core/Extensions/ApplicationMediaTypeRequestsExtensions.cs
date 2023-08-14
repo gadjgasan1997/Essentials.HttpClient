@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Essentials.HttpClient.MediaTypes;
-using Essentials.HttpClient.MediaTypes.Application;
 using Essentials.HttpClient.Serialization.Implementations;
 using LanguageExt;
 using LanguageExt.Common;
+using ApplicationJson= Essentials.HttpClient.MediaTypes.Application.Json;
 using ApplicationXml = Essentials.HttpClient.MediaTypes.Application.Xml;
 
 namespace Essentials.HttpClient.Extensions;
@@ -31,7 +31,12 @@ public static class ApplicationMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostStringAsync<Json>(validation, content, encoding, token);
+        return await httpClient.PostStringAsync(
+            validation,
+            content,
+            new ApplicationJson(),
+            encoding,
+            token);
     }
     
     /// <summary>
@@ -50,7 +55,12 @@ public static class ApplicationMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostStringAsync<Json>(request, content, encoding, token);
+        return await httpClient.PostStringAsync(
+            request,
+            content,
+            new ApplicationJson(),
+            encoding,
+            token);
     }
     
     #region Newtonsoft Json
@@ -71,7 +81,12 @@ public static class ApplicationMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostDataAsync<Json, TData, NewtonsoftJsonSerializer>(validation, data, encoding, token);
+        return await httpClient.PostDataAsync<TData, NewtonsoftJsonSerializer>(
+            validation,
+            data,
+            new ApplicationJson(),
+            encoding,
+            token);
     }
 
     /// <summary>
@@ -90,7 +105,12 @@ public static class ApplicationMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostDataAsync<Json, TData, NewtonsoftJsonSerializer>(request, data, encoding, token);
+        return await httpClient.PostDataAsync<TData, NewtonsoftJsonSerializer>(
+            request,
+            data,
+            new ApplicationJson(),
+            encoding,
+            token);
     }
     
     #endregion
@@ -113,7 +133,12 @@ public static class ApplicationMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostDataAsync<Json, TData, NativeJsonSerializer>(validation, data, encoding, token);
+        return await httpClient.PostDataAsync<TData, NativeJsonSerializer>(
+            validation,
+            data,
+            new ApplicationJson(),
+            encoding,
+            token);
     }
 
     /// <summary>
@@ -132,7 +157,12 @@ public static class ApplicationMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostDataAsync<Json, TData, NativeJsonSerializer>(request, data, encoding, token);
+        return await httpClient.PostDataAsync<TData, NativeJsonSerializer>(
+            request,
+            data,
+            new ApplicationJson(),
+            encoding,
+            token);
     }
     
     #endregion
@@ -155,7 +185,12 @@ public static class ApplicationMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostStringAsync<ApplicationXml>(validation, content, encoding, token);
+        return await httpClient.PostStringAsync(
+            validation,
+            content,
+            new ApplicationXml(),
+            encoding,
+            token);
     }
     
     /// <summary>
@@ -174,7 +209,12 @@ public static class ApplicationMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostStringAsync<ApplicationXml>(request, content, encoding, token);
+        return await httpClient.PostStringAsync(
+            request,
+            content,
+            new ApplicationXml(),
+            encoding,
+            token);
     }
 
     /// <summary>
@@ -193,7 +233,12 @@ public static class ApplicationMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostDataAsync<ApplicationXml, TData, XmlSerializer>(validation, data, encoding, token);
+        return await httpClient.PostDataAsync<TData, XmlSerializer>(
+            validation,
+            data,
+            new ApplicationXml(),
+            encoding,
+            token);
     }
 
     /// <summary>
@@ -212,7 +257,12 @@ public static class ApplicationMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostDataAsync<ApplicationXml, TData, XmlSerializer>(request, data, encoding, token);
+        return await httpClient.PostDataAsync<TData, XmlSerializer>(
+            request,
+            data,
+            new ApplicationXml(),
+            encoding,
+            token);
     }
     
     #endregion

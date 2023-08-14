@@ -33,7 +33,7 @@ public static class TextMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostStringAsync<TextXml>(validation, content, encoding, token);
+        return await httpClient.PostStringAsync(validation, content, new TextXml(), encoding, token);
     }
     
     /// <summary>
@@ -52,7 +52,7 @@ public static class TextMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostStringAsync<TextXml>(request, content, encoding, token);
+        return await httpClient.PostStringAsync(request, content, new TextXml(), encoding, token);
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public static class TextMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostDataAsync<TextXml, TData, XmlSerializer>(validation, data, encoding, token);
+        return await httpClient.PostDataAsync<TData, XmlSerializer>(validation, data, new TextXml(), encoding, token);
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public static class TextMediaTypeRequestsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostDataAsync<TextXml, TData, XmlSerializer>(request, data, encoding, token);
+        return await httpClient.PostDataAsync<TData, XmlSerializer>(request, data, new TextXml(), encoding, token);
     }
 
     #endregion
