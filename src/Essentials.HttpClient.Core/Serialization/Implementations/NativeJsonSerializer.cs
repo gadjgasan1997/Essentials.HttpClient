@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Essentials.Func.Utils.Helpers;
+using Essentials.HttpClient.Serialization.Helpers;
 
 namespace Essentials.HttpClient.Serialization.Implementations;
 
@@ -37,18 +38,18 @@ public class NativeJsonSerializer : IEssentialsBothSerializer
     protected virtual JsonSerializerOptions DeserializeOptions { get; }
     
     /// <inheritdoc cref="IEssentialsSerializer.Serialize{T}" />
-    public string Serialize<T>(T obj)
+    public Stream Serialize<T>(T obj)
     {
-        var result = JsonSerializer.Serialize(obj, SerializeOptions);
-        if (string.IsNullOrWhiteSpace(result))
+        var resultString = JsonSerializer.Serialize(obj, SerializeOptions);
+        if (string.IsNullOrWhiteSpace(resultString))
         {
             // TODO Check message
             throw new ArgumentException(
-                "Строка пуста после серлизиации. " +
+                "Строка пуста после сериализации. " +
                 $"Исходный объект: '{JsonHelpers.Serialize(obj)}'");
         }
 
-        return result;
+        return SerializationHelpers.WriteToStream(resultString);
     }
 
     /// <inheritdoc cref="IEssentialsDeserializer.Deserialize{T}" />

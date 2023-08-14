@@ -2,6 +2,7 @@
 using System.Text;
 using System.Xml;
 using Essentials.Func.Utils.Helpers;
+using Essentials.HttpClient.Serialization.Helpers;
 
 namespace Essentials.HttpClient.Serialization.Implementations;
 
@@ -43,7 +44,7 @@ public class XmlSerializer : IEssentialsBothSerializer
     protected virtual Func<TextWriter> TextWriterGetter { get; }
 
     /// <inheritdoc cref="IEssentialsSerializer.Serialize{T}" />
-    public virtual string Serialize<T>(T? obj)
+    public virtual Stream Serialize<T>(T? obj)
     {
         using var textWriter = TextWriterGetter();
         using var writer = XmlWriter.Create(textWriter, SerializeOptions);
@@ -51,16 +52,16 @@ public class XmlSerializer : IEssentialsBothSerializer
         var xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
         xmlSerializer.Serialize(writer, obj);
 
-        var result = textWriter.ToString();
-        if (string.IsNullOrWhiteSpace(result))
+        var resultString = textWriter.ToString();
+        if (string.IsNullOrWhiteSpace(resultString))
         {
             // TODO Check message
             throw new ArgumentException(
-                "Строка пуста после серлизиации. " +
+                "Строка пуста после сериализации. " +
                 $"Исходный объект: '{JsonHelpers.Serialize(obj)}'");
         }
 
-        return result;
+        return SerializationHelpers.WriteToStream(resultString);
     }
 
     /// <inheritdoc cref="IEssentialsDeserializer.Deserialize{T}" />

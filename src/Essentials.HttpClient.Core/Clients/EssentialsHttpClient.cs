@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Headers;
 using System.Text;
 using Essentials.Func.Utils.Extensions;
 using Essentials.HttpClient.MediaTypes.Interfaces;
@@ -40,11 +41,11 @@ public class EssentialsHttpClient : IEssentialsHttpClient
 
     /// <inheritdoc cref="IEssentialsHttpClient.GetAsync(IRequest, Token?)" />
     public async Task<Validation<Error, IEssentialsHttpResponse>> GetAsync(IRequest request, Token? token = null) =>
-        await SendRequestAsync(request, HttpMethod.Get, token);
+        await SendWithoutContentAsync(request, HttpMethod.Get, token);
 
     /// <inheritdoc cref="IEssentialsHttpClient.HeadAsync(IRequest, Token?)" />
     public async Task<Validation<Error, IEssentialsHttpResponse>> HeadAsync(IRequest request, Token? token = null) =>
-        await SendRequestAsync(request, HttpMethod.Head, token);
+        await SendWithoutContentAsync(request, HttpMethod.Head, token);
 
     /// <inheritdoc cref="IEssentialsHttpClient.PostStringAsync{TMediaType}(IRequest, string, Encoding?, Token?)" />
     public async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync<TMediaType>(
@@ -115,13 +116,13 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     #region Additional Methods
 
     /// <summary>
-    /// Отправляет запрос
+    /// Отправляет запрос без содержимого
     /// </summary>
     /// <param name="request">Http запрос</param>
     /// <param name="httpMethod">Http метод</param>
     /// <param name="token">Токен отмены</param>
     /// <returns></returns>
-    private async Task<Validation<Error, IEssentialsHttpResponse>> SendRequestAsync(
+    private async Task<Validation<Error, IEssentialsHttpResponse>> SendWithoutContentAsync(
         IRequest request,
         HttpMethod httpMethod,
         Token? token = default)
@@ -130,9 +131,38 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         return await CreateClient(request).DefaultBindAsync(client =>
             SendWithMetricsAsync(request, () => SendAsync(request, client, token)));
     }
-    
+
     /// <summary>
-    /// Отправляет запрос с данными
+    /// Отправляет строку с содержимым
+    /// </summary>
+    /// <param name="request">Http запрос</param>
+    /// <param name="content">Строка с содержимым</param>
+    /// <param name="httpMethod">Http метод</param>
+    /// <param name="encoding">Кодировка</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns></returns>
+    private async Task<Validation<Error, IEssentialsHttpResponse>> SendStringAsync<TMediaType>(
+        IRequest request,
+        string content,
+        HttpMethod httpMethod,
+        Encoding? encoding = null,
+        Token? token = null)
+        where TMediaType : IMediaType, new()
+    {
+        // TODO Log
+        encoding ??= Encoding.Default;
+        
+        return await BuildStringContent<TMediaType>(content, encoding)
+            .DefaultBindAsync(stringContent =>
+                SendHttpContentAsync(
+                    request,
+                    stringContent,
+                    httpMethod,
+                    token));
+    }
+
+    /// <summary>
+    /// Отправляет объект, сериализуя его в строку
     /// </summary>
     /// <param name="request">Http запрос</param>
     /// <param name="data">Содержимое</param>
@@ -156,45 +186,36 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         if (data is null)
             return Error.New("Передано пустое содержимое запроса");
 
+        encoding ??= Encoding.Default;
         return await SerializersCreator
             .GetSerializer<TSerializer>()
             .DefaultBindAsync(serializer => serializer.SerializeObject(data))
-            .DefaultBindAsync(requestString =>
-                SendStringAsync<TMediaType>(request, requestString, httpMethod, encoding, token));
+            .DefaultBindAsync(stream => BuildStreamContent<TMediaType>(stream, encoding))
+            .DefaultBindAsync(content => SendHttpContentAsync(request, content, httpMethod, token));
     }
     
     /// <summary>
-    /// Отправляет строку запроса
+    /// Отправляет запрос с содержимым
     /// </summary>
     /// <param name="request">Http запрос</param>
-    /// <param name="content">Строка с содержимым</param>
+    /// <param name="content">Содержимое</param>
     /// <param name="httpMethod">Http метод</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
-    /// <typeparam name="TMediaType">Тип содержимого запроса (Json, Xml, ...)</typeparam>
     /// <returns></returns>
-    private async Task<Validation<Error, IEssentialsHttpResponse>> SendStringAsync<TMediaType>(
+    private async Task<Validation<Error, IEssentialsHttpResponse>> SendHttpContentAsync(
         IRequest request,
-        string content,
+        HttpContent content,
         HttpMethod httpMethod,
-        Encoding? encoding = null,
         Token? token = null)
-        where TMediaType : IMediaType, new()
     {
         // TODO Log
-        if (string.IsNullOrWhiteSpace(content))
-            return Error.New("Передана пустая строка запроса");
-
-        return await (
-                CreateClient(request),
-                BuildStringContent<TMediaType>(content, encoding ?? Encoding.UTF8))
-            .Apply((client, stringContent) =>
+        return await CreateClient(request)
+            .DefaultBindAsync(client =>
             {
                 request.RequestMessage.Method = httpMethod;
-                request.RequestMessage.Content = stringContent;
+                request.RequestMessage.Content = content;
                 return SendWithMetricsAsync(request, () => SendAsync(request, client, token));
-            })
-            .DefaultBindAsync(task => task);
+            });
     }
 
     /// <summary>
@@ -251,15 +272,15 @@ public class EssentialsHttpClient : IEssentialsHttpClient
 
         return new EssentialsHttpResponse(responseMessage);
     }
-
+    
     /// <summary>
-    /// Создает контент для отправки
+    /// Создает контент для отправки из строки
     /// </summary>
     /// <param name="requestSting">Строка запроса</param>
     /// <param name="encoding">Кодировка</param>
     /// <typeparam name="TMediaType">Тип содержимого запроса</typeparam>
     /// <returns>Контент</returns>
-    protected virtual Validation<Error, StringContent> BuildStringContent<TMediaType>(
+    private static Validation<Error, StringContent> BuildStringContent<TMediaType>(
         string requestSting,
         Encoding encoding)
         where TMediaType : IMediaType, new()
@@ -271,6 +292,34 @@ public class EssentialsHttpClient : IEssentialsHttpClient
             })
             .Match(
                 Succ: Success<Error, StringContent>,
+                Fail: exception =>
+                {
+                    // TODO Log
+                    return Error.New(exception);
+                });
+    }
+    
+    /// <summary>
+    /// Создает контент для отправки из потока
+    /// </summary>
+    /// <param name="stream">Поток</param>
+    /// <param name="encoding">Кодировка</param>
+    /// <typeparam name="TMediaType">Тип содержимого запроса</typeparam>
+    /// <returns>Контент</returns>
+    private static Validation<Error, StreamContent> BuildStreamContent<TMediaType>(
+        Stream stream,
+        Encoding encoding)
+        where TMediaType : IMediaType, new()
+    {
+        return Try(() =>
+            {
+                var mediaType = new TMediaType();
+                var streamContent = new StreamContent(stream);
+                streamContent.Headers.ContentType = new MediaTypeHeaderValue(mediaType.TypeName, encoding.WebName);
+                return streamContent;
+            })
+            .Match(
+                Succ: Success<Error, StreamContent>,
                 Fail: exception =>
                 {
                     // TODO Log

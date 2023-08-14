@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Essentials.Func.Utils.Helpers;
+using Essentials.HttpClient.Serialization.Helpers;
 using Newtonsoft.Json;
 
 namespace Essentials.HttpClient.Serialization.Implementations;
@@ -37,18 +38,18 @@ public class NewtonsoftJsonSerializer : IEssentialsBothSerializer
     protected virtual JsonSerializerSettings DeserializeOptions { get; }
 
     /// <inheritdoc cref="IEssentialsSerializer.Serialize{T}" />
-    public virtual string Serialize<T>(T? obj)
+    public virtual Stream Serialize<T>(T? obj)
     {
-        var result = JsonConvert.SerializeObject(obj, SerializeOptions);
-        if (string.IsNullOrWhiteSpace(result))
+        var resultString = JsonConvert.SerializeObject(obj, SerializeOptions);
+        if (string.IsNullOrWhiteSpace(resultString))
         {
             // TODO Check message
             throw new ArgumentException(
-                "Строка пуста после серлизиации. " +
+                "Строка пуста после сериализации. " +
                 $"Исходный объект: '{JsonHelpers.Serialize(obj)}'");
         }
 
-        return result;
+        return SerializationHelpers.WriteToStream(resultString);
     }
 
     /// <inheritdoc cref="IEssentialsDeserializer.Deserialize{T}" />

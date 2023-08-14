@@ -11,20 +11,20 @@ namespace Essentials.HttpClient.Serialization.Extensions;
 internal static class SerializationExtensions
 {
     /// <summary>
-    /// Серилизует объект в строку
+    /// Серилизует объект в поток
     /// </summary>
     /// <param name="serializer">Сериалайзер</param>
     /// <param name="content">Объект</param>
     /// <typeparam name="T">Тип объекта</typeparam>
-    /// <returns></returns>
-    public static Validation<Error, string> SerializeObject<T>(
+    /// <returns>Поток</returns>
+    public static Validation<Error, Stream> SerializeObject<T>(
         this IEssentialsSerializer serializer,
         T content)
     {
         // TODO Log
         return TryOption(() => serializer.Serialize(content))
             .Match(
-                Some: Success<Error, string>,
+                Some: Success<Error, Stream>,
                 Fail: exception => Error.New(exception),
                 None: () => Error.New("Результат после серилизации равен null"));
     }
