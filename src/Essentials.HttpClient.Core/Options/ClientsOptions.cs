@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Essentials.HttpClient.Metrics.Options;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Essentials.HttpClient.Options;
 
@@ -13,6 +14,11 @@ internal class ClientsOptions
     /// Название секции в конфигурации
     /// </summary>
     public static string Section => "EssentialsHttpClients";
+    
+    /// <summary>
+    /// Время жизни сервиса при регистрации
+    /// </summary>
+    public ServiceLifetime? ServiceLifetime { get; set; }
     
     /// <summary>
     /// Опции метрик

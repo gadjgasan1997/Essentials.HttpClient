@@ -23,4 +23,19 @@ internal static class HttpResponseMessageExtensions
                 Fail: exception => Error.New(exception),
                 None: () => Error.New("Содержимое ответа равно null"));
     }
+    
+    /// <summary>
+    /// Возвращает поток с содержимым из Http ответа
+    /// </summary>
+    /// <param name="message">Http ответ</param>
+    /// <returns></returns>
+    public static Task<Validation<Error, Stream>> ReceiveStreamAsync(this HttpResponseMessage message)
+    {
+        // TODO Log
+        return TryOptionAsync(() => message.Content.ReadAsStreamAsync())
+            .Match(
+                Some: Validation<Error, Stream>.Success,
+                Fail: exception => Error.New(exception),
+                None: () => Error.New("Содержимое ответа равно null"));
+    }
 }

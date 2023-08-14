@@ -1,4 +1,4 @@
-﻿namespace Essentials.HttpClient.Sample.Dictionaries;
+﻿namespace Essentials.HttpClient.Sample.Client.Dictionaries;
 
 /// <summary>
 /// Общие константы

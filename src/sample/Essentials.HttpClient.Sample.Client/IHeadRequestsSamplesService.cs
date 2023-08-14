@@ -1,4 +1,4 @@
-﻿namespace Essentials.HttpClient.Sample;
+﻿namespace Essentials.HttpClient.Sample.Client;
 
 /// <summary>
 /// Сервис с примерами вызова Head запросов

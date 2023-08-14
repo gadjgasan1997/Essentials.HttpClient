@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Essentials.Func.Utils.Helpers;
+using Essentials.HttpClient.Serialization.Helpers;
 
 namespace Essentials.HttpClient.Serialization.Implementations;
 
@@ -13,11 +14,11 @@ public class NativeJsonSerializer : IEssentialsBothSerializer
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="deserializeOptions">Опции десерилизации</param>
     /// <param name="serializeOptions">Опции серилизации</param>
+    /// <param name="deserializeOptions">Опции десерилизации</param>
     public NativeJsonSerializer(
-        JsonSerializerOptions? deserializeOptions = null,
-        JsonSerializerOptions? serializeOptions = null)
+        JsonSerializerOptions? serializeOptions = null,
+        JsonSerializerOptions? deserializeOptions = null)
     {
         SerializeOptions = serializeOptions ?? new JsonSerializerOptions();
         DeserializeOptions = deserializeOptions ?? new JsonSerializerOptions
@@ -37,26 +38,24 @@ public class NativeJsonSerializer : IEssentialsBothSerializer
     protected virtual JsonSerializerOptions DeserializeOptions { get; }
     
     /// <inheritdoc cref="IEssentialsSerializer.Serialize{T}" />
-    public string Serialize<T>(T obj)
+    public Stream Serialize<T>(T obj)
     {
-        var result = JsonSerializer.Serialize(obj, SerializeOptions);
-        if (string.IsNullOrWhiteSpace(result))
+        var resultString = JsonSerializer.Serialize(obj, SerializeOptions);
+        if (string.IsNullOrWhiteSpace(resultString))
         {
             // TODO Check message
             throw new ArgumentException(
-                "Строка пуста после серлизиации. " +
+                "Строка пуста после сериализации. " +
                 $"Исходный объект: '{JsonHelpers.Serialize(obj)}'");
         }
 
-        return result;
+        return SerializationHelpers.WriteToStream(resultString);
     }
 
     /// <inheritdoc cref="IEssentialsDeserializer.Deserialize{T}" />
-    public T Deserialize<T>(string @string)
+    public T Deserialize<T>(ReadOnlySpan<byte> data)
     {
-        return JsonSerializer.Deserialize<T>(@string, DeserializeOptions)
-               ?? throw new InvalidDataException(
-                   "Объект после десерилизации равен null. " +
-                   $"Исходная строка: '{@string}'");
+        return JsonSerializer.Deserialize<T>(data, DeserializeOptions)
+               ?? throw new InvalidDataException("Объект после десерилизации равен null.");
     }
 }

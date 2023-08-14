@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Essentials.Func.Utils.Helpers;
+using Essentials.HttpClient.Serialization.Helpers;
 using Newtonsoft.Json;
 
 namespace Essentials.HttpClient.Serialization.Implementations;
@@ -16,8 +17,8 @@ public class NewtonsoftJsonSerializer : IEssentialsBothSerializer
     /// <param name="serializeOptions">Опции серилизации</param>
     /// <param name="deserializeOptions">Опции десерилизации</param>
     public NewtonsoftJsonSerializer(
-        JsonSerializerSettings? deserializeOptions = null,
-        JsonSerializerSettings? serializeOptions = null)
+        JsonSerializerSettings? serializeOptions = null,
+        JsonSerializerSettings? deserializeOptions = null)
     {
         SerializeOptions = serializeOptions ?? new JsonSerializerSettings
         {
@@ -37,26 +38,28 @@ public class NewtonsoftJsonSerializer : IEssentialsBothSerializer
     protected virtual JsonSerializerSettings DeserializeOptions { get; }
 
     /// <inheritdoc cref="IEssentialsSerializer.Serialize{T}" />
-    public virtual string Serialize<T>(T? obj)
+    public virtual Stream Serialize<T>(T? obj)
     {
-        var result = JsonConvert.SerializeObject(obj, SerializeOptions);
-        if (string.IsNullOrWhiteSpace(result))
+        var resultString = JsonConvert.SerializeObject(obj, SerializeOptions);
+        if (string.IsNullOrWhiteSpace(resultString))
         {
             // TODO Check message
             throw new ArgumentException(
-                "Строка пуста после серлизиации. " +
+                "Строка пуста после сериализации. " +
                 $"Исходный объект: '{JsonHelpers.Serialize(obj)}'");
         }
 
-        return result;
+        return SerializationHelpers.WriteToStream(resultString);
     }
 
     /// <inheritdoc cref="IEssentialsDeserializer.Deserialize{T}" />
-    public virtual T Deserialize<T>(string @string)
+    public T Deserialize<T>(ReadOnlySpan<byte> data)
     {
-        return JsonConvert.DeserializeObject<T>(@string, DeserializeOptions)
-               ?? throw new InvalidDataException(
-                   "Объект после десерилизации равен null. " +
-                   $"Исходная строка: '{@string}'");
+        var stream = new MemoryStream(data.ToArray());
+        var reader = new JsonTextReader(new StreamReader(stream));
+
+        var serializer = JsonSerializer.CreateDefault(DeserializeOptions);
+        return serializer.Deserialize<T>(reader)
+               ?? throw new InvalidDataException("Объект после десерилизации равен null.");
     }
 }

@@ -1,4 +1,5 @@
-﻿using LanguageExt;
+﻿using System.Collections.Concurrent;
+using LanguageExt;
 using LanguageExt.Common;
 using static LanguageExt.Prelude;
 using ISerializer = Essentials.HttpClient.Serialization.IEssentialsSerializer;
@@ -14,30 +15,28 @@ internal static class SerializersCreator
     /// <summary>
     /// Список сериалайзеров
     /// </summary>
-    private static readonly List<ISerializer> _serializers = new();
+    private static readonly ConcurrentDictionary<string, ISerializer> _serializers = new();
 
     /// <summary>
     /// Список десериалайзеров
     /// </summary>
-    private static readonly List<IDeserializer> _deserializers = new();
-    
+    private static readonly ConcurrentDictionary<string, IDeserializer> _deserializers = new();
+
     /// <summary>
     /// Добавляет или заменяет сериалайзер
     /// </summary>
     /// <param name="serializer">Сериалайзер</param>
     public static void AddOrUpdateSerializer(ISerializer serializer)
     {
-        var existingSerializer = _serializers.FirstOrDefault(essentialsSerializer =>
-            essentialsSerializer.GetType() == typeof(ISerializer));
-        
-        if (existingSerializer is null)
+        // TODO Log
+        var key = serializer.GetType().FullName!;
+        if (!_serializers.TryGetValue(key, out var existingSerializer))
         {
-            _serializers.Add(serializer);
+            _serializers.TryAdd(key, serializer);
             return;
         }
 
-        var index = _serializers.IndexOf(existingSerializer);
-        _serializers[index] = serializer;
+        _serializers.TryUpdate(key, serializer, existingSerializer);
     }
     
     /// <summary>
@@ -46,17 +45,15 @@ internal static class SerializersCreator
     /// <param name="deserializer">Десериалайзер</param>
     public static void AddOrUpdateDeserializer(IDeserializer deserializer)
     {
-        var existingDeserializer = _deserializers.FirstOrDefault(essentialsDeserializer =>
-            essentialsDeserializer.GetType() == typeof(IDeserializer));
-        
-        if (existingDeserializer is null)
+        // TODO Log
+        var key = deserializer.GetType().FullName!;
+        if (!_deserializers.TryGetValue(key, out var existingDeserializer))
         {
-            _deserializers.Add(deserializer);
+            _deserializers.TryAdd(key, deserializer);
             return;
         }
 
-        var index = _deserializers.IndexOf(existingDeserializer);
-        _deserializers[index] = deserializer;
+        _deserializers.TryUpdate(key, deserializer, existingDeserializer);
     }
     
     /// <summary>
@@ -67,9 +64,10 @@ internal static class SerializersCreator
     public static Validation<Error, ISerializer> GetSerializer<TSerializer>()
     {
         // TODO Log
-        return Try(() => _serializers.First(serializer => serializer is TSerializer))
+        var key = typeof(TSerializer).FullName!;
+        return Try(() => _serializers[key])
             .ToValidation(exception =>
-                Error.New($"Во время получения сериалайзера с типом '{typeof(TSerializer).FullName}' произошло исключение",
+                Error.New($"Во время получения сериалайзера с ключом '{key}' произошло исключение",
                     exception));
     }
     
@@ -81,9 +79,10 @@ internal static class SerializersCreator
     public static Validation<Error, IDeserializer> GetDeserializer<TDeserializer>()
     {
         // TODO Log
-        return Try(() => _deserializers.First(deserializer => deserializer is TDeserializer))
+        var key = typeof(TDeserializer).FullName!;
+        return Try(() => _deserializers[key])
             .ToValidation(exception =>
-                Error.New($"Во время получения десериалайзера с типом '{typeof(TDeserializer).FullName}' произошло исключение",
+                Error.New($"Во время получения десериалайзера с ключом '{key}' произошло исключение",
                     exception));
     }
 }

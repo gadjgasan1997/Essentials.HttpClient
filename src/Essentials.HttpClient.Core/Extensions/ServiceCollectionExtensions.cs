@@ -30,7 +30,6 @@ public static class ServiceCollectionExtensions
         List<IEssentialsDeserializer>? deserializers = null)
     {
         services.AddHttpClient(nameof(IEssentialsHttpClient));
-        services.TryAddTransient<IEssentialsHttpClient, EssentialsHttpClient>();
         
         AddOrUpdateSerializers(serializers);
         AddOrUpdateDeserializers(deserializers);
@@ -38,6 +37,12 @@ public static class ServiceCollectionExtensions
         var options = new ClientsOptions();
         var section = configuration.GetSection(ClientsOptions.Section);
         section.Bind(options);
+        
+        services.TryAdd(
+            ServiceDescriptor.Describe(
+                serviceType: typeof(IEssentialsHttpClient),
+                implementationType: typeof(EssentialsHttpClient),
+                lifetime: options.ServiceLifetime ?? ServiceLifetime.Transient));
         
         return services.ConfigureMetrics(options.Metrics);
     }

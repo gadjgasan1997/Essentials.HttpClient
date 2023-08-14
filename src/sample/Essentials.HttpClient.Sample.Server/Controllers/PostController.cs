@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Essentials.HttpClient.Common.Models.Requests;
+using Essentials.HttpClient.Sample.Server.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 using static Essentials.HttpClient.MediaTypes.Storage;
-using static Essentials.HttpClient.Common.Helpers.PersonsHelpers;
+using static Essentials.HttpClient.Sample.Server.Helpers.PersonsHelpers;
 using static Essentials.HttpClient.Sample.Server.Helpers.ResponseHelpers;
 using static Essentials.HttpClient.Common.Helpers.SerializationHelpers;
 

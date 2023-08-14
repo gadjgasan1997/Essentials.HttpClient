@@ -6,10 +6,10 @@
 public interface IEssentialsDeserializer
 {
     /// <summary>
-    /// Десерилизует строку в объект
+    /// Десерилизует полученные данные в объект
     /// </summary>
-    /// <param name="string">Строка</param>
+    /// <param name="data">Данные</param>
     /// <typeparam name="T">Тип объекта</typeparam>
     /// <returns>Объект</returns>
-    T Deserialize<T>(string @string);
+    T Deserialize<T>(ReadOnlySpan<byte> data);
 }
