@@ -62,6 +62,22 @@ public interface IEssentialsHttpClient
         Token? token = null);
     
     /// <summary>
+    /// Отправляет Patch запрос
+    /// </summary>
+    /// <param name="request">Http запрос</param>
+    /// <param name="content">Содержимое</param>
+    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
+    /// <param name="encoding">Кодировка</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Http ответ</returns>
+    Task<Validation<Error, IResponse>> PatchAsync(
+        IRequest request,
+        HttpContent content,
+        IMediaType? mediaType = null,
+        Encoding? encoding = null,
+        Token? token = null);
+    
+    /// <summary>
     /// Отправляет Delete запрос
     /// </summary>
     /// <param name="request">Http запрос</param>
