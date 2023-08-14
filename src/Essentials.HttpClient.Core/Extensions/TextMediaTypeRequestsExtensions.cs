@@ -9,7 +9,7 @@ using TextXml = Essentials.HttpClient.MediaTypes.Text.Xml;
 namespace Essentials.HttpClient.Extensions;
 
 /// <summary>
-/// Методы расширения для отправки Http запросов с типами содерждимого из <see cref="Storage.Text" />
+/// Методы расширения для отправки Http запросов с типами содержимого из <see cref="Storage.Text" />
 /// </summary>
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]

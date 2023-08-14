@@ -2,6 +2,9 @@
 using Essentials.HttpClient.MediaTypes.Interfaces;
 using LanguageExt;
 using LanguageExt.Common;
+using IRequest = Essentials.HttpClient.IEssentialsHttpRequest;
+using IResponse = Essentials.HttpClient.IEssentialsHttpResponse;
+using Token = System.Threading.CancellationToken;
 
 namespace Essentials.HttpClient;
 
@@ -16,9 +19,7 @@ public interface IEssentialsHttpClient
     /// <param name="request">Http запрос</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    Task<Validation<Error, IEssentialsHttpResponse>> GetAsync(
-        IEssentialsHttpRequest request,
-        CancellationToken? token = null);
+    Task<Validation<Error, IResponse>> GetAsync(IRequest request, Token? token = null);
     
     /// <summary>
     /// Отправляет Head запрос
@@ -26,9 +27,7 @@ public interface IEssentialsHttpClient
     /// <param name="request">Http запрос</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    Task<Validation<Error, IEssentialsHttpResponse>> HeadAsync(
-        IEssentialsHttpRequest request,
-        CancellationToken? token = null);
+    Task<Validation<Error, IResponse>> HeadAsync(IRequest request, Token? token = null);
     
     /// <summary>
     /// Отправляет Post запрос
@@ -39,12 +38,12 @@ public interface IEssentialsHttpClient
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    Task<Validation<Error, IEssentialsHttpResponse>> PostAsync(
-        IEssentialsHttpRequest request,
+    Task<Validation<Error, IResponse>> PostAsync(
+        IRequest request,
         HttpContent content,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
-        CancellationToken? token = null);
+        Token? token = null);
     
     /// <summary>
     /// Отправляет Put запрос
@@ -55,12 +54,12 @@ public interface IEssentialsHttpClient
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    Task<Validation<Error, IEssentialsHttpResponse>> PutAsync(
-        IEssentialsHttpRequest request,
+    Task<Validation<Error, IResponse>> PutAsync(
+        IRequest request,
         HttpContent content,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
-        CancellationToken? token = null);
+        Token? token = null);
     
     /// <summary>
     /// Отправляет Delete запрос
@@ -68,7 +67,5 @@ public interface IEssentialsHttpClient
     /// <param name="request">Http запрос</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    Task<Validation<Error, IEssentialsHttpResponse>> DeleteAsync(
-        IEssentialsHttpRequest request,
-        CancellationToken? token = null);
+    Task<Validation<Error, IResponse>> DeleteAsync(IRequest request, Token? token = null);
 }

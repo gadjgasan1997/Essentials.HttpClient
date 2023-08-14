@@ -10,7 +10,7 @@ using ApplicationXml = Essentials.HttpClient.MediaTypes.Application.Xml;
 namespace Essentials.HttpClient.Extensions;
 
 /// <summary>
-/// Методы расширения для отправки Http запросов с типами содерждимого из <see cref="Storage.Application" />
+/// Методы расширения для отправки Http запросов с типами содержимого из <see cref="Storage.Application" />
 /// </summary>
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class ApplicationMediaTypeRequestsExtensions

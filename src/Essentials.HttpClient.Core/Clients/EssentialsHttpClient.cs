@@ -11,6 +11,7 @@ using LanguageExt.Common;
 using SystemHttpClient = System.Net.Http.HttpClient;
 using static LanguageExt.Prelude;
 using IRequest = Essentials.HttpClient.IEssentialsHttpRequest;
+using IResponse = Essentials.HttpClient.IEssentialsHttpResponse;
 using Token = System.Threading.CancellationToken;
 
 namespace Essentials.HttpClient.Clients;
@@ -40,15 +41,15 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     }
 
     /// <inheritdoc cref="IEssentialsHttpClient.GetAsync(IRequest, Token?)" />
-    public async Task<Validation<Error, IEssentialsHttpResponse>> GetAsync(IRequest request, Token? token = null) =>
+    public async Task<Validation<Error, IResponse>> GetAsync(IRequest request, Token? token = null) =>
         await SendWithoutContentAsync(request, HttpMethod.Get, token);
 
     /// <inheritdoc cref="IEssentialsHttpClient.HeadAsync(IRequest, Token?)" />
-    public async Task<Validation<Error, IEssentialsHttpResponse>> HeadAsync(IRequest request, Token? token = null) =>
+    public async Task<Validation<Error, IResponse>> HeadAsync(IRequest request, Token? token = null) =>
         await SendWithoutContentAsync(request, HttpMethod.Head, token);
 
     /// <inheritdoc cref="IEssentialsHttpClient.PostAsync(IRequest, HttpContent, IMediaType, Encoding?, Token?)" />
-    public async Task<Validation<Error, IEssentialsHttpResponse>> PostAsync(
+    public async Task<Validation<Error, IResponse>> PostAsync(
         IRequest request,
         HttpContent content,
         IMediaType? mediaType = null,
@@ -59,7 +60,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     }
     
     /// <inheritdoc cref="IEssentialsHttpClient.PutAsync(IRequest, HttpContent, IMediaType, Encoding?, Token?)" />
-    public async Task<Validation<Error, IEssentialsHttpResponse>> PutAsync(
+    public async Task<Validation<Error, IResponse>> PutAsync(
         IRequest request,
         HttpContent content,
         IMediaType? mediaType = null,
@@ -70,7 +71,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     }
 
     /// <inheritdoc cref="IEssentialsHttpClient.DeleteAsync(IRequest, Token?)" />
-    public async Task<Validation<Error, IEssentialsHttpResponse>> DeleteAsync(IRequest request, Token? token = null) =>
+    public async Task<Validation<Error, IResponse>> DeleteAsync(IRequest request, Token? token = null) =>
         await SendWithoutContentAsync(request, HttpMethod.Delete, token);
 
     #region Additional Methods
@@ -82,7 +83,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     /// <param name="httpMethod">Http метод</param>
     /// <param name="token">Токен отмены</param>
     /// <returns></returns>
-    private async Task<Validation<Error, IEssentialsHttpResponse>> SendWithoutContentAsync(
+    private async Task<Validation<Error, IResponse>> SendWithoutContentAsync(
         IRequest request,
         HttpMethod httpMethod,
         Token? token = default)
@@ -110,7 +111,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns></returns>
-    private async Task<Validation<Error, IEssentialsHttpResponse>> SendWithContentAsync(
+    private async Task<Validation<Error, IResponse>> SendWithContentAsync(
         IRequest request,
         HttpContent content,
         HttpMethod httpMethod,
@@ -144,9 +145,9 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     /// <param name="request">Http запрос</param>
     /// <param name="sendFunc">Делегат отправки запроса</param>
     /// <returns>Http ответ</returns>
-    protected virtual async Task<Validation<Error, IEssentialsHttpResponse>> SendWithMetricsAsync(
+    protected virtual async Task<Validation<Error, IResponse>> SendWithMetricsAsync(
         IRequest request,
-        Func<Task<Validation<Error, IEssentialsHttpResponse>>> sendFunc)
+        Func<Task<Validation<Error, IResponse>>> sendFunc)
     {
         using var timer = _metrics.StartRequestTimer(request.ClientName);
         _metrics.HttpRequestSent(request.ClientName, request.RequestMessage.Method);
@@ -167,7 +168,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     /// <param name="httpClient">Http клиент</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    protected virtual async Task<Validation<Error, IEssentialsHttpResponse>> SendAsync(
+    protected virtual async Task<Validation<Error, IResponse>> SendAsync(
         IRequest request,
         SystemHttpClient httpClient,
         Token? token = default)

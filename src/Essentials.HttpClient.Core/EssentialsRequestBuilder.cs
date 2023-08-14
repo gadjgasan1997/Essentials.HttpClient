@@ -188,6 +188,14 @@ public class EssentialsRequestBuilder
     }
 
     /// <summary>
+    /// Меняет запрос поданным на вход делегатом
+    /// </summary>
+    /// <param name="func">Делегат для изменения запроса</param>
+    /// <returns>Билдер</returns>
+    public EssentialsRequestBuilder ModifyRequest(Action<HttpRequestMessage?> func) =>
+        ModifyRequest(() => func(RequestMessage));
+
+    /// <summary>
     /// Создает запрос
     /// </summary>
     /// <param name="clientName">Название Http клиента</param>
