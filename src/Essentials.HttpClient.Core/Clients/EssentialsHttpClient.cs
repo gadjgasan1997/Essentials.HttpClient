@@ -69,6 +69,10 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         return await SendWithContentAsync(request, content, HttpMethod.Put, mediaType, encoding, token);
     }
 
+    /// <inheritdoc cref="IEssentialsHttpClient.DeleteAsync(IRequest, Token?)" />
+    public async Task<Validation<Error, IEssentialsHttpResponse>> DeleteAsync(IRequest request, Token? token = null) =>
+        await SendWithoutContentAsync(request, HttpMethod.Delete, token);
+
     #region Additional Methods
 
     /// <summary>
@@ -83,6 +87,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         HttpMethod httpMethod,
         Token? token = default)
     {
+        // TODO Log
         if (request is null)
             return Error.New("Передан пустой запрос");
         
@@ -113,6 +118,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         Encoding? encoding = null,
         Token? token = null)
     {
+        // TODO Log
         if (request is null)
             return Error.New("Передан пустой запрос");
         
@@ -213,7 +219,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     /// Возвращает заголовок с типом содержимого
     /// </summary>
     /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param
+    /// <param name="encoding">Кодировка</param>
     /// <returns></returns>
     private static MediaTypeHeaderValue GetContentType(IMediaType mediaType, Encoding? encoding = null)
     {

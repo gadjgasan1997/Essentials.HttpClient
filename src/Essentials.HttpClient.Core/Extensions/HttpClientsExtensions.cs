@@ -15,6 +15,8 @@ namespace Essentials.HttpClient.Extensions;
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class HttpClientsExtensions
 {
+    #region Get Requests
+
     /// <summary>
     /// Отправляет Get запрос
     /// </summary>
@@ -30,6 +32,10 @@ public static class HttpClientsExtensions
         return await validation.DefaultBindAsync(request => httpClient.GetAsync(request, token));
     }
 
+    #endregion
+
+    #region Head Requests
+
     /// <summary>
     /// Отправляет Head запрос
     /// </summary>
@@ -44,6 +50,8 @@ public static class HttpClientsExtensions
     {
         return await validation.DefaultBindAsync(request => httpClient.HeadAsync(request, token));
     }
+
+    #endregion
 
     #region Post Requests
 
@@ -323,6 +331,25 @@ public static class HttpClientsExtensions
             httpClient.PutDataAsync<TData, TSerializer>(request, data, mediaType, encoding, token));
     }
     
+    #endregion
+
+    #region Delete Requests
+    
+    /// <summary>
+    /// Отправляет Delete запрос
+    /// </summary>
+    /// <param name="httpClient">Http клиент</param>
+    /// <param name="validation">Объект Validation с Http запросом</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Http ответ</returns>
+    public static async Task<Validation<Error, IEssentialsHttpResponse>> DeleteAsync(
+        this IEssentialsHttpClient httpClient,
+        Validation<Error, IEssentialsHttpRequest> validation,
+        CancellationToken? token = default)
+    {
+        return await validation.DefaultBindAsync(request => httpClient.DeleteAsync(request, token));
+    }
+
     #endregion
 
     /// <summary>

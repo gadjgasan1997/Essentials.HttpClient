@@ -61,4 +61,14 @@ public interface IEssentialsHttpClient
         IMediaType? mediaType = null,
         Encoding? encoding = null,
         CancellationToken? token = null);
+    
+    /// <summary>
+    /// Отправляет Delete запрос
+    /// </summary>
+    /// <param name="request">Http запрос</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Http ответ</returns>
+    Task<Validation<Error, IEssentialsHttpResponse>> DeleteAsync(
+        IEssentialsHttpRequest request,
+        CancellationToken? token = null);
 }
