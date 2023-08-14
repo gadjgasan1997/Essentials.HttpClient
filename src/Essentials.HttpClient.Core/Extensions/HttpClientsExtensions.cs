@@ -13,6 +13,7 @@ namespace Essentials.HttpClient.Extensions;
 /// Методы расширений для Http клиентов
 /// </summary>
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class HttpClientsExtensions
 {
     #region Get Requests
@@ -30,6 +31,103 @@ public static class HttpClientsExtensions
         CancellationToken? token = default)
     {
         return await validation.DefaultBindAsync(request => httpClient.GetAsync(request, token));
+    }
+    
+    /// <summary>
+    /// Отправляет Get запрос по указанному адресу
+    /// </summary>
+    /// <param name="httpClient">Http клиент</param>
+    /// <param name="uri">Адрес запроса</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Http ответ</returns>
+    public static async Task<Validation<Error, IEssentialsHttpResponse>> GetAsync(
+        this IEssentialsHttpClient httpClient,
+        Uri uri,
+        CancellationToken? token = null)
+    {
+        var uriValidation = await EssentialsUriBuilder
+            .CreateBuilder(uri)
+            .BuildAsync();
+
+        return await EssentialsRequestBuilder
+            .CreateBuilder(uriValidation)
+            .BuildAsync()
+            .DefaultBindAsync(request => httpClient.GetAsync(request, token));
+    }
+    
+    /// <summary>
+    /// Отправляет Get запрос по указанному адресу
+    /// </summary>
+    /// <param name="httpClient">Http клиент</param>
+    /// <param name="address">Адрес запроса</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Http ответ</returns>
+    public static async Task<Validation<Error, IEssentialsHttpResponse>> GetAsync(
+        this IEssentialsHttpClient httpClient,
+        string address,
+        CancellationToken? token = null)
+    {
+        return await httpClient.GetAsync(new Uri(address), token);
+    }
+    
+    /// <summary>
+    /// Отправляет Get запрос по указанному адресу и возвращает строку ответа
+    /// </summary>
+    /// <param name="httpClient">Http клиент</param>
+    /// <param name="uri">Адрес запроса</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Http ответ</returns>
+    public static async Task<string?> GetStringAsync(
+        this IEssentialsHttpClient httpClient,
+        Uri uri,
+        CancellationToken? token = null)
+    {
+        return await httpClient.GetAsync(uri, token).ReceiveStringUnsafeAsync();
+    }
+    
+    /// <summary>
+    /// Отправляет Get запрос по указанному адресу и возвращает строку ответа
+    /// </summary>
+    /// <param name="httpClient">Http клиент</param>
+    /// <param name="address">Адрес запроса</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Http ответ</returns>
+    public static async Task<string?> GetStringAsync(
+        this IEssentialsHttpClient httpClient,
+        string address,
+        CancellationToken? token = null)
+    {
+        return await httpClient.GetStringAsync(new Uri(address), token);
+    }
+    
+    /// <summary>
+    /// Отправляет Get запрос по указанному адресу и возвращает поток с ответом
+    /// </summary>
+    /// <param name="httpClient">Http клиент</param>
+    /// <param name="uri">Адрес запроса</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Http ответ</returns>
+    public static async Task<Stream?> GetStreamAsync(
+        this IEssentialsHttpClient httpClient,
+        Uri uri,
+        CancellationToken? token = null)
+    {
+        return await httpClient.GetAsync(uri, token).ReceiveStreamUnsafeAsync();
+    }
+    
+    /// <summary>
+    /// Отправляет Get запрос по указанному адресу и возвращает поток с ответом
+    /// </summary>
+    /// <param name="httpClient">Http клиент</param>
+    /// <param name="address">Адрес запроса</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Http ответ</returns>
+    public static async Task<Stream?> GetStreamAsync(
+        this IEssentialsHttpClient httpClient,
+        string address,
+        CancellationToken? token = null)
+    {
+        return await httpClient.GetStreamAsync(new Uri(address), token);
     }
 
     #endregion
