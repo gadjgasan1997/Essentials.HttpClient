@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Essentials.Func.Utils.Extensions;
+using Essentials.HttpClient.Errors;
 using Essentials.HttpClient.Serialization;
 using Essentials.HttpClient.Serialization.Extensions;
 using LanguageExt;
 using LanguageExt.Common;
+using static LanguageExt.Prelude;
 
 namespace Essentials.HttpClient.Extensions;
 
@@ -22,7 +24,11 @@ public static class ResponseExtensions
     public static async Task<Validation<Error, HttpResponseMessage>> ReceiveMessageAsync(
         this Validation<Error, IEssentialsHttpResponse> validation)
     {
-        return await validation.DefaultBindAsync(response => response.ResponseMessage);
+        return await validation.DefaultMatchAsync(
+            Succ: response => response.ResponseMessage,
+            Fail: seq => seq.OfType<BadStatusCodeError>().FirstOrDefault() is { } error
+                ? error.ResponseMessage
+                : Fail<Error, HttpResponseMessage>(seq));
     }
     
     /// <summary>
@@ -108,6 +114,54 @@ public static class ResponseExtensions
     {
         var validation = await task;
         return await validation.ReceiveStringUnsafeAsync();
+    }
+    
+    /// <summary>
+    /// Возвращает поток из ответа
+    /// </summary>
+    /// <param name="validation">Объект Validation с Http ответом</param>
+    /// <returns></returns>
+    public static async Task<Validation<Error, Stream>> ReceiveStreamAsync(
+        this Validation<Error, IEssentialsHttpResponse> validation)
+    {
+        return await validation.DefaultBindAsync(response => response.ResponseMessage.ReceiveStreamAsync());
+    }
+    
+    /// <summary>
+    /// Возвращает поток из ответа
+    /// </summary>
+    /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
+    /// <returns></returns>
+    public static async Task<Validation<Error, Stream>> ReceiveStreamAsync(
+        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+    {
+        var validation = await task;
+        return await validation.ReceiveStreamAsync();
+    }
+    
+    /// <summary>
+    /// Возвращает поток из ответа
+    /// </summary>
+    /// <param name="validation">Объект Validation с Http ответом</param>
+    /// <returns></returns>
+    public static async Task<Stream?> ReceiveStreamUnsafeAsync(
+        this Validation<Error, IEssentialsHttpResponse> validation)
+    {
+        return await validation
+            .ReceiveStreamAsync()
+            .DefaultMatchUnsafeAsync(stream => stream, _ => null);
+    }
+    
+    /// <summary>
+    /// Возвращает поток из ответа
+    /// </summary>
+    /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
+    /// <returns></returns>
+    public static async Task<Stream?> ReceiveStreamUnsafeAsync(
+        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+    {
+        var validation = await task;
+        return await validation.ReceiveStreamUnsafeAsync();
     }
     
     /// <summary>

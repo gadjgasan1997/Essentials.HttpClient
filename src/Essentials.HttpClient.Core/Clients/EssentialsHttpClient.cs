@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using Essentials.Func.Utils.Extensions;
+using Essentials.HttpClient.Errors;
 using Essentials.HttpClient.MediaTypes.Interfaces;
 using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Models;
@@ -268,7 +269,11 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         }
 
         if (!responseMessage.IsSuccessStatusCode)
-            return Error.New($"Ошибочный Http код ответа: '{responseMessage.StatusCode}'.");
+        {
+            return BadStatusCodeError.New(
+                responseMessage,
+                $"Ошибочный Http код ответа: '{responseMessage.StatusCode}'.");
+        }
 
         return new EssentialsHttpResponse(responseMessage);
     }

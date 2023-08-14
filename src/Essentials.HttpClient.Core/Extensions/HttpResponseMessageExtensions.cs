@@ -1,4 +1,5 @@
-﻿using LanguageExt;
+﻿using Essentials.Func.Utils.Extensions;
+using LanguageExt;
 using LanguageExt.Common;
 using static LanguageExt.Prelude;
 
@@ -7,7 +8,7 @@ namespace Essentials.HttpClient.Extensions;
 /// <summary>
 /// Методы расширения для <see cref="HttpResponseMessage" />
 /// </summary>
-internal static class HttpResponseMessageExtensions
+public static class HttpResponseMessageExtensions
 {
     /// <summary>
     /// Возвращает строку с содержимым из Http ответа
@@ -25,6 +26,19 @@ internal static class HttpResponseMessageExtensions
     }
     
     /// <summary>
+    /// Возвращает строку с содержимым из Http ответа
+    /// </summary>
+    /// <param name="message">Http ответ</param>
+    /// <returns></returns>
+    public static Task<string?> ReceiveStringUnsafeAsync(this HttpResponseMessage message)
+    {
+        // TODO Log
+        return message
+            .ReceiveStringAsync()
+            .DefaultMatchUnsafeAsync(str => str, _ => null);
+    }
+    
+    /// <summary>
     /// Возвращает поток с содержимым из Http ответа
     /// </summary>
     /// <param name="message">Http ответ</param>
@@ -37,5 +51,18 @@ internal static class HttpResponseMessageExtensions
                 Some: Validation<Error, Stream>.Success,
                 Fail: exception => Error.New(exception),
                 None: () => Error.New("Содержимое ответа равно null"));
+    }
+    
+    /// <summary>
+    /// Возвращает поток с содержимым из Http ответа
+    /// </summary>
+    /// <param name="message">Http ответ</param>
+    /// <returns></returns>
+    public static Task<Stream?> ReceiveStreamUnsafeAsync(this HttpResponseMessage message)
+    {
+        // TODO Log
+        return message
+            .ReceiveStreamAsync()
+            .DefaultMatchUnsafeAsync(stream => stream, _ => null);
     }
 }
