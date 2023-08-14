@@ -70,6 +70,17 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         return await SendWithContentAsync(request, content, HttpMethod.Put, mediaType, encoding, token);
     }
 
+    /// <inheritdoc cref="IEssentialsHttpClient.PatchAsync(IRequest, HttpContent, IMediaType, Encoding?, Token?)" />
+    public async Task<Validation<Error, IEssentialsHttpResponse>> PatchAsync(
+        IEssentialsHttpRequest request,
+        HttpContent content,
+        IMediaType? mediaType = null,
+        Encoding? encoding = null,
+        CancellationToken? token = null)
+    {
+        return await SendWithContentAsync(request, content, HttpMethod.Patch, mediaType, encoding, token);
+    }
+
     /// <inheritdoc cref="IEssentialsHttpClient.DeleteAsync(IRequest, Token?)" />
     public async Task<Validation<Error, IResponse>> DeleteAsync(IRequest request, Token? token = null) =>
         await SendWithoutContentAsync(request, HttpMethod.Delete, token);
