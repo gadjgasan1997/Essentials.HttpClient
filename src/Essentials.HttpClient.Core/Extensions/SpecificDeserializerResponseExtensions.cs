@@ -24,7 +24,7 @@ public static class SpecificDeserializerResponseExtensions
     public static async Task<Validation<Error, TData>> ReceiveJsonContentAsync<TData>(
         this Validation<Error, IEssentialsHttpResponse> validation)
     {
-        return await validation.ReceiveContentAsync<TData, NewtonsoftJsonSerializer>();
+        return await validation.ReceiveContentAsync<TData, NewtonsoftJsonSerializer>().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -36,8 +36,8 @@ public static class SpecificDeserializerResponseExtensions
     public static async Task<Validation<Error, TData>> ReceiveJsonContentAsync<TData>(
         this Task<Validation<Error, IEssentialsHttpResponse>> task)
     {
-        var validation = await task;
-        return await validation.ReceiveJsonContentAsync<TData>();
+        var validation = await task.ConfigureAwait(false);
+        return await validation.ReceiveJsonContentAsync<TData>().ConfigureAwait(false);
     }
     
     /// <summary>
@@ -49,7 +49,7 @@ public static class SpecificDeserializerResponseExtensions
     public static async Task<TData?> ReceiveJsonContentUnsafeAsync<TData>(
         this Validation<Error, IEssentialsHttpResponse> validation)
     {
-        return await validation.ReceiveContentUnsafeAsync<TData, NewtonsoftJsonSerializer>();
+        return await validation.ReceiveContentUnsafeAsync<TData, NewtonsoftJsonSerializer>().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -61,8 +61,8 @@ public static class SpecificDeserializerResponseExtensions
     public static async Task<TData?> ReceiveJsonContentUnsafeAsync<TData>(
         this Task<Validation<Error, IEssentialsHttpResponse>> task)
     {
-        var validation = await task;
-        return await validation.ReceiveJsonContentUnsafeAsync<TData>();
+        var validation = await task.ConfigureAwait(false);
+        return await validation.ReceiveJsonContentUnsafeAsync<TData>().ConfigureAwait(false);
     }
 
     #endregion
@@ -78,7 +78,7 @@ public static class SpecificDeserializerResponseExtensions
     public static async Task<Validation<Error, TData>> ReceiveNativeJsonContentAsync<TData>(
         this Validation<Error, IEssentialsHttpResponse> validation)
     {
-        return await validation.ReceiveContentAsync<TData, NativeJsonSerializer>();
+        return await validation.ReceiveContentAsync<TData, NativeJsonSerializer>().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -90,8 +90,8 @@ public static class SpecificDeserializerResponseExtensions
     public static async Task<Validation<Error, TData>> ReceiveNativeJsonContentAsync<TData>(
         this Task<Validation<Error, IEssentialsHttpResponse>> task)
     {
-        var validation = await task;
-        return await validation.ReceiveNativeJsonContentAsync<TData>();
+        var validation = await task.ConfigureAwait(false);
+        return await validation.ReceiveNativeJsonContentAsync<TData>().ConfigureAwait(false);
     }
     
     /// <summary>
@@ -103,7 +103,7 @@ public static class SpecificDeserializerResponseExtensions
     public static async Task<TData?> ReceiveNativeJsonContentUnsafeAsync<TData>(
         this Validation<Error, IEssentialsHttpResponse> validation)
     {
-        return await validation.ReceiveContentUnsafeAsync<TData, NativeJsonSerializer>();
+        return await validation.ReceiveContentUnsafeAsync<TData, NativeJsonSerializer>().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -115,8 +115,8 @@ public static class SpecificDeserializerResponseExtensions
     public static async Task<TData?> ReceiveNativeJsonContentUnsafeAsync<TData>(
         this Task<Validation<Error, IEssentialsHttpResponse>> task)
     {
-        var validation = await task;
-        return await validation.ReceiveNativeJsonContentUnsafeAsync<TData>();
+        var validation = await task.ConfigureAwait(false);
+        return await validation.ReceiveNativeJsonContentUnsafeAsync<TData>().ConfigureAwait(false);
     }
 
     #endregion
@@ -132,7 +132,7 @@ public static class SpecificDeserializerResponseExtensions
     public static async Task<Validation<Error, TData>> ReceiveXmlContentAsync<TData>(
         this Validation<Error, IEssentialsHttpResponse> validation)
     {
-        return await validation.ReceiveContentAsync<TData, XmlSerializer>();
+        return await validation.ReceiveContentAsync<TData, XmlSerializer>().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -144,8 +144,8 @@ public static class SpecificDeserializerResponseExtensions
     public static async Task<Validation<Error, TData>> ReceiveXmlContentAsync<TData>(
         this Task<Validation<Error, IEssentialsHttpResponse>> task)
     {
-        var validation = await task;
-        return await validation.ReceiveXmlContentAsync<TData>();
+        var validation = await task.ConfigureAwait(false);
+        return await validation.ReceiveXmlContentAsync<TData>().ConfigureAwait(false);
     }
     
     /// <summary>
@@ -157,7 +157,7 @@ public static class SpecificDeserializerResponseExtensions
     public static async Task<TData?> ReceiveXmlContentUnsafeAsync<TData>(
         this Validation<Error, IEssentialsHttpResponse> validation)
     {
-        return await validation.ReceiveContentUnsafeAsync<TData, XmlSerializer>();
+        return await validation.ReceiveContentUnsafeAsync<TData, XmlSerializer>().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -169,8 +169,8 @@ public static class SpecificDeserializerResponseExtensions
     public static async Task<TData?> ReceiveXmlContentUnsafeAsync<TData>(
         this Task<Validation<Error, IEssentialsHttpResponse>> task)
     {
-        var validation = await task;
-        return await validation.ReceiveXmlContentUnsafeAsync<TData>();
+        var validation = await task.ConfigureAwait(false);
+        return await validation.ReceiveXmlContentUnsafeAsync<TData>().ConfigureAwait(false);
     }
 
     #endregion

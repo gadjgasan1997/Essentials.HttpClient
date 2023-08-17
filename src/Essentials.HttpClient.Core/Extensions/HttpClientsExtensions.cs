@@ -30,7 +30,7 @@ public static class HttpClientsExtensions
         Validation<Error, IEssentialsHttpRequest> validation,
         CancellationToken? token = default)
     {
-        return await validation.DefaultBindAsync(request => httpClient.GetAsync(request, token));
+        return await validation.BindAsync(request => httpClient.GetAsync(request, token)).ConfigureAwait(false);
     }
     
     /// <summary>
@@ -47,12 +47,14 @@ public static class HttpClientsExtensions
     {
         var uriValidation = await EssentialsUriBuilder
             .CreateBuilder(uri)
-            .BuildAsync();
+            .BuildAsync()
+            .ConfigureAwait(false);
 
         return await EssentialsRequestBuilder
             .CreateBuilder(uriValidation)
             .BuildAsync()
-            .DefaultBindAsync(request => httpClient.GetAsync(request, token));
+            .BindAsync(request => httpClient.GetAsync(request, token))
+            .ConfigureAwait(false);
     }
     
     /// <summary>
@@ -67,7 +69,7 @@ public static class HttpClientsExtensions
         string address,
         CancellationToken? token = null)
     {
-        return await httpClient.GetAsync(new Uri(address), token);
+        return await httpClient.GetAsync(new Uri(address), token).ConfigureAwait(false);
     }
     
     /// <summary>
@@ -82,7 +84,10 @@ public static class HttpClientsExtensions
         Uri uri,
         CancellationToken? token = null)
     {
-        return await httpClient.GetAsync(uri, token).ReceiveStringUnsafeAsync();
+        return await httpClient
+            .GetAsync(uri, token)
+            .ReceiveStringUnsafeAsync()
+            .ConfigureAwait(false);
     }
     
     /// <summary>
@@ -97,7 +102,7 @@ public static class HttpClientsExtensions
         string address,
         CancellationToken? token = null)
     {
-        return await httpClient.GetStringAsync(new Uri(address), token);
+        return await httpClient.GetStringAsync(new Uri(address), token).ConfigureAwait(false);
     }
     
     /// <summary>
@@ -112,7 +117,10 @@ public static class HttpClientsExtensions
         Uri uri,
         CancellationToken? token = null)
     {
-        return await httpClient.GetAsync(uri, token).ReceiveStreamUnsafeAsync();
+        return await httpClient
+            .GetAsync(uri, token)
+            .ReceiveStreamUnsafeAsync()
+            .ConfigureAwait(false);
     }
     
     /// <summary>
@@ -127,7 +135,7 @@ public static class HttpClientsExtensions
         string address,
         CancellationToken? token = null)
     {
-        return await httpClient.GetStreamAsync(new Uri(address), token);
+        return await httpClient.GetStreamAsync(new Uri(address), token).ConfigureAwait(false);
     }
 
     #endregion
@@ -146,7 +154,7 @@ public static class HttpClientsExtensions
         Validation<Error, IEssentialsHttpRequest> validation,
         CancellationToken? token = default)
     {
-        return await validation.DefaultBindAsync(request => httpClient.HeadAsync(request, token));
+        return await validation.BindAsync(request => httpClient.HeadAsync(request, token)).ConfigureAwait(false);
     }
 
     #endregion
@@ -171,7 +179,9 @@ public static class HttpClientsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostAsync(request, new StringContent(content), mediaType, encoding, token);
+        return await httpClient
+            .PostAsync(request, new StringContent(content), mediaType, encoding, token)
+            .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -192,8 +202,10 @@ public static class HttpClientsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await validation.DefaultBindAsync(request =>
-            httpClient.PostStringAsync(request, content, mediaType, encoding, token));
+        return await validation
+            .BindAsync(request =>
+                httpClient.PostStringAsync(request, content, mediaType, encoding, token))
+            .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -214,7 +226,9 @@ public static class HttpClientsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PostAsync(request, new StreamContent(content), mediaType, encoding, token);
+        return await httpClient
+            .PostAsync(request, new StreamContent(content), mediaType, encoding, token)
+            .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -235,8 +249,10 @@ public static class HttpClientsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await validation.DefaultBindAsync(request =>
-            httpClient.PostStreamAsync(request, content, mediaType, encoding, token));
+        return await validation
+            .BindAsync(request =>
+                httpClient.PostStreamAsync(request, content, mediaType, encoding, token))
+            .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -261,7 +277,8 @@ public static class HttpClientsExtensions
         where TSerializer : IEssentialsSerializer
     {
         return await BuildStreamContent<TData, TSerializer>(data)
-            .DefaultBindAsync(content => httpClient.PostAsync(request, content, mediaType, encoding, token));
+            .BindAsync(content => httpClient.PostAsync(request, content, mediaType, encoding, token))
+            .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -285,8 +302,10 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
-        return await validation.DefaultBindAsync(request =>
-            httpClient.PostDataAsync<TData, TSerializer>(request, data, mediaType, encoding, token));
+        return await validation
+            .BindAsync(request =>
+                httpClient.PostDataAsync<TData, TSerializer>(request, data, mediaType, encoding, token))
+            .ConfigureAwait(false);
     }
     
     #endregion
@@ -311,7 +330,9 @@ public static class HttpClientsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PutAsync(request, new StringContent(content), mediaType, encoding, token);
+        return await httpClient
+            .PutAsync(request, new StringContent(content), mediaType, encoding, token)
+            .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -332,8 +353,10 @@ public static class HttpClientsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await validation.DefaultBindAsync(request =>
-            httpClient.PutStringAsync(request, content, mediaType, encoding, token));
+        return await validation
+            .BindAsync(request =>
+                httpClient.PutStringAsync(request, content, mediaType, encoding, token))
+            .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -358,7 +381,8 @@ public static class HttpClientsExtensions
         where TSerializer : IEssentialsSerializer
     {
         return await BuildStreamContent<TData, TSerializer>(data)
-            .DefaultBindAsync(content => httpClient.PutAsync(request, content, mediaType, encoding, token));
+            .BindAsync(content => httpClient.PutAsync(request, content, mediaType, encoding, token))
+            .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -382,8 +406,10 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
-        return await validation.DefaultBindAsync(request =>
-            httpClient.PutDataAsync<TData, TSerializer>(request, data, mediaType, encoding, token));
+        return await validation
+            .BindAsync(request =>
+                httpClient.PutDataAsync<TData, TSerializer>(request, data, mediaType, encoding, token))
+            .ConfigureAwait(false);
     }
     
     #endregion
@@ -408,7 +434,9 @@ public static class HttpClientsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await httpClient.PatchAsync(request, new StringContent(content), mediaType, encoding, token);
+        return await httpClient
+            .PatchAsync(request, new StringContent(content), mediaType, encoding, token)
+            .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -429,8 +457,10 @@ public static class HttpClientsExtensions
         Encoding? encoding = null,
         CancellationToken? token = null)
     {
-        return await validation.DefaultBindAsync(request =>
-            httpClient.PatchStringAsync(request, content, mediaType, encoding, token));
+        return await validation
+            .BindAsync(request =>
+                httpClient.PatchStringAsync(request, content, mediaType, encoding, token))
+            .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -455,7 +485,8 @@ public static class HttpClientsExtensions
         where TSerializer : IEssentialsSerializer
     {
         return await BuildStreamContent<TData, TSerializer>(data)
-            .DefaultBindAsync(content => httpClient.PatchAsync(request, content, mediaType, encoding, token));
+            .BindAsync(content => httpClient.PatchAsync(request, content, mediaType, encoding, token))
+            .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -479,8 +510,10 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
-        return await validation.DefaultBindAsync(request =>
-            httpClient.PatchDataAsync<TData, TSerializer>(request, data, mediaType, encoding, token));
+        return await validation
+            .BindAsync(request =>
+                httpClient.PatchDataAsync<TData, TSerializer>(request, data, mediaType, encoding, token))
+            .ConfigureAwait(false);
     }
     
     #endregion
@@ -499,7 +532,9 @@ public static class HttpClientsExtensions
         Validation<Error, IEssentialsHttpRequest> validation,
         CancellationToken? token = default)
     {
-        return await validation.DefaultBindAsync(request => httpClient.DeleteAsync(request, token));
+        return await validation
+            .BindAsync(request => httpClient.DeleteAsync(request, token))
+            .ConfigureAwait(false);
     }
 
     #endregion
@@ -511,11 +546,11 @@ public static class HttpClientsExtensions
     /// <typeparam name="TData">Тип данных</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns></returns>
-    private static async Task<Validation<Error, StreamContent>> BuildStreamContent<TData, TSerializer>(TData data)
+    private static Validation<Error, StreamContent> BuildStreamContent<TData, TSerializer>(TData data)
     {
-        return await SerializersCreator
+        return SerializersCreator
             .GetSerializer<TSerializer>()
-            .DefaultBindAsync(serializer => serializer.SerializeObject(data))
-            .DefaultBindAsync(stream => new StreamContent(stream));
+            .Bind(serializer => serializer.SerializeObject(data))
+            .Bind<StreamContent>(stream => new StreamContent(stream));
     }
 }
