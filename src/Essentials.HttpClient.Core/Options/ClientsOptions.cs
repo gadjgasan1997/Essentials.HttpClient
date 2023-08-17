@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Essentials.HttpClient.Cache.Options;
 using Essentials.HttpClient.Metrics.Options;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,4 +25,9 @@ internal class ClientsOptions
     /// Опции метрик
     /// </summary>
     public MetricsOptions? Metrics { get; set; }
+    
+    /// <summary>
+    /// Опции кеша
+    /// </summary>
+    public CacheOptions? Cache { get; set; }
 }

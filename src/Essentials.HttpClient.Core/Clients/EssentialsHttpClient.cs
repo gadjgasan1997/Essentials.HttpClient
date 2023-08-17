@@ -103,9 +103,12 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         if (request is null)
             return Error.New("Передан пустой запрос");
         
-        request.RequestMessage.Method = httpMethod;
+        if (!TryModifyRequest(Action, out var exception))
+            return Error.New(exception);
         
         return await SendRequestAsync(request, token).ConfigureAwait(false);
+
+        void Action() => request.RequestMessage.Method = httpMethod;
     }
 
     /// <summary>
@@ -133,13 +136,19 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         if (content is null)
             return Error.New("Передано пустое содержимое запроса");
         
-        if (mediaType is not null)
-            content.Headers.ContentType = GetContentType(mediaType, encoding);
-        
-        request.RequestMessage.Method = httpMethod;
-        request.RequestMessage.Content = content;
+        if (!TryModifyRequest(Action, out var exception))
+            return Error.New(exception);
 
         return await SendRequestAsync(request, token).ConfigureAwait(false);
+
+        void Action()
+        {
+            if (mediaType is not null)
+                content.Headers.ContentType = GetContentType(mediaType, encoding);
+
+            request.RequestMessage.Method = httpMethod;
+            request.RequestMessage.Content = content;
+        }
     }
 
     /// <summary>
@@ -158,6 +167,33 @@ public class EssentialsHttpClient : IEssentialsHttpClient
             await SendWithMetricsAsync(request,
                     async () => await SendAsync(request, client, token).ConfigureAwait(false))
                 .ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Пытается изменить запрос
+    /// </summary>
+    /// <param name="modifyRequestAction">Действие изменения запроса</param>
+    /// <param name="exception">Возникшее исключение</param>
+    /// <returns></returns>
+    private static bool TryModifyRequest(
+        Action modifyRequestAction,
+        [NotNullWhen(false)] out Exception? exception)
+    {
+        try
+        {
+            modifyRequestAction();
+            exception = null;
+            return true;
+        }
+        catch (Exception innerException)
+        {
+            // TODO Log and ex message
+            exception = new InvalidOperationException(
+                message: "Во время изменения запроса произошло исключение. Запрос не будет отправлен.",
+                innerException);
+            
+            return false;
+        }
     }
 
     /// <summary>
