@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Web;
+using Essentials.HttpClient.Cache;
 using LanguageExt;
 using LanguageExt.Common;
 using static LanguageExt.Prelude;
@@ -182,6 +183,32 @@ public class EssentialsUriBuilder
             return;
 
         Query[name] = value;
+    }
+
+    /// <summary>
+    /// Возвращает Uri из кеша по Id или создает новую
+    /// </summary>
+    /// <param name="id">Id</param>
+    /// <param name="creator">Делегат создания Uri</param>
+    /// <returns></returns>
+    public static Validation<Error, Uri> GetFromCacheOrCreate(
+        string id,
+        Func<Validation<Error, Uri>> creator)
+    {
+        return UriCacheService.GetFromCacheOrCreate(id, creator);
+    }
+
+    /// <summary>
+    /// Возвращает Uri из кеша по Id или создает новую
+    /// </summary>
+    /// <param name="id">Id</param>
+    /// <param name="creator">Делегат создания Uri</param>
+    /// <returns></returns>
+    public static Task<Validation<Error, Uri>> GetFromCacheOrCreateAsync(
+        string id,
+        Func<Task<Validation<Error, Uri>>> creator)
+    {
+        return UriCacheService.GetFromCacheOrCreate(id, () => creator().Result).AsTask();
     }
     
     /// <summary>

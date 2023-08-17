@@ -1,4 +1,5 @@
-﻿using Essentials.HttpClient.Clients;
+﻿using Essentials.HttpClient.Cache.Extensions;
+using Essentials.HttpClient.Clients;
 using Essentials.HttpClient.Metrics.Extensions;
 using Essentials.HttpClient.Options;
 using Essentials.HttpClient.Serialization;
@@ -44,7 +45,7 @@ public static class ServiceCollectionExtensions
                 implementationType: typeof(EssentialsHttpClient),
                 lifetime: options.ServiceLifetime ?? ServiceLifetime.Transient));
         
-        return services.ConfigureMetrics(options.Metrics);
+        return services.ConfigureMetrics(options.Metrics).ConfigureCache(options.Cache);
     }
 
     /// <summary>

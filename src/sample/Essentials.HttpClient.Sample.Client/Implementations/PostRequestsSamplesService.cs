@@ -91,7 +91,7 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
             .BuildAsync<PostRequestsSamplesService>();
 
         var response = await _httpClient
-            .PostStringAsync<TextPlain>(requestValidation, requestString)
+            .PostStringAsync(requestValidation, requestString, new TextPlain())
             .ReceiveXmlContentAsync<List<Person>>();
     }
 }
