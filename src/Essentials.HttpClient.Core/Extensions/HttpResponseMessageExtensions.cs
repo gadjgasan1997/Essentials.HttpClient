@@ -15,14 +15,15 @@ public static class HttpResponseMessageExtensions
     /// </summary>
     /// <param name="message">Http ответ</param>
     /// <returns></returns>
-    public static Task<Validation<Error, string>> ReceiveStringAsync(this HttpResponseMessage message)
+    public static async Task<Validation<Error, string>> ReceiveStringAsync(this HttpResponseMessage message)
     {
         // TODO Log
-        return TryOptionAsync(() => message.Content.ReadAsStringAsync())
+        return await TryOptionAsync(() => message.Content.ReadAsStringAsync())
             .Match(
                 Some: Validation<Error, string>.Success,
                 Fail: exception => Error.New(exception),
-                None: () => Error.New("Содержимое ответа равно null"));
+                None: () => Error.New("Содержимое ответа равно null"))
+            .ConfigureAwait(false);
     }
     
     /// <summary>
@@ -30,12 +31,13 @@ public static class HttpResponseMessageExtensions
     /// </summary>
     /// <param name="message">Http ответ</param>
     /// <returns></returns>
-    public static Task<string?> ReceiveStringUnsafeAsync(this HttpResponseMessage message)
+    public static async Task<string?> ReceiveStringUnsafeAsync(this HttpResponseMessage message)
     {
         // TODO Log
-        return message
+        return await message
             .ReceiveStringAsync()
-            .DefaultMatchUnsafeAsync(str => str, _ => null);
+            .MatchUnsafeAsync(@string => @string, _ => null)
+            .ConfigureAwait(false);
     }
     
     /// <summary>
@@ -43,14 +45,15 @@ public static class HttpResponseMessageExtensions
     /// </summary>
     /// <param name="message">Http ответ</param>
     /// <returns></returns>
-    public static Task<Validation<Error, Stream>> ReceiveStreamAsync(this HttpResponseMessage message)
+    public static async Task<Validation<Error, Stream>> ReceiveStreamAsync(this HttpResponseMessage message)
     {
         // TODO Log
-        return TryOptionAsync(() => message.Content.ReadAsStreamAsync())
+        return await TryOptionAsync(() => message.Content.ReadAsStreamAsync())
             .Match(
                 Some: Validation<Error, Stream>.Success,
                 Fail: exception => Error.New(exception),
-                None: () => Error.New("Содержимое ответа равно null"));
+                None: () => Error.New("Содержимое ответа равно null"))
+            .ConfigureAwait(false);
     }
     
     /// <summary>
@@ -58,11 +61,12 @@ public static class HttpResponseMessageExtensions
     /// </summary>
     /// <param name="message">Http ответ</param>
     /// <returns></returns>
-    public static Task<Stream?> ReceiveStreamUnsafeAsync(this HttpResponseMessage message)
+    public static async Task<Stream?> ReceiveStreamUnsafeAsync(this HttpResponseMessage message)
     {
         // TODO Log
-        return message
+        return await message
             .ReceiveStreamAsync()
-            .DefaultMatchUnsafeAsync(stream => stream, _ => null);
+            .MatchUnsafeAsync(stream => stream, _ => null)
+            .ConfigureAwait(false);
     }
 }
