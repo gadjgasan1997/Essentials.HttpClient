@@ -1,8 +1,5 @@
 ﻿using Essentials.HttpClient.Builders;
-using Essentials.HttpClient.Cache;
 using Essentials.HttpClient.Extensions;
-using LanguageExt;
-using LanguageExt.Common;
 
 namespace Essentials.HttpClient;
 
@@ -36,30 +33,4 @@ public static class UriBuilderFactory
     /// </summary>
     /// <param name="uri">Базовый адрес запроса</param>
     public static IUriBuilder CreateBuilder(Uri uri) => CreateBuilder(uri.ToString());
-    
-    /// <summary>
-    /// Возвращает Uri из кеша по Id или создает новую
-    /// </summary>
-    /// <param name="id">Id</param>
-    /// <param name="creator">Делегат создания Uri</param>
-    /// <returns></returns>
-    public static Validation<Error, Uri> GetFromCacheOrCreate(
-        string id,
-        Func<Validation<Error, Uri>> creator)
-    {
-        return UriCacheService.GetFromCacheOrCreate(id, creator);
-    }
-    
-    /// <summary>
-    /// Возвращает Uri из кеша по Id или создает новую
-    /// </summary>
-    /// <param name="id">Id</param>
-    /// <param name="creator">Делегат создания Uri</param>
-    /// <returns></returns>
-    public static Task<Validation<Error, Uri>> GetFromCacheOrCreateAsync(
-        string id,
-        Func<Task<Validation<Error, Uri>>> creator)
-    {
-        return UriCacheService.GetFromCacheOrCreate(id, () => creator().Result).AsTask();
-    }
 }

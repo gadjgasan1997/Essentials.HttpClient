@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Essentials.HttpClient.Extensions;
 using Essentials.HttpClient.Sample.Client.Models;
+using LanguageExt;
+using LanguageExt.Common;
 using static Essentials.HttpClient.Sample.Client.Dictionaries.CommonConsts;
 
 namespace Essentials.HttpClient.Sample.Client.Implementations;
@@ -48,34 +50,39 @@ public class GetRequestsSamplesService : IGetRequestsSamplesService
     private async Task RunSample_GetPersonsInJson_WithCache()
     {
         var uriValidation = await UriBuilderFactory
-            .GetFromCacheOrCreateAsync(
-                "persons_list",
-                () => UriBuilderFactory
-                    .CreateBuilder(SERVER_URL)
-                    .WithSegments("get", "GetPersonsInJson")
-                    .WithUriParam("age", "26")
-                    .BuildAsync());
+            .CreateBuilder(SERVER_URL)
+            .WithSegments("get", "GetPersonsInJson")
+            .WithUriParam("age", "26")
+            .BuildAsync();
 
-        var request = await RequestBuilderFactory
-            .CreateBuilder(uriValidation)
-            .WithHeader("personName", "as")
-            .BuildAsync<GetRequestsSamplesService>();
-
+        const string requestId = "persons_list";
+        
+        var request = await RequestBuilderFactory.GetFromCacheOrCreateAsync(requestId, Creator);
         var persons = await _httpClient
             .GetAsync(request)
             .ReceiveNativeJsonContentAsync<List<Person>>();
-
+        
+        var request2 = await RequestBuilderFactory.GetFromCacheOrCreateAsync(requestId, Creator);
         var persons2 = await _httpClient
-            .GetAsync(request)
+            .GetAsync(request2)
             .ReceiveNativeJsonContentUnsafeAsync<List<Person>>();
-
+        
+        var request3 = await RequestBuilderFactory.GetFromCacheOrCreateAsync(requestId, Creator);
         var persons3 = await _httpClient
-            .GetAsync(request)
+            .GetAsync(request3)
             .ReceiveNativeJsonContentUnsafeAsync<List<Person>>();
 
+        var request4 = await RequestBuilderFactory.GetFromCacheOrCreateAsync(requestId, Creator);
         var persons4 = await _httpClient
-            .GetAsync(request)
+            .GetAsync(request4)
             .ReceiveNativeJsonContentUnsafeAsync<List<Person>>();
+        
+        return;
+
+        Task<Validation<Error, IRequest>> Creator() =>
+            RequestBuilderFactory.CreateBuilder(uriValidation)
+                .WithHeader("personName", "as")
+                .BuildAsync<GetRequestsSamplesService>();
     }
 
     private async Task RunSample_GetPersonsInXml()
