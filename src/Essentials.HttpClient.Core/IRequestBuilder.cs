@@ -1,4 +1,5 @@
-﻿using LanguageExt;
+﻿using System.Text;
+using LanguageExt;
 using LanguageExt.Common;
 
 namespace Essentials.HttpClient;
@@ -8,16 +9,6 @@ namespace Essentials.HttpClient;
 /// </summary>
 public interface IRequestBuilder
 {
-    /// <summary>
-    /// Таймаут запроса, необязательный
-    /// </summary>
-    TimeSpan? Timeout { get; }
-    
-    /// <summary>
-    /// Сообщение запроса
-    /// </summary>
-    HttpRequestMessage? RequestMessage { get; }
-
     /// <summary>
     /// Добавляет заголовок к запросу
     /// </summary>
@@ -39,21 +30,22 @@ public interface IRequestBuilder
     /// </summary>
     /// <param name="headers">Список заголовков</param>
     /// <returns>Билдер</returns>
-    IRequestBuilder WithHeaders(params (string, IEnumerable<string?>)[] headers);
+    IRequestBuilder WithHeaders(params (string Name, IEnumerable<string?> Value)[] headers);
 
     /// <summary>
     /// Добавляет заголовки к запросу, если их значения не пустые
     /// </summary>
     /// <param name="headers">Список заголовков</param>
     /// <returns>Билдер</returns>
-    IRequestBuilder WithNotEmptyHeaders(params (string, IEnumerable<string?>)[] headers);
+    IRequestBuilder WithNotEmptyHeaders(params (string Name, IEnumerable<string?> Value)[] headers);
 
     /// <summary>
-    /// Устанавливает таймаут запроса
+    /// Устанавливает тип содержимого запроса
     /// </summary>
-    /// <param name="timeout">Таймаут</param>
-    /// <returns></returns>
-    IRequestBuilder SetTimeout(TimeSpan timeout);
+    /// <param name="mediaType">Тип содержимого</param>
+    /// <param name="encoding">Кодировка</param>
+    /// <returns>Билдер</returns>
+    IRequestBuilder SetMediaType(string mediaType, Encoding? encoding = null);
 
     /// <summary>
     /// Настраивает Basic авторизацию
@@ -81,9 +73,16 @@ public interface IRequestBuilder
     /// <summary>
     /// Меняет запрос поданным на вход делегатом
     /// </summary>
-    /// <param name="func">Делегат для изменения запроса</param>
+    /// <param name="action">Делегат для изменения запроса</param>
     /// <returns>Билдер</returns>
-    IRequestBuilder ModifyRequest(Action<HttpRequestMessage?> func);
+    IRequestBuilder ModifyRequest(Action<HttpRequestMessage?> action);
+
+    /// <summary>
+    /// Устанавливает таймаут запроса
+    /// </summary>
+    /// <param name="timeout">Таймаут</param>
+    /// <returns>Билдер</returns>
+    IRequestBuilder SetTimeout(TimeSpan timeout);
 
     /// <summary>
     /// Создает запрос

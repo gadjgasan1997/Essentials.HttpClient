@@ -22,12 +22,12 @@ public static class RequestBuilderFactory
         try
         {
             uri.Validate();
-            return new EssentialsRequestBuilder(new HttpRequestMessage {RequestUri = uri});
+            return new EssentialsRequestBuilder(uri);
         }
         catch (Exception ex)
         {
             // TODO Log
-            return new EssentialsRequestBuilder();
+            return new FailRequestBuilder(ex);
         }
     }
 
@@ -37,5 +37,5 @@ public static class RequestBuilderFactory
     /// <param name="validation">Адрес запроса</param>
     /// <returns>Билдер</returns>
     public static IRequestBuilder CreateBuilder(Validation<Error, Uri> validation) =>
-        validation.Match(CreateBuilder, _ => new EssentialsRequestBuilder());
+        validation.Match(CreateBuilder, seq => new FailRequestBuilder(seq));
 }

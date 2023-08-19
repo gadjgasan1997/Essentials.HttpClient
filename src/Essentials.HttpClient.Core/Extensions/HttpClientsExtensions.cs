@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Essentials.Func.Utils.Extensions;
-using Essentials.HttpClient.MediaTypes.Interfaces;
 using Essentials.HttpClient.Serialization;
 using Essentials.HttpClient.Serialization.Extensions;
 using LanguageExt;
@@ -30,7 +28,10 @@ public static class HttpClientsExtensions
         Validation<Error, IRequest> validation,
         CancellationToken? token = default)
     {
-        return await validation.BindAsync(request => httpClient.GetAsync(request, token)).ConfigureAwait(false);
+        return await validation
+            .BindAsync(async request =>
+                await httpClient.GetAsync(request, token).ConfigureAwait(false))
+            .ConfigureAwait(false);
     }
     
     /// <summary>
@@ -53,7 +54,8 @@ public static class HttpClientsExtensions
         return await RequestBuilderFactory
             .CreateBuilder(uriValidation)
             .BuildAsync()
-            .BindAsync(request => httpClient.GetAsync(request, token))
+            .BindAsync(async request =>
+                await httpClient.GetAsync(request, token).ConfigureAwait(false))
             .ConfigureAwait(false);
     }
     
@@ -154,7 +156,10 @@ public static class HttpClientsExtensions
         Validation<Error, IRequest> validation,
         CancellationToken? token = default)
     {
-        return await validation.BindAsync(request => httpClient.HeadAsync(request, token)).ConfigureAwait(false);
+        return await validation
+            .BindAsync(async request =>
+                await httpClient.HeadAsync(request, token).ConfigureAwait(false))
+            .ConfigureAwait(false);
     }
 
     #endregion
@@ -167,20 +172,16 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="request">Http запрос</param>
     /// <param name="content">Строка с содержимым</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
     public static async Task<Validation<Error, IResponse>> PostStringAsync(
         this IEssentialsHttpClient httpClient,
         IRequest request,
         string content,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
     {
         return await httpClient
-            .PostAsync(request, new StringContent(content), mediaType, encoding, token)
+            .PostAsync(request, new StringContent(content), token)
             .ConfigureAwait(false);
     }
 
@@ -190,21 +191,17 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="validation">Объект Validation с Http запросом</param>
     /// <param name="content">Строка с содержимым</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
     public static async Task<Validation<Error, IResponse>> PostStringAsync(
         this IEssentialsHttpClient httpClient,
         Validation<Error, IRequest> validation,
         string content,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
     {
         return await validation
-            .BindAsync(request =>
-                httpClient.PostStringAsync(request, content, mediaType, encoding, token))
+            .BindAsync(async request =>
+                await httpClient.PostStringAsync(request, content, token).ConfigureAwait(false))
             .ConfigureAwait(false);
     }
 
@@ -214,20 +211,16 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="request">Http запрос</param>
     /// <param name="content">Поток с содержимым</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
     public static async Task<Validation<Error, IResponse>> PostStreamAsync(
         this IEssentialsHttpClient httpClient,
         IRequest request,
         Stream content,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
     {
         return await httpClient
-            .PostAsync(request, new StreamContent(content), mediaType, encoding, token)
+            .PostAsync(request, new StreamContent(content), token)
             .ConfigureAwait(false);
     }
 
@@ -237,21 +230,17 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="validation">Объект Validation с Http запросом</param>
     /// <param name="content">Поток с содержимым</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
     public static async Task<Validation<Error, IResponse>> PostStreamAsync(
         this IEssentialsHttpClient httpClient,
         Validation<Error, IRequest> validation,
         Stream content,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
     {
         return await validation
-            .BindAsync(request =>
-                httpClient.PostStreamAsync(request, content, mediaType, encoding, token))
+            .BindAsync(async request =>
+                await httpClient.PostStreamAsync(request, content, token).ConfigureAwait(false))
             .ConfigureAwait(false);
     }
 
@@ -261,8 +250,6 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="request">Http запрос</param>
     /// <param name="data">Содержимое</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <typeparam name="TData">Тип содержимого</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
@@ -271,13 +258,12 @@ public static class HttpClientsExtensions
         this IEssentialsHttpClient httpClient,
         IRequest request,
         TData data,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
         return await BuildStreamContent<TData, TSerializer>(data)
-            .BindAsync(content => httpClient.PostAsync(request, content, mediaType, encoding, token))
+            .BindAsync(async content =>
+                await httpClient.PostAsync(request, content, token).ConfigureAwait(false))
             .ConfigureAwait(false);
     }
 
@@ -287,8 +273,6 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="validation">Объект Validation с Http запросом</param>
     /// <param name="data">Содержимое</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <typeparam name="TData">Тип содержимого</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
@@ -297,14 +281,12 @@ public static class HttpClientsExtensions
         this IEssentialsHttpClient httpClient,
         Validation<Error, IRequest> validation,
         TData data,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
         return await validation
-            .BindAsync(request =>
-                httpClient.PostDataAsync<TData, TSerializer>(request, data, mediaType, encoding, token))
+            .BindAsync(async request =>
+                await httpClient.PostDataAsync<TData, TSerializer>(request, data, token).ConfigureAwait(false))
             .ConfigureAwait(false);
     }
     
@@ -318,20 +300,16 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="request">Http запрос</param>
     /// <param name="content">Строка с содержимым</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
     public static async Task<Validation<Error, IResponse>> PutStringAsync(
         this IEssentialsHttpClient httpClient,
         IRequest request,
         string content,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
     {
         return await httpClient
-            .PutAsync(request, new StringContent(content), mediaType, encoding, token)
+            .PutAsync(request, new StringContent(content), token)
             .ConfigureAwait(false);
     }
 
@@ -341,21 +319,17 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="validation">Объект Validation с Http запросом</param>
     /// <param name="content">Строка с содержимым</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
     public static async Task<Validation<Error, IResponse>> PutStringAsync(
         this IEssentialsHttpClient httpClient,
         Validation<Error, IRequest> validation,
         string content,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
     {
         return await validation
-            .BindAsync(request =>
-                httpClient.PutStringAsync(request, content, mediaType, encoding, token))
+            .BindAsync(async request =>
+                await httpClient.PutStringAsync(request, content, token).ConfigureAwait(false))
             .ConfigureAwait(false);
     }
 
@@ -365,8 +339,6 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="request">Http запрос</param>
     /// <param name="data">Содержимое</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <typeparam name="TData">Тип содержимого</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
@@ -375,13 +347,12 @@ public static class HttpClientsExtensions
         this IEssentialsHttpClient httpClient,
         IRequest request,
         TData data,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
         return await BuildStreamContent<TData, TSerializer>(data)
-            .BindAsync(content => httpClient.PutAsync(request, content, mediaType, encoding, token))
+            .BindAsync(async content =>
+                await httpClient.PutAsync(request, content, token).ConfigureAwait(false))
             .ConfigureAwait(false);
     }
 
@@ -391,8 +362,6 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="validation">Объект Validation с Http запросом</param>
     /// <param name="data">Содержимое</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <typeparam name="TData">Тип содержимого</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
@@ -401,14 +370,12 @@ public static class HttpClientsExtensions
         this IEssentialsHttpClient httpClient,
         Validation<Error, IRequest> validation,
         TData data,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
         return await validation
-            .BindAsync(request =>
-                httpClient.PutDataAsync<TData, TSerializer>(request, data, mediaType, encoding, token))
+            .BindAsync(async request =>
+                await httpClient.PutDataAsync<TData, TSerializer>(request, data, token).ConfigureAwait(false))
             .ConfigureAwait(false);
     }
     
@@ -422,20 +389,16 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="request">Http запрос</param>
     /// <param name="content">Строка с содержимым</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
     public static async Task<Validation<Error, IResponse>> PatchStringAsync(
         this IEssentialsHttpClient httpClient,
         IRequest request,
         string content,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
     {
         return await httpClient
-            .PatchAsync(request, new StringContent(content), mediaType, encoding, token)
+            .PatchAsync(request, new StringContent(content), token)
             .ConfigureAwait(false);
     }
 
@@ -445,21 +408,17 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="validation">Объект Validation с Http запросом</param>
     /// <param name="content">Строка с содержимым</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
     public static async Task<Validation<Error, IResponse>> PatchStringAsync(
         this IEssentialsHttpClient httpClient,
         Validation<Error, IRequest> validation,
         string content,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
     {
         return await validation
-            .BindAsync(request =>
-                httpClient.PatchStringAsync(request, content, mediaType, encoding, token))
+            .BindAsync(async request =>
+                await httpClient.PatchStringAsync(request, content, token).ConfigureAwait(false))
             .ConfigureAwait(false);
     }
 
@@ -469,8 +428,6 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="request">Http запрос</param>
     /// <param name="data">Содержимое</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <typeparam name="TData">Тип содержимого</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
@@ -479,13 +436,12 @@ public static class HttpClientsExtensions
         this IEssentialsHttpClient httpClient,
         IRequest request,
         TData data,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
         return await BuildStreamContent<TData, TSerializer>(data)
-            .BindAsync(content => httpClient.PatchAsync(request, content, mediaType, encoding, token))
+            .BindAsync(async content =>
+                await httpClient.PatchAsync(request, content, token).ConfigureAwait(false))
             .ConfigureAwait(false);
     }
 
@@ -495,8 +451,6 @@ public static class HttpClientsExtensions
     /// <param name="httpClient">Http клиент</param>
     /// <param name="validation">Объект Validation с Http запросом</param>
     /// <param name="data">Содержимое</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <typeparam name="TData">Тип содержимого</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
@@ -505,14 +459,12 @@ public static class HttpClientsExtensions
         this IEssentialsHttpClient httpClient,
         Validation<Error, IRequest> validation,
         TData data,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
         return await validation
-            .BindAsync(request =>
-                httpClient.PatchDataAsync<TData, TSerializer>(request, data, mediaType, encoding, token))
+            .BindAsync(async request =>
+                await httpClient.PatchDataAsync<TData, TSerializer>(request, data, token).ConfigureAwait(false))
             .ConfigureAwait(false);
     }
     
@@ -533,7 +485,8 @@ public static class HttpClientsExtensions
         CancellationToken? token = default)
     {
         return await validation
-            .BindAsync(request => httpClient.DeleteAsync(request, token))
+            .BindAsync(async request =>
+                await httpClient.DeleteAsync(request, token).ConfigureAwait(false))
             .ConfigureAwait(false);
     }
 

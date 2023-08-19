@@ -75,7 +75,7 @@ public static class ResponseExtensions
         this Validation<Error, IResponse> validation)
     {
         return await validation
-            .BindAsync(response => response.ResponseMessage.ReceiveStringAsync())
+            .BindAsync(async response => await response.ResponseMessage.ReceiveStringAsync().ConfigureAwait(false))
             .ConfigureAwait(false);
     }
     
@@ -126,7 +126,7 @@ public static class ResponseExtensions
         this Validation<Error, IResponse> validation)
     {
         return await validation
-            .BindAsync(response => response.ResponseMessage.ReceiveStreamAsync())
+            .BindAsync(async response => await response.ResponseMessage.ReceiveStreamAsync().ConfigureAwait(false))
             .ConfigureAwait(false);
     }
     

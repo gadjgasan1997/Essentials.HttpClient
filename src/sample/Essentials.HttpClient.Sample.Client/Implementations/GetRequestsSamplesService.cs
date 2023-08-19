@@ -1,9 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Essentials.HttpClient.Extensions;
 using Essentials.HttpClient.Sample.Client.Models;
-using LanguageExt;
-using LanguageExt.Common;
-using TextPlain = Essentials.HttpClient.MediaTypes.Text.Plain;
 using static Essentials.HttpClient.Sample.Client.Dictionaries.CommonConsts;
 
 namespace Essentials.HttpClient.Sample.Client.Implementations;
@@ -42,7 +39,7 @@ public class GetRequestsSamplesService : IGetRequestsSamplesService
             .CreateBuilder(uriValidation)
             .WithHeader("personName", "as")
             .BuildAsync<GetRequestsSamplesService>();
-
+    
         var persons = await _httpClient
             .GetAsync(requestValidation)
             .ReceiveNativeJsonContentAsync<List<Person>>();
@@ -59,28 +56,26 @@ public class GetRequestsSamplesService : IGetRequestsSamplesService
                     .WithUriParam("age", "26")
                     .BuildAsync());
 
+        var request = await RequestBuilderFactory
+            .CreateBuilder(uriValidation)
+            .WithHeader("personName", "as")
+            .BuildAsync<GetRequestsSamplesService>();
+
         var persons = await _httpClient
-            .GetAsync(await RequestGetter())
-            .ReceiveNativeJsonContentUnsafeAsync<List<Person>>();
+            .GetAsync(request)
+            .ReceiveNativeJsonContentAsync<List<Person>>();
 
         var persons2 = await _httpClient
-            .GetAsync(await RequestGetter())
+            .GetAsync(request)
             .ReceiveNativeJsonContentUnsafeAsync<List<Person>>();
 
         var persons3 = await _httpClient
-            .GetAsync(await RequestGetter())
+            .GetAsync(request)
             .ReceiveNativeJsonContentUnsafeAsync<List<Person>>();
 
         var persons4 = await _httpClient
-            .GetAsync(await RequestGetter())
+            .GetAsync(request)
             .ReceiveNativeJsonContentUnsafeAsync<List<Person>>();
-        
-        return;
-
-        async Task<Validation<Error, IRequest>> RequestGetter() =>
-            await RequestBuilderFactory.CreateBuilder(uriValidation)
-                .WithHeader("personName", "as")
-                .BuildAsync<GetRequestsSamplesService>();
     }
 
     private async Task RunSample_GetPersonsInXml()

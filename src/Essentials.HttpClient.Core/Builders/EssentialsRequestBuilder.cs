@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Net.Http.Headers;
 using System.Text;
 using Essentials.HttpClient.Extensions;
@@ -18,15 +17,21 @@ namespace Essentials.HttpClient.Builders;
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 internal class EssentialsRequestBuilder : IRequestBuilder
 {
-    /// <inheritdoc cref="IRequestBuilder.Timeout"/>
-    public TimeSpan? Timeout { get; private set; }
+    private readonly Uri _uri;
     
-    /// <inheritdoc cref="IRequestBuilder.RequestMessage"/>
-    public HttpRequestMessage? RequestMessage { get; }
+    private MediaTypeHeaderValue? _mediaTypeHeader;
+    
+    private AuthenticationHeaderValue? _authenticationHeader;
 
-    public EssentialsRequestBuilder(HttpRequestMessage? requestMessage = null)
+    private readonly List<(string, IEnumerable<string?>)> _headers = new();
+
+    private readonly List<Action<HttpRequestMessage>> _modifyRequestActions = new();
+    
+    private TimeSpan? _timeout;
+    
+    public EssentialsRequestBuilder(Uri uri)
     {
-        RequestMessage = requestMessage;
+        _uri = uri ?? throw new ArgumentNullException(nameof(uri));
     }
     
     /// <inheritdoc cref="IRequestBuilder.WithHeader"/>
@@ -38,15 +43,13 @@ internal class EssentialsRequestBuilder : IRequestBuilder
         ModifyRequest(() => AddHeader(name, values.Where(value => !string.IsNullOrWhiteSpace(value))));
     
     /// <inheritdoc cref="IRequestBuilder.WithHeaders"/>
-    public IRequestBuilder WithHeaders(params (string, IEnumerable<string?>)[] headers) =>
-        ModifyRequest(() => headers.Map(tuple => AddHeader(tuple.Item1, tuple.Item2)));
-    
+    public IRequestBuilder WithHeaders(params (string Name, IEnumerable<string?> Value)[] headers) =>
+        ModifyRequest(() => headers.Map(header => AddHeader(header.Name, header.Value)));
+
     /// <inheritdoc cref="IRequestBuilder.WithNotEmptyHeaders"/>
-    public IRequestBuilder WithNotEmptyHeaders(params (string, IEnumerable<string?>)[] headers)
-    {
-        return ModifyRequest(() => headers.Map(tuple =>
-            AddHeader(tuple.Item1, tuple.Item2.Where(value => !string.IsNullOrWhiteSpace(value)))));
-    }
+    public IRequestBuilder WithNotEmptyHeaders(params (string Name, IEnumerable<string?> Value)[] headers) =>
+        ModifyRequest(() => headers.Map(header =>
+            AddHeader(header.Name, header.Value.Where(value => !string.IsNullOrWhiteSpace(value)))));
     
     /// <summary>
     /// Добавляет заголовок к запросу
@@ -55,17 +58,25 @@ internal class EssentialsRequestBuilder : IRequestBuilder
     /// <param name="values">Значения заголовка</param>
     private void AddHeader(string name, IEnumerable<string?> values)
     {
-        Contract.Assert(RequestMessage is not null, "RequestMessage must not null here!");
-
         if (string.IsNullOrWhiteSpace(name))
             return;
 
-        RequestMessage.Headers.Add(name, values);
+        _headers.Add((name, values));
     }
-    
-    /// <inheritdoc cref="IRequestBuilder.SetTimeout"/>
-    public IRequestBuilder SetTimeout(TimeSpan timeout) => ModifyRequest(() => Timeout = timeout);
-    
+
+    /// <inheritdoc cref="IRequestBuilder.SetMediaType"/>
+    public IRequestBuilder SetMediaType(string mediaType, Encoding? encoding = null)
+    {
+        return ModifyRequest(() =>
+        {
+            if (string.IsNullOrWhiteSpace(mediaType))
+                return;
+            
+            encoding ??= Encoding.Default;
+            _mediaTypeHeader = new MediaTypeHeaderValue(mediaType, encoding.WebName);
+        });
+    }
+
     /// <inheritdoc cref="IRequestBuilder.WithBasicAuthentication"/>
     public IRequestBuilder WithBasicAuthentication(string userName, string password)
     {
@@ -90,18 +101,22 @@ internal class EssentialsRequestBuilder : IRequestBuilder
     {
         return ModifyRequest(() =>
         {
-            Contract.Assert(RequestMessage is not null, "RequestMessage must not null here!");
-
             if (string.IsNullOrWhiteSpace(scheme) || string.IsNullOrWhiteSpace(parameter))
                 return;
 
-            RequestMessage.Headers.Authorization = new AuthenticationHeaderValue(scheme, parameter);
+            _authenticationHeader = new AuthenticationHeaderValue(scheme, parameter);
         });
     }
 
     /// <inheritdoc cref="IRequestBuilder.ModifyRequest"/>
-    public IRequestBuilder ModifyRequest(Action<HttpRequestMessage?> func) =>
-        ModifyRequest(() => func(RequestMessage));
+    public IRequestBuilder ModifyRequest(Action<HttpRequestMessage?> action)
+    {
+        _modifyRequestActions.Add(action);
+        return this;
+    }
+    
+    /// <inheritdoc cref="IRequestBuilder.SetTimeout"/>
+    public IRequestBuilder SetTimeout(TimeSpan timeout) => ModifyRequest(() => _timeout = timeout);
 
     /// <inheritdoc cref="IRequestBuilder.Build"/>
     public Validation<Error, IRequest> Build(string? clientName = null)
@@ -134,16 +149,15 @@ internal class EssentialsRequestBuilder : IRequestBuilder
     /// <returns>Запрос</returns>
     private Validation<Error, IRequest> BuildPrivate(string clientName)
     {
-        if (RequestMessage is null)
-        {
-            const string errorMessage = "Не инициализированы обязательные параметры запроса. Запрос не будет создан";
-
-            // TODO Log
-            return Fail<Error, IRequest>(errorMessage);
-        }
-
         // TODO Log Trace
-        return new Request(clientName, RequestMessage, Timeout);
+        return new Request(
+            clientName,
+            _uri,
+            _mediaTypeHeader,
+            _authenticationHeader,
+            _headers,
+            _modifyRequestActions,
+            _timeout);
     }
 
     /// <summary>
@@ -153,9 +167,6 @@ internal class EssentialsRequestBuilder : IRequestBuilder
     /// <returns>Билдер</returns>
     private EssentialsRequestBuilder ModifyRequest(Action modifyRequestAction)
     {
-        if (RequestMessage is null)
-            return this;
-
         // TODO Log if fail
         _ = Try(() =>
             {

@@ -1,4 +1,6 @@
-﻿namespace Essentials.HttpClient;
+﻿using System.Net.Http.Headers;
+
+namespace Essentials.HttpClient;
 
 /// <summary>
 /// Http запрос
@@ -11,9 +13,29 @@ public interface IRequest
     string ClientName { get; }
     
     /// <summary>
-    /// Сообщение запроса
+    /// Uri запроса
     /// </summary>
-    HttpRequestMessage RequestMessage { get; }
+    Uri Uri { get; }
+    
+    /// <summary>
+    /// Заголовок с типом медиа
+    /// </summary>
+    MediaTypeHeaderValue? MediaTypeHeader { get; internal set; }
+    
+    /// <summary>
+    /// Авторизационный заголовок
+    /// </summary>
+    AuthenticationHeaderValue? AuthenticationHeader { get; }
+    
+    /// <summary>
+    /// Список заголовков запроса
+    /// </summary>
+    IEnumerable<(string Name, IEnumerable<string?> Values)>? Headers { get; }
+    
+    /// <summary>
+    /// Список действий по изменению запроса
+    /// </summary>
+    IEnumerable<Action<HttpRequestMessage>>? ModifyRequestActions { get; }
     
     /// <summary>
     /// Таймаут запроса

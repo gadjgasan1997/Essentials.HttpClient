@@ -16,35 +16,21 @@ internal class EssentialsUriBuilder : IUriBuilder
     private const string SEPARATOR = "/";
 
     /// <inheritdoc cref="IUriBuilder.Segments" />
-    public List<string> Segments { get; private set; } = new();
+    public List<string> Segments { get; }
     
     /// <inheritdoc cref="IUriBuilder.UriBuilder" />
-    public UriBuilder? UriBuilder { get; private set; }
+    public UriBuilder UriBuilder { get; }
     
     /// <inheritdoc cref="IUriBuilder.Query" />
-    public NameValueCollection? Query { get; private set; }
-    
-    /// <summary>
-    /// Инициализирует поля билдера
-    /// </summary>
-    /// <param name="address">Базовый адрес запроса</param>
-    public IUriBuilder InitFields(string address)
-    {
-        try
-        {
-            var uri = new Uri(address);
-            uri.Validate();
-                
-            UriBuilder = new UriBuilder(uri);
-            Query = HttpUtility.ParseQueryString(UriBuilder.Query);
-            Segments = UriBuilder.Path.Split(SEPARATOR).Where(@string => !string.IsNullOrWhiteSpace(@string)).ToList();
-        }
-        catch (Exception ex)
-        {
-            // TODO Log
-        }
+    public NameValueCollection Query { get; }
 
-        return this;
+    public EssentialsUriBuilder(Uri uri)
+    {
+        ArgumentNullException.ThrowIfNull(uri);
+
+        UriBuilder = new UriBuilder(uri);
+        Query = HttpUtility.ParseQueryString(UriBuilder.Query);
+        Segments = UriBuilder.Path.Split(SEPARATOR).Where(@string => !string.IsNullOrWhiteSpace(@string)).ToList();
     }
     
     /// <inheritdoc cref="IUriBuilder.WithSegment" />
@@ -130,15 +116,6 @@ internal class EssentialsUriBuilder : IUriBuilder
     /// <inheritdoc cref="IUriBuilder.Build" />
     public Validation<Error, Uri> Build()
     {
-        if (UriBuilder is null || Query is null)
-        {
-            const string message =
-                "Во время содания Http запроса произошла ошибка. Не инициализированы обязательные параметры.";
-
-            // TODO Log
-            return Fail<Error, Uri>(message);
-        }
-
         try
         {
             UriBuilder.Path = string.Join(SEPARATOR, Segments);
@@ -169,9 +146,6 @@ internal class EssentialsUriBuilder : IUriBuilder
     /// <returns></returns>
     private EssentialsUriBuilder ModifyRequest(Action modifyAddressAction)
     {
-        if (UriBuilder is null || Query is null)
-            return this;
-
         // TODO Log if fail
         _ = Try(() =>
             {

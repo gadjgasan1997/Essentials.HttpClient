@@ -1,6 +1,4 @@
-﻿using System.Text;
-using Essentials.HttpClient.MediaTypes.Interfaces;
-using LanguageExt;
+﻿using LanguageExt;
 using LanguageExt.Common;
 using Token = System.Threading.CancellationToken;
 
@@ -32,48 +30,27 @@ public interface IEssentialsHttpClient
     /// </summary>
     /// <param name="request">Http запрос</param>
     /// <param name="content">Содержимое</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    Task<Validation<Error, IResponse>> PostAsync(
-        IRequest request,
-        HttpContent content,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
-        Token? token = null);
-    
+    Task<Validation<Error, IResponse>> PostAsync(IRequest request, HttpContent content, Token? token = null);
+
     /// <summary>
     /// Отправляет Put запрос
     /// </summary>
     /// <param name="request">Http запрос</param>
     /// <param name="content">Содержимое</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    Task<Validation<Error, IResponse>> PutAsync(
-        IRequest request,
-        HttpContent content,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
-        Token? token = null);
+    Task<Validation<Error, IResponse>> PutAsync(IRequest request, HttpContent content, Token? token = null);
     
     /// <summary>
     /// Отправляет Patch запрос
     /// </summary>
     /// <param name="request">Http запрос</param>
     /// <param name="content">Содержимое</param>
-    /// <param name="mediaType">Тип содержимого запроса (Json, Xml, ...)</param>
-    /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    Task<Validation<Error, IResponse>> PatchAsync(
-        IRequest request,
-        HttpContent content,
-        IMediaType? mediaType = null,
-        Encoding? encoding = null,
-        Token? token = null);
+    Task<Validation<Error, IResponse>> PatchAsync(IRequest request, HttpContent content, Token? token = null);
     
     /// <summary>
     /// Отправляет Delete запрос

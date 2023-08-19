@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.Mime;
 using Essentials.HttpClient.Extensions;
 using Essentials.HttpClient.Sample.Client.Models;
 using Essentials.HttpClient.Sample.Client.Models.Requests;
-using TextPlain = Essentials.HttpClient.MediaTypes.Text.Plain;
 using static Essentials.HttpClient.Common.Helpers.SerializationHelpers;
 using static Essentials.HttpClient.Sample.Client.Dictionaries.CommonConsts;
 
@@ -88,10 +88,11 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
 
         var requestValidation = await RequestBuilderFactory
             .CreateBuilder(uriValidation)
+            .SetMediaType(MediaTypeNames.Text.Xml)
             .BuildAsync<PostRequestsSamplesService>();
 
         var response = await _httpClient
-            .PostStringAsync(requestValidation, requestString, new TextPlain())
+            .PostStringAsync(requestValidation, requestString)
             .ReceiveXmlContentAsync<List<Person>>();
     }
 }

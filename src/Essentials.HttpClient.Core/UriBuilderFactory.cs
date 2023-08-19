@@ -1,5 +1,6 @@
 ﻿using Essentials.HttpClient.Builders;
 using Essentials.HttpClient.Cache;
+using Essentials.HttpClient.Extensions;
 using LanguageExt;
 using LanguageExt.Common;
 
@@ -14,15 +15,27 @@ public static class UriBuilderFactory
     /// Создает экземпляр билдера
     /// </summary>
     /// <param name="address">Базовый адрес запроса</param>
-    public static IUriBuilder CreateBuilder(string address) =>
-        new EssentialsUriBuilder().InitFields(address);
-    
+    public static IUriBuilder CreateBuilder(string address)
+    {
+        try
+        {
+            var uri = new Uri(address);
+            uri.Validate();
+
+            return new EssentialsUriBuilder(uri);
+        }
+        catch (Exception ex)
+        {
+            // TODO Log
+            return new FailUriBuilder(ex);
+        }
+    }
+
     /// <summary>
     /// Создает экземпляр билдера
     /// </summary>
     /// <param name="uri">Базовый адрес запроса</param>
-    public static IUriBuilder CreateBuilder(Uri uri) =>
-        new EssentialsUriBuilder().InitFields(uri.ToString());
+    public static IUriBuilder CreateBuilder(Uri uri) => CreateBuilder(uri.ToString());
     
     /// <summary>
     /// Возвращает Uri из кеша по Id или создает новую
