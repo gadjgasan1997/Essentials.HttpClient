@@ -37,12 +37,12 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
             Name = "as"
         };
         
-        var uriValidation = await EssentialsUriBuilder
+        var uriValidation = await UriBuilderFactory
             .CreateBuilder(SERVER_URL)
             .WithSegments("post", "GetPersonsInJson")
             .BuildAsync();
 
-        var requestValidation = await EssentialsRequestBuilder
+        var requestValidation = await RequestBuilderFactory
             .CreateBuilder(uriValidation)
             .BuildAsync<PostRequestsSamplesService>();
 
@@ -58,12 +58,12 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
             Name = "mi"
         };
         
-        var uriValidation = await EssentialsUriBuilder
+        var uriValidation = await UriBuilderFactory
             .CreateBuilder(SERVER_URL)
             .WithSegments("post", "GetPersonsInXml")
             .BuildAsync();
 
-        var requestValidation = await EssentialsRequestBuilder
+        var requestValidation = await RequestBuilderFactory
             .CreateBuilder(uriValidation)
             .BuildAsync<PostRequestsSamplesService>();
 
@@ -81,12 +81,12 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
         
         var requestString = SerializeInXml(data);
         
-        var uriValidation = await EssentialsUriBuilder
+        var uriValidation = await UriBuilderFactory
             .CreateBuilder(SERVER_URL)
             .WithSegments("post", "GetPersonsInPlainXmlText")
             .BuildAsync();
 
-        var requestValidation = await EssentialsRequestBuilder
+        var requestValidation = await RequestBuilderFactory
             .CreateBuilder(uriValidation)
             .BuildAsync<PostRequestsSamplesService>();
 

@@ -25,9 +25,9 @@ public static class HttpClientsExtensions
     /// <param name="validation">Объект Validation с Http запросом</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> GetAsync(
+    public static async Task<Validation<Error, IResponse>> GetAsync(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         CancellationToken? token = default)
     {
         return await validation.BindAsync(request => httpClient.GetAsync(request, token)).ConfigureAwait(false);
@@ -40,17 +40,17 @@ public static class HttpClientsExtensions
     /// <param name="uri">Адрес запроса</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> GetAsync(
+    public static async Task<Validation<Error, IResponse>> GetAsync(
         this IEssentialsHttpClient httpClient,
         Uri uri,
         CancellationToken? token = null)
     {
-        var uriValidation = await EssentialsUriBuilder
+        var uriValidation = await UriBuilderFactory
             .CreateBuilder(uri)
             .BuildAsync()
             .ConfigureAwait(false);
 
-        return await EssentialsRequestBuilder
+        return await RequestBuilderFactory
             .CreateBuilder(uriValidation)
             .BuildAsync()
             .BindAsync(request => httpClient.GetAsync(request, token))
@@ -64,7 +64,7 @@ public static class HttpClientsExtensions
     /// <param name="address">Адрес запроса</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> GetAsync(
+    public static async Task<Validation<Error, IResponse>> GetAsync(
         this IEssentialsHttpClient httpClient,
         string address,
         CancellationToken? token = null)
@@ -149,9 +149,9 @@ public static class HttpClientsExtensions
     /// <param name="validation">Объект Validation с Http запросом</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> HeadAsync(
+    public static async Task<Validation<Error, IResponse>> HeadAsync(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         CancellationToken? token = default)
     {
         return await validation.BindAsync(request => httpClient.HeadAsync(request, token)).ConfigureAwait(false);
@@ -171,9 +171,9 @@ public static class HttpClientsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync(
+    public static async Task<Validation<Error, IResponse>> PostStringAsync(
         this IEssentialsHttpClient httpClient,
-        IEssentialsHttpRequest request,
+        IRequest request,
         string content,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -194,9 +194,9 @@ public static class HttpClientsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostStringAsync(
+    public static async Task<Validation<Error, IResponse>> PostStringAsync(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         string content,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -218,9 +218,9 @@ public static class HttpClientsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostStreamAsync(
+    public static async Task<Validation<Error, IResponse>> PostStreamAsync(
         this IEssentialsHttpClient httpClient,
-        IEssentialsHttpRequest request,
+        IRequest request,
         Stream content,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -241,9 +241,9 @@ public static class HttpClientsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostStreamAsync(
+    public static async Task<Validation<Error, IResponse>> PostStreamAsync(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         Stream content,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -267,9 +267,9 @@ public static class HttpClientsExtensions
     /// <typeparam name="TData">Тип содержимого</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TData, TSerializer>(
+    public static async Task<Validation<Error, IResponse>> PostDataAsync<TData, TSerializer>(
         this IEssentialsHttpClient httpClient,
-        IEssentialsHttpRequest request,
+        IRequest request,
         TData data,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -293,9 +293,9 @@ public static class HttpClientsExtensions
     /// <typeparam name="TData">Тип содержимого</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostDataAsync<TData, TSerializer>(
+    public static async Task<Validation<Error, IResponse>> PostDataAsync<TData, TSerializer>(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         TData data,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -322,9 +322,9 @@ public static class HttpClientsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PutStringAsync(
+    public static async Task<Validation<Error, IResponse>> PutStringAsync(
         this IEssentialsHttpClient httpClient,
-        IEssentialsHttpRequest request,
+        IRequest request,
         string content,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -345,9 +345,9 @@ public static class HttpClientsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PutStringAsync(
+    public static async Task<Validation<Error, IResponse>> PutStringAsync(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         string content,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -371,9 +371,9 @@ public static class HttpClientsExtensions
     /// <typeparam name="TData">Тип содержимого</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PutDataAsync<TData, TSerializer>(
+    public static async Task<Validation<Error, IResponse>> PutDataAsync<TData, TSerializer>(
         this IEssentialsHttpClient httpClient,
-        IEssentialsHttpRequest request,
+        IRequest request,
         TData data,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -397,9 +397,9 @@ public static class HttpClientsExtensions
     /// <typeparam name="TData">Тип содержимого</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PutDataAsync<TData, TSerializer>(
+    public static async Task<Validation<Error, IResponse>> PutDataAsync<TData, TSerializer>(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         TData data,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -426,9 +426,9 @@ public static class HttpClientsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PatchStringAsync(
+    public static async Task<Validation<Error, IResponse>> PatchStringAsync(
         this IEssentialsHttpClient httpClient,
-        IEssentialsHttpRequest request,
+        IRequest request,
         string content,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -449,9 +449,9 @@ public static class HttpClientsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PatchStringAsync(
+    public static async Task<Validation<Error, IResponse>> PatchStringAsync(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         string content,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -475,9 +475,9 @@ public static class HttpClientsExtensions
     /// <typeparam name="TData">Тип содержимого</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PatchDataAsync<TData, TSerializer>(
+    public static async Task<Validation<Error, IResponse>> PatchDataAsync<TData, TSerializer>(
         this IEssentialsHttpClient httpClient,
-        IEssentialsHttpRequest request,
+        IRequest request,
         TData data,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -501,9 +501,9 @@ public static class HttpClientsExtensions
     /// <typeparam name="TData">Тип содержимого</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PatchDataAsync<TData, TSerializer>(
+    public static async Task<Validation<Error, IResponse>> PatchDataAsync<TData, TSerializer>(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         TData data,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -527,9 +527,9 @@ public static class HttpClientsExtensions
     /// <param name="validation">Объект Validation с Http запросом</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> DeleteAsync(
+    public static async Task<Validation<Error, IResponse>> DeleteAsync(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         CancellationToken? token = default)
     {
         return await validation

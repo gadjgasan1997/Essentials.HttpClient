@@ -8,10 +8,8 @@ using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Models;
 using LanguageExt;
 using LanguageExt.Common;
-using SystemHttpClient = System.Net.Http.HttpClient;
 using static LanguageExt.Prelude;
-using IRequest = Essentials.HttpClient.IEssentialsHttpRequest;
-using IResponse = Essentials.HttpClient.IEssentialsHttpResponse;
+using SystemHttpClient = System.Net.Http.HttpClient;
 using Token = System.Threading.CancellationToken;
 
 namespace Essentials.HttpClient.Clients;
@@ -71,8 +69,8 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     }
 
     /// <inheritdoc cref="IEssentialsHttpClient.PatchAsync(IRequest, HttpContent, IMediaType, Encoding?, Token?)" />
-    public Task<Validation<Error, IEssentialsHttpResponse>> PatchAsync(
-        IEssentialsHttpRequest request,
+    public Task<Validation<Error, IResponse>> PatchAsync(
+        IRequest request,
         HttpContent content,
         IMediaType? mediaType = null,
         Encoding? encoding = null,
@@ -157,13 +155,13 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     /// <param name="request">Запрос</param>
     /// <param name="token">Токен отмены</param>
     /// <returns></returns>
-    private async Task<Validation<Error, IEssentialsHttpResponse>> SendRequestAsync(
-        IEssentialsHttpRequest request,
+    private async Task<Validation<Error, IResponse>> SendRequestAsync(
+        IRequest request,
         Token? token = null)
     {
         return await CreateClient(request).BindAsync(SendFunc).ConfigureAwait(false);
 
-        async Task<Validation<Error, IEssentialsHttpResponse>> SendFunc(SystemHttpClient client) =>
+        async Task<Validation<Error, IResponse>> SendFunc(SystemHttpClient client) =>
             await SendWithMetricsAsync(request,
                     async () => await SendAsync(request, client, token).ConfigureAwait(false))
                 .ConfigureAwait(false);
@@ -254,7 +252,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
                 $"Ошибочный Http код ответа: '{responseMessage.StatusCode}'.");
         }
 
-        return new EssentialsHttpResponse(responseMessage);
+        return new Response(responseMessage);
     }
     
     /// <summary>

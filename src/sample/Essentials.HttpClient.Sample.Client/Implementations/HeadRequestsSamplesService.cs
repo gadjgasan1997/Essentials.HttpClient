@@ -26,12 +26,12 @@ public class HeadRequestsSamplesService : IHeadRequestsSamplesService
 
     private async Task RunSample_Head()
     {
-        var uriValidation = await EssentialsUriBuilder
+        var uriValidation = await UriBuilderFactory
             .CreateBuilder(SERVER_URL)
             .WithSegments("head", "Head")
             .BuildAsync();
 
-        var requestValidation = await EssentialsRequestBuilder
+        var requestValidation = await RequestBuilderFactory
             .CreateBuilder(uriValidation)
             .WithHeader("User-Agent", "C# Program")
             .BuildAsync<HeadRequestsSamplesService>();

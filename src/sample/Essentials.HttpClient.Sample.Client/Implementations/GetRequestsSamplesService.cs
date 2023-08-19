@@ -32,13 +32,13 @@ public class GetRequestsSamplesService : IGetRequestsSamplesService
 
     private async Task RunSample_GetPersonsInJson()
     {
-        var uriValidation = await EssentialsUriBuilder
+        var uriValidation = await UriBuilderFactory
             .CreateBuilder(SERVER_URL)
             .WithSegments("get", "GetPersonsInJson")
             .WithUriParam("age", "26")
             .BuildAsync();
 
-        var requestValidation = await EssentialsRequestBuilder
+        var requestValidation = await RequestBuilderFactory
             .CreateBuilder(uriValidation)
             .WithHeader("personName", "as")
             .BuildAsync<GetRequestsSamplesService>();
@@ -50,10 +50,10 @@ public class GetRequestsSamplesService : IGetRequestsSamplesService
 
     private async Task RunSample_GetPersonsInJson_WithCache()
     {
-        var uriValidation = await EssentialsUriBuilder
+        var uriValidation = await UriBuilderFactory
             .GetFromCacheOrCreateAsync(
                 "persons_list",
-                () => EssentialsUriBuilder
+                () => UriBuilderFactory
                     .CreateBuilder(SERVER_URL)
                     .WithSegments("get", "GetPersonsInJson")
                     .WithUriParam("age", "26")
@@ -77,20 +77,20 @@ public class GetRequestsSamplesService : IGetRequestsSamplesService
         
         return;
 
-        async Task<Validation<Error, IEssentialsHttpRequest>> RequestGetter() =>
-            await EssentialsRequestBuilder.CreateBuilder(uriValidation)
+        async Task<Validation<Error, IRequest>> RequestGetter() =>
+            await RequestBuilderFactory.CreateBuilder(uriValidation)
                 .WithHeader("personName", "as")
                 .BuildAsync<GetRequestsSamplesService>();
     }
 
     private async Task RunSample_GetPersonsInXml()
     {
-        var uriValidation = await EssentialsUriBuilder
+        var uriValidation = await UriBuilderFactory
             .CreateBuilder(SERVER_URL)
             .WithSegments("get", "GetPersonsInXml")
             .BuildAsync();
 
-        var requestValidation = await EssentialsRequestBuilder
+        var requestValidation = await RequestBuilderFactory
             .CreateBuilder(uriValidation)
             .BuildAsync<GetRequestsSamplesService>();
 

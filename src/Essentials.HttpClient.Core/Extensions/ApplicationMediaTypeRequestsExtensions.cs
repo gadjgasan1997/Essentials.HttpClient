@@ -24,9 +24,9 @@ public static class ApplicationMediaTypeRequestsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostJsonStringAsync(
+    public static async Task<Validation<Error, IResponse>> PostJsonStringAsync(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         string content,
         Encoding? encoding = null,
         CancellationToken? token = null)
@@ -50,9 +50,9 @@ public static class ApplicationMediaTypeRequestsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostJsonStringAsync(
+    public static async Task<Validation<Error, IResponse>> PostJsonStringAsync(
         this IEssentialsHttpClient httpClient,
-        IEssentialsHttpRequest request,
+        IRequest request,
         string content,
         Encoding? encoding = null,
         CancellationToken? token = null)
@@ -78,9 +78,9 @@ public static class ApplicationMediaTypeRequestsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostJsonDataAsync<TData>(
+    public static async Task<Validation<Error, IResponse>> PostJsonDataAsync<TData>(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         TData data,
         Encoding? encoding = null,
         CancellationToken? token = null)
@@ -104,9 +104,9 @@ public static class ApplicationMediaTypeRequestsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostJsonDataAsync<TData>(
+    public static async Task<Validation<Error, IResponse>> PostJsonDataAsync<TData>(
         this IEssentialsHttpClient httpClient,
-        IEssentialsHttpRequest request,
+        IRequest request,
         TData data,
         Encoding? encoding = null,
         CancellationToken? token = null)
@@ -134,9 +134,9 @@ public static class ApplicationMediaTypeRequestsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostNativeJsonDataAsync<TData>(
+    public static async Task<Validation<Error, IResponse>> PostNativeJsonDataAsync<TData>(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         TData data,
         Encoding? encoding = null,
         CancellationToken? token = null)
@@ -160,9 +160,9 @@ public static class ApplicationMediaTypeRequestsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostNativeJsonDataAsync<TData>(
+    public static async Task<Validation<Error, IResponse>> PostNativeJsonDataAsync<TData>(
         this IEssentialsHttpClient httpClient,
-        IEssentialsHttpRequest request,
+        IRequest request,
         TData data,
         Encoding? encoding = null,
         CancellationToken? token = null)
@@ -190,9 +190,9 @@ public static class ApplicationMediaTypeRequestsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostApplicationXmlStringAsync(
+    public static async Task<Validation<Error, IResponse>> PostApplicationXmlStringAsync(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         string content,
         Encoding? encoding = null,
         CancellationToken? token = null)
@@ -216,9 +216,9 @@ public static class ApplicationMediaTypeRequestsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostApplicationXmlStringAsync(
+    public static async Task<Validation<Error, IResponse>> PostApplicationXmlStringAsync(
         this IEssentialsHttpClient httpClient,
-        IEssentialsHttpRequest request,
+        IRequest request,
         string content,
         Encoding? encoding = null,
         CancellationToken? token = null)
@@ -242,9 +242,9 @@ public static class ApplicationMediaTypeRequestsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostApplicationXmlDataAsync<TData>(
+    public static async Task<Validation<Error, IResponse>> PostApplicationXmlDataAsync<TData>(
         this IEssentialsHttpClient httpClient,
-        Validation<Error, IEssentialsHttpRequest> validation,
+        Validation<Error, IRequest> validation,
         TData data,
         Encoding? encoding = null,
         CancellationToken? token = null)
@@ -268,9 +268,9 @@ public static class ApplicationMediaTypeRequestsExtensions
     /// <param name="encoding">Кодировка</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    public static async Task<Validation<Error, IEssentialsHttpResponse>> PostApplicationXmlDataAsync<TData>(
+    public static async Task<Validation<Error, IResponse>> PostApplicationXmlDataAsync<TData>(
         this IEssentialsHttpClient httpClient,
-        IEssentialsHttpRequest request,
+        IRequest request,
         TData data,
         Encoding? encoding = null,
         CancellationToken? token = null)

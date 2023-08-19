@@ -3,7 +3,7 @@
 /// <summary>
 /// Http запрос
 /// </summary>
-public interface IEssentialsHttpRequest
+public interface IRequest
 {
     /// <summary>
     /// Название Http клиента, с помощью которого отправляется запрос

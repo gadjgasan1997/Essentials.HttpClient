@@ -2,8 +2,6 @@
 using Essentials.HttpClient.MediaTypes.Interfaces;
 using LanguageExt;
 using LanguageExt.Common;
-using IRequest = Essentials.HttpClient.IEssentialsHttpRequest;
-using IResponse = Essentials.HttpClient.IEssentialsHttpResponse;
 using Token = System.Threading.CancellationToken;
 
 namespace Essentials.HttpClient;

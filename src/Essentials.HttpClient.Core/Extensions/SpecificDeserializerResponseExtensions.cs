@@ -22,7 +22,7 @@ public static class SpecificDeserializerResponseExtensions
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
     /// <returns></returns>
     public static async Task<Validation<Error, TData>> ReceiveJsonContentAsync<TData>(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
     {
         return await validation.ReceiveContentAsync<TData, NewtonsoftJsonSerializer>().ConfigureAwait(false);
     }
@@ -34,7 +34,7 @@ public static class SpecificDeserializerResponseExtensions
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
     /// <returns></returns>
     public static async Task<Validation<Error, TData>> ReceiveJsonContentAsync<TData>(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
     {
         var validation = await task.ConfigureAwait(false);
         return await validation.ReceiveJsonContentAsync<TData>().ConfigureAwait(false);
@@ -47,7 +47,7 @@ public static class SpecificDeserializerResponseExtensions
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
     /// <returns></returns>
     public static async Task<TData?> ReceiveJsonContentUnsafeAsync<TData>(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
     {
         return await validation.ReceiveContentUnsafeAsync<TData, NewtonsoftJsonSerializer>().ConfigureAwait(false);
     }
@@ -59,7 +59,7 @@ public static class SpecificDeserializerResponseExtensions
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
     /// <returns></returns>
     public static async Task<TData?> ReceiveJsonContentUnsafeAsync<TData>(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
     {
         var validation = await task.ConfigureAwait(false);
         return await validation.ReceiveJsonContentUnsafeAsync<TData>().ConfigureAwait(false);
@@ -76,7 +76,7 @@ public static class SpecificDeserializerResponseExtensions
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
     /// <returns></returns>
     public static async Task<Validation<Error, TData>> ReceiveNativeJsonContentAsync<TData>(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
     {
         return await validation.ReceiveContentAsync<TData, NativeJsonSerializer>().ConfigureAwait(false);
     }
@@ -88,7 +88,7 @@ public static class SpecificDeserializerResponseExtensions
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
     /// <returns></returns>
     public static async Task<Validation<Error, TData>> ReceiveNativeJsonContentAsync<TData>(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
     {
         var validation = await task.ConfigureAwait(false);
         return await validation.ReceiveNativeJsonContentAsync<TData>().ConfigureAwait(false);
@@ -101,7 +101,7 @@ public static class SpecificDeserializerResponseExtensions
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
     /// <returns></returns>
     public static async Task<TData?> ReceiveNativeJsonContentUnsafeAsync<TData>(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
     {
         return await validation.ReceiveContentUnsafeAsync<TData, NativeJsonSerializer>().ConfigureAwait(false);
     }
@@ -113,7 +113,7 @@ public static class SpecificDeserializerResponseExtensions
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
     /// <returns></returns>
     public static async Task<TData?> ReceiveNativeJsonContentUnsafeAsync<TData>(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
     {
         var validation = await task.ConfigureAwait(false);
         return await validation.ReceiveNativeJsonContentUnsafeAsync<TData>().ConfigureAwait(false);
@@ -130,7 +130,7 @@ public static class SpecificDeserializerResponseExtensions
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
     /// <returns></returns>
     public static async Task<Validation<Error, TData>> ReceiveXmlContentAsync<TData>(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
     {
         return await validation.ReceiveContentAsync<TData, XmlSerializer>().ConfigureAwait(false);
     }
@@ -142,7 +142,7 @@ public static class SpecificDeserializerResponseExtensions
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
     /// <returns></returns>
     public static async Task<Validation<Error, TData>> ReceiveXmlContentAsync<TData>(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
     {
         var validation = await task.ConfigureAwait(false);
         return await validation.ReceiveXmlContentAsync<TData>().ConfigureAwait(false);
@@ -155,7 +155,7 @@ public static class SpecificDeserializerResponseExtensions
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
     /// <returns></returns>
     public static async Task<TData?> ReceiveXmlContentUnsafeAsync<TData>(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
     {
         return await validation.ReceiveContentUnsafeAsync<TData, XmlSerializer>().ConfigureAwait(false);
     }
@@ -167,7 +167,7 @@ public static class SpecificDeserializerResponseExtensions
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
     /// <returns></returns>
     public static async Task<TData?> ReceiveXmlContentUnsafeAsync<TData>(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
     {
         var validation = await task.ConfigureAwait(false);
         return await validation.ReceiveXmlContentUnsafeAsync<TData>().ConfigureAwait(false);

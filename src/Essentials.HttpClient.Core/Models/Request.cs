@@ -2,18 +2,18 @@
 
 namespace Essentials.HttpClient.Models;
 
-/// <inheritdoc cref="IEssentialsHttpRequest" />
-internal record EssentialsHttpRequest(
+/// <inheritdoc cref="IRequest" />
+internal record Request(
     string ClientName,
     HttpRequestMessage RequestMessage,
-    TimeSpan? Timeout) : IEssentialsHttpRequest
+    TimeSpan? Timeout) : IRequest
 {
-    /// <inheritdoc cref="IEssentialsHttpRequest.ClientName" />
+    /// <inheritdoc cref="IRequest.ClientName" />
     public string ClientName { get; } = ClientName.CheckNotNullOrEmpty();
 
-    /// <inheritdoc cref="IEssentialsHttpRequest.RequestMessage" />
+    /// <inheritdoc cref="IRequest.RequestMessage" />
     public HttpRequestMessage RequestMessage { get; } = RequestMessage.CheckNotNull();
     
-    /// <inheritdoc cref="IEssentialsHttpRequest.Timeout" />
+    /// <inheritdoc cref="IRequest.Timeout" />
     public TimeSpan? Timeout { get; } = Timeout;
 }
