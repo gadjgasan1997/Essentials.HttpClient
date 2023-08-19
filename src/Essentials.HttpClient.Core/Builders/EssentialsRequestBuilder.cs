@@ -2,11 +2,13 @@
 using System.Diagnostics.Contracts;
 using System.Net.Http.Headers;
 using System.Text;
+using Essentials.HttpClient.Extensions;
 using Essentials.HttpClient.Models;
 using LanguageExt;
 using LanguageExt.Common;
 using static Essentials.HttpClient.Dictionaries.KnownAuthenticationSchemes;
 using static LanguageExt.Prelude;
+#pragma warning disable CS1574 // XML comment has cref attribute that could not be resolved
 
 namespace Essentials.HttpClient.Builders;
 
@@ -28,58 +30,37 @@ internal class EssentialsRequestBuilder : IRequestBuilder
     }
     
     /// <inheritdoc cref="IRequestBuilder.WithHeader"/>
-    public IRequestBuilder WithHeader(string name, string value) => ModifyRequest(() => AddHeader(name, value));
-    
-    /// <inheritdoc cref="IRequestBuilder.WithNotEmptyHeader"/>
-    public IRequestBuilder WithNotEmptyHeader(string name, string? value)
-    {
-        return ModifyRequest(() =>
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return;
+    public IRequestBuilder WithHeader(string name, params string?[] values) =>
+        ModifyRequest(() => AddHeader(name, values));
 
-            AddHeader(name, value);
-        });
-    }
+    /// <inheritdoc cref="IRequestBuilder.WithNotEmptyHeader"/>
+    public IRequestBuilder WithNotEmptyHeader(string name, params string?[] values) =>
+        ModifyRequest(() => AddHeader(name, values.Where(value => !string.IsNullOrWhiteSpace(value))));
     
     /// <inheritdoc cref="IRequestBuilder.WithHeaders"/>
-    public IRequestBuilder WithHeaders(IEnumerable<(string, string?)> headers)
-    {
-        return ModifyRequest(() =>
-        {
-            foreach (var (name, value) in headers)
-                AddHeader(name, value);
-        });
-    }
+    public IRequestBuilder WithHeaders(params (string, IEnumerable<string?>)[] headers) =>
+        ModifyRequest(() => headers.Map(tuple => AddHeader(tuple.Item1, tuple.Item2)));
     
     /// <inheritdoc cref="IRequestBuilder.WithNotEmptyHeaders"/>
-    public IRequestBuilder WithNotEmptyHeaders(params (string, string?)[] headers)
+    public IRequestBuilder WithNotEmptyHeaders(params (string, IEnumerable<string?>)[] headers)
     {
-        return ModifyRequest(() =>
-        {
-            foreach (var (name, value) in headers)
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                    continue;
-
-                AddHeader(name, value);
-            }
-        });
+        return ModifyRequest(() => headers.Map(tuple =>
+            AddHeader(tuple.Item1, tuple.Item2.Where(value => !string.IsNullOrWhiteSpace(value)))));
     }
     
     /// <summary>
     /// Добавляет заголовок к запросу
     /// </summary>
     /// <param name="name">Название заголовка</param>
-    /// <param name="value">Значение заголовка</param>
-    private void AddHeader(string name, string? value)
+    /// <param name="values">Значения заголовка</param>
+    private void AddHeader(string name, IEnumerable<string?> values)
     {
         Contract.Assert(RequestMessage is not null, "RequestMessage must not null here!");
 
         if (string.IsNullOrWhiteSpace(name))
             return;
 
-        RequestMessage.Headers.Add(name, value);
+        RequestMessage.Headers.Add(name, values);
     }
     
     /// <inheritdoc cref="IRequestBuilder.SetTimeout"/>

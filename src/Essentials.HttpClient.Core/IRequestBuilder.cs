@@ -22,31 +22,31 @@ public interface IRequestBuilder
     /// Добавляет заголовок к запросу
     /// </summary>
     /// <param name="name">Название заголовка</param>
-    /// <param name="value">Значение заголовка</param>
+    /// <param name="values">Значения заголовка</param>
     /// <returns>Билдер</returns>
-    IRequestBuilder WithHeader(string name, string value);
+    IRequestBuilder WithHeader(string name, params string?[] values);
 
     /// <summary>
     /// Добавляет заголовок к запросу, если его значение не пустое
     /// </summary>
     /// <param name="name">Название заголовка</param>
-    /// <param name="value">Значение заголовка</param>
+    /// <param name="values">Значения заголовка</param>
     /// <returns>Билдер</returns>
-    IRequestBuilder WithNotEmptyHeader(string name, string? value);
+    IRequestBuilder WithNotEmptyHeader(string name, params string?[] values);
 
     /// <summary>
     /// Добавляет заголовки к запросу
     /// </summary>
     /// <param name="headers">Список заголовков</param>
     /// <returns>Билдер</returns>
-    IRequestBuilder WithHeaders(IEnumerable<(string, string?)> headers);
+    IRequestBuilder WithHeaders(params (string, IEnumerable<string?>)[] headers);
 
     /// <summary>
     /// Добавляет заголовки к запросу, если их значения не пустые
     /// </summary>
     /// <param name="headers">Список заголовков</param>
     /// <returns>Билдер</returns>
-    IRequestBuilder WithNotEmptyHeaders(params (string, string?)[] headers);
+    IRequestBuilder WithNotEmptyHeaders(params (string, IEnumerable<string?>)[] headers);
 
     /// <summary>
     /// Устанавливает таймаут запроса
