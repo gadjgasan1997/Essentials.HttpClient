@@ -3,7 +3,7 @@
 /// <summary>
 /// Http ответ
 /// </summary>
-public interface IEssentialsHttpResponse
+public interface IResponse
 {
     /// <summary>
     /// Сообщение ответа

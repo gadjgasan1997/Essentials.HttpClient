@@ -11,17 +11,17 @@ namespace Essentials.HttpClient.Cache.Options;
 internal class CacheOptions
 {
     /// <summary>
-    /// Опции кеша Uri
+    /// Опции кеша запросов
     /// </summary>
-    public UriCacheOptions? Uris { get; set; }
+    public RequestsCacheOptions? Requests { get; set; }
     
     /// <summary>
-    /// Опции кеша Uri
+    /// Опции кеша запросов
     /// </summary>
-    public class UriCacheOptions
+    public class RequestsCacheOptions
     {
         /// <summary>
-        /// Список Id Uri, которые не должны кешироваться
+        /// Список Id запросов, которые не должны кешироваться
         /// </summary>
         public List<string> IgnoredIdList { get; set; } = new();
     }

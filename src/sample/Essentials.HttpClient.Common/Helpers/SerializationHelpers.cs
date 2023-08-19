@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Xml;
 using System.Xml.Serialization;
+#pragma warning disable CS8604 // Possible null reference argument.
 
 namespace Essentials.HttpClient.Common.Helpers;
 

@@ -20,10 +20,10 @@ internal static class ServiceCollectionExtensions
         if (cacheOptions is null)
             return services;
 
-        if (cacheOptions.Uris is null)
+        if (cacheOptions.Requests is null)
             return services;
 
-        UriCacheService.IgnoredIdList = cacheOptions.Uris.IgnoredIdList;
+        RequestsCacheService.IgnoredIdList = cacheOptions.Requests.IgnoredIdList;
         return services;
     }
 }

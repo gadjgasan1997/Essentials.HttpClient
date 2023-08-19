@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
-using static Essentials.HttpClient.MediaTypes.Storage;
 using static Essentials.HttpClient.Sample.Server.Helpers.PersonsHelpers;
 using static Essentials.HttpClient.Sample.Server.Helpers.ResponseHelpers;
 using static Essentials.HttpClient.Common.Helpers.SerializationHelpers;
@@ -19,7 +19,7 @@ public class GetController
             return new ContentResult
             {
                 Content = SerializeInJson(GetPersons(personName, age)),
-                ContentType = Application.Json.ToString()
+                ContentType = MediaTypeNames.Application.Json
             };
         }
         catch (Exception ex)
@@ -36,7 +36,7 @@ public class GetController
             return new ContentResult
             {
                 Content = SerializeInXml(GetPersons(personName, age)),
-                ContentType = Application.Xml.ToString()
+                ContentType = MediaTypeNames.Application.Xml
             };
         }
         catch (Exception ex)

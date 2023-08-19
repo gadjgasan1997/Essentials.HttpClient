@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.Mime;
 using Essentials.HttpClient.Extensions;
 using Essentials.HttpClient.Sample.Client.Models;
 using Essentials.HttpClient.Sample.Client.Models.Requests;
-using TextPlain = Essentials.HttpClient.MediaTypes.Text.Plain;
 using static Essentials.HttpClient.Common.Helpers.SerializationHelpers;
 using static Essentials.HttpClient.Sample.Client.Dictionaries.CommonConsts;
 
@@ -37,12 +37,12 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
             Name = "as"
         };
         
-        var uriValidation = await EssentialsUriBuilder
+        var uriValidation = await UriBuilderFactory
             .CreateBuilder(SERVER_URL)
             .WithSegments("post", "GetPersonsInJson")
             .BuildAsync();
 
-        var requestValidation = await EssentialsRequestBuilder
+        var requestValidation = await RequestBuilderFactory
             .CreateBuilder(uriValidation)
             .BuildAsync<PostRequestsSamplesService>();
 
@@ -58,12 +58,12 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
             Name = "mi"
         };
         
-        var uriValidation = await EssentialsUriBuilder
+        var uriValidation = await UriBuilderFactory
             .CreateBuilder(SERVER_URL)
             .WithSegments("post", "GetPersonsInXml")
             .BuildAsync();
 
-        var requestValidation = await EssentialsRequestBuilder
+        var requestValidation = await RequestBuilderFactory
             .CreateBuilder(uriValidation)
             .BuildAsync<PostRequestsSamplesService>();
 
@@ -81,17 +81,18 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
         
         var requestString = SerializeInXml(data);
         
-        var uriValidation = await EssentialsUriBuilder
+        var uriValidation = await UriBuilderFactory
             .CreateBuilder(SERVER_URL)
             .WithSegments("post", "GetPersonsInPlainXmlText")
             .BuildAsync();
 
-        var requestValidation = await EssentialsRequestBuilder
+        var requestValidation = await RequestBuilderFactory
             .CreateBuilder(uriValidation)
+            .SetMediaType(MediaTypeNames.Text.Xml)
             .BuildAsync<PostRequestsSamplesService>();
 
         var response = await _httpClient
-            .PostStringAsync(requestValidation, requestString, new TextPlain())
+            .PostStringAsync(requestValidation, requestString)
             .ReceiveXmlContentAsync<List<Person>>();
     }
 }

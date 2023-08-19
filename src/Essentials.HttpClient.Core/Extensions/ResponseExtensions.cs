@@ -22,7 +22,7 @@ public static class ResponseExtensions
     /// <param name="validation">Объект Validation с Http ответом</param>
     /// <returns></returns>
     public static Validation<Error, HttpResponseMessage> ReceiveMessage(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
     {
         return validation.Match(
             Succ: response => response.ResponseMessage,
@@ -37,7 +37,7 @@ public static class ResponseExtensions
     /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
     /// <returns></returns>
     public static async Task<Validation<Error, HttpResponseMessage>> ReceiveMessageAsync(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
     {
         var validation = await task.ConfigureAwait(false);
         return validation.ReceiveMessage();
@@ -49,7 +49,7 @@ public static class ResponseExtensions
     /// <param name="validation">Объект Validation с Http ответом</param>
     /// <returns></returns>
     public static HttpResponseMessage? ReceiveMessageUnsafe(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
     {
         return validation.ReceiveMessage().MatchUnsafe(message => message, _ => null!);
     }
@@ -60,7 +60,7 @@ public static class ResponseExtensions
     /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
     /// <returns></returns>
     public static async Task<HttpResponseMessage?> ReceiveMessageUnsafeAsync(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
     {
         var validation = await task.ConfigureAwait(false);
         return validation.ReceiveMessageUnsafe();
@@ -72,10 +72,10 @@ public static class ResponseExtensions
     /// <param name="validation">Объект Validation с Http ответом</param>
     /// <returns></returns>
     public static async Task<Validation<Error, string>> ReceiveStringAsync(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
     {
         return await validation
-            .BindAsync(response => response.ResponseMessage.ReceiveStringAsync())
+            .BindAsync(async response => await response.ResponseMessage.ReceiveStringAsync().ConfigureAwait(false))
             .ConfigureAwait(false);
     }
     
@@ -85,7 +85,7 @@ public static class ResponseExtensions
     /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
     /// <returns></returns>
     public static async Task<Validation<Error, string>> ReceiveStringAsync(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
     {
         var validation = await task.ConfigureAwait(false);
         return await validation.ReceiveStringAsync().ConfigureAwait(false);
@@ -97,7 +97,7 @@ public static class ResponseExtensions
     /// <param name="validation">Объект Validation с Http ответом</param>
     /// <returns></returns>
     public static async Task<string?> ReceiveStringUnsafeAsync(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
     {
         return await validation
             .ReceiveStringAsync()
@@ -111,7 +111,7 @@ public static class ResponseExtensions
     /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
     /// <returns></returns>
     public static async Task<string?> ReceiveStringUnsafeAsync(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
     {
         var validation = await task.ConfigureAwait(false);
         return await validation.ReceiveStringUnsafeAsync().ConfigureAwait(false);
@@ -123,10 +123,10 @@ public static class ResponseExtensions
     /// <param name="validation">Объект Validation с Http ответом</param>
     /// <returns></returns>
     public static async Task<Validation<Error, Stream>> ReceiveStreamAsync(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
     {
         return await validation
-            .BindAsync(response => response.ResponseMessage.ReceiveStreamAsync())
+            .BindAsync(async response => await response.ResponseMessage.ReceiveStreamAsync().ConfigureAwait(false))
             .ConfigureAwait(false);
     }
     
@@ -136,7 +136,7 @@ public static class ResponseExtensions
     /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
     /// <returns></returns>
     public static async Task<Validation<Error, Stream>> ReceiveStreamAsync(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
     {
         var validation = await task.ConfigureAwait(false);
         return await validation.ReceiveStreamAsync().ConfigureAwait(false);
@@ -148,7 +148,7 @@ public static class ResponseExtensions
     /// <param name="validation">Объект Validation с Http ответом</param>
     /// <returns></returns>
     public static async Task<Stream?> ReceiveStreamUnsafeAsync(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
     {
         return await validation
             .ReceiveStreamAsync()
@@ -162,7 +162,7 @@ public static class ResponseExtensions
     /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
     /// <returns></returns>
     public static async Task<Stream?> ReceiveStreamUnsafeAsync(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
     {
         var validation = await task.ConfigureAwait(false);
         return await validation.ReceiveStreamUnsafeAsync().ConfigureAwait(false);
@@ -176,7 +176,7 @@ public static class ResponseExtensions
     /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
     public static async Task<Validation<Error, TData>> ReceiveContentAsync<TData, TDeserializer>(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
         where TDeserializer : IEssentialsDeserializer
     {
         return await validation.BindAsync(DeserializeResponseAsync<TData, TDeserializer>).ConfigureAwait(false);
@@ -190,7 +190,7 @@ public static class ResponseExtensions
     /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
     public static async Task<Validation<Error, TData>> ReceiveContentAsync<TData, TDeserializer>(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
         where TDeserializer : IEssentialsDeserializer
     {
         var validation = await task.ConfigureAwait(false);
@@ -205,7 +205,7 @@ public static class ResponseExtensions
     /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
     public static async Task<TData?> ReceiveContentUnsafeAsync<TData, TDeserializer>(
-        this Validation<Error, IEssentialsHttpResponse> validation)
+        this Validation<Error, IResponse> validation)
         where TDeserializer : IEssentialsDeserializer
     {
         return await validation
@@ -222,7 +222,7 @@ public static class ResponseExtensions
     /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
     public static async Task<TData?> ReceiveContentUnsafeAsync<TData, TDeserializer>(
-        this Task<Validation<Error, IEssentialsHttpResponse>> task)
+        this Task<Validation<Error, IResponse>> task)
         where TDeserializer : IEssentialsDeserializer
     {
         var validation = await task.ConfigureAwait(false);
@@ -237,7 +237,7 @@ public static class ResponseExtensions
     /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
     internal static async Task<Validation<Error, TData>> DeserializeResponseAsync<TData, TDeserializer>(
-        this IEssentialsHttpResponse response)
+        this IResponse response)
         where TDeserializer : IEssentialsDeserializer
     {
         return (
