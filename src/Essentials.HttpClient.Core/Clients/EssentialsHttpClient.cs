@@ -1,21 +1,23 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Essentials.Func.Utils.Extensions;
 using Essentials.HttpClient.Errors;
+using Essentials.HttpClient.Events.Args;
 using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Models;
 using LanguageExt;
 using LanguageExt.Common;
 using static LanguageExt.Prelude;
+using static Essentials.HttpClient.Events.EventsPublisher;
+using static Essentials.HttpClient.Dictionaries.ErrorMessages;
 using SystemHttpClient = System.Net.Http.HttpClient;
 using Token = System.Threading.CancellationToken;
 
 namespace Essentials.HttpClient.Clients;
 
 /// <inheritdoc cref="IEssentialsHttpClient" />
-[SuppressMessage("ReSharper", "ConditionalAccessQualifierIsNonNullableAccordingToAPIContract")]
-[SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
 [SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
 [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract")]
+[SuppressMessage("ReSharper", "InvertIf")]
 public class EssentialsHttpClient : IEssentialsHttpClient
 {
     private readonly IMetricsService _metrics;
@@ -73,9 +75,11 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         HttpMethod httpMethod,
         Token? token = null)
     {
-        // TODO Log
         if (request is null)
-            return Error.New("Передан пустой запрос");
+        {
+            RaiseOnBadRequest(new BadRequestEventArgs(EmptyRequest));
+            return Error.New(EmptyRequest);
+        }
         
         return await SendRequestAsync(request, httpMethod, token: token).ConfigureAwait(false);
     }
@@ -94,12 +98,17 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         HttpMethod httpMethod,
         Token? token = null)
     {
-        // TODO Log
         if (request is null)
-            return Error.New("Передан пустой запрос");
-        
+        {
+            RaiseOnBadRequest(new BadRequestEventArgs(EmptyRequest));
+            return Error.New(EmptyRequest);
+        }
+
         if (content is null)
-            return Error.New("Передано пустое содержимое запроса");
+        {
+            RaiseOnBadRequest(new BadRequestEventArgs(EmptyContent));
+            return Error.New(EmptyContent);
+        }
 
         return await SendRequestAsync(request, httpMethod, content, token).ConfigureAwait(false);
     }
@@ -120,12 +129,14 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     {
         return await CreateClient(request).BindAsync(SendFunc).ConfigureAwait(false);
 
-        async Task<Validation<Error, IResponse>> SendFunc(SystemHttpClient client) =>
-            await SendWithMetricsAsync(
+        async Task<Validation<Error, IResponse>> SendFunc(SystemHttpClient client)
+        {
+            return await SendWithMetricsAsync(
                     request: request,
                     method: httpMethod,
                     async () => await SendAsync(request, client, httpMethod, httpContent, token).ConfigureAwait(false))
                 .ConfigureAwait(false);
+        }
     }
 
     /// <summary>
@@ -168,8 +179,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         HttpContent? httpContent = null,
         Token? token = null)
     {
-        // TODO Log
-        HttpResponseMessage? responseMessage = null;
+        HttpResponseMessage responseMessage;
         HttpRequestMessage? requestMessage = null;
         try
         {
@@ -200,12 +210,12 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         }
         catch (TimeoutException ex)
         {
-            responseMessage?.Dispose();
+            RaiseOnErrorSend(new ErrorSendRequestEventArgs(request, ex, string.Format(TimeoutError, ex.Message)));
             return Error.New(ex);
         }
         catch (Exception ex)
         {
-            responseMessage?.Dispose();
+            RaiseOnErrorSend(new ErrorSendRequestEventArgs(request, exception: ex));
             return Error.New(ex);
         }
         finally
@@ -215,12 +225,20 @@ public class EssentialsHttpClient : IEssentialsHttpClient
 
         if (!responseMessage.IsSuccessStatusCode)
         {
+            RaiseOnBadStatusCode(
+                new BadStatusCodeEventArgs(
+                    responseMessage.StatusCode,
+                    request,
+                    responseMessage));
+            
             return BadStatusCodeError.New(
                 responseMessage,
-                $"Ошибочный Http код ответа: '{responseMessage.StatusCode}'.");
+                string.Format(BadStatusCode, responseMessage.StatusCode));
         }
 
-        return new Response(responseMessage);
+        var response = new Response(responseMessage);
+        RaiseOnSuccessSend(new SuccessSendRequestEventArgs(request, response));
+        return response;
     }
     
     /// <summary>
@@ -238,7 +256,13 @@ public class EssentialsHttpClient : IEssentialsHttpClient
                         client.Timeout = request.Timeout.Value;
                     return client;
                 },
-                Fail: exception => Fail<Error, SystemHttpClient>(exception));
+                Fail: exception =>
+                {
+                    var errorMessage = string.Format(ErrorCreateClient, exception.Message);
+                    
+                    RaiseOnErrorSend(new ErrorSendRequestEventArgs(request, exception, errorMessage));
+                    return Fail<Error, SystemHttpClient>(Error.New(errorMessage, exception));
+                });
     }
 
     #endregion

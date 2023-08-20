@@ -236,14 +236,14 @@ public static class ResponseExtensions
     /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
     /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
     /// <returns></returns>
-    internal static async Task<Validation<Error, TData>> DeserializeResponseAsync<TData, TDeserializer>(
+    private static async Task<Validation<Error, TData>> DeserializeResponseAsync<TData, TDeserializer>(
         this IResponse response)
         where TDeserializer : IEssentialsDeserializer
     {
         return (
                 await response.ResponseMessage.ReceiveStreamAsync().ConfigureAwait(false),
                 SerializersCreator.GetDeserializer<TDeserializer>())
-            .Apply((stream, deserializer) => deserializer.DeserializeStream<TData>(stream))
+            .Apply((stream, deserializer) => deserializer.DeserializeStream<TData>(response, stream))
             .Bind(validation => validation);
     }
 }

@@ -17,12 +17,12 @@ public interface IUriBuilder
     /// <summary>
     /// Билдер
     /// </summary>
-    public UriBuilder? UriBuilder { get; }
+    public UriBuilder UriBuilder { get; }
     
     /// <summary>
     /// Параметры запроса
     /// </summary>
-    public NameValueCollection? Query { get; }
+    public NameValueCollection Query { get; }
 
     /// <summary>
     /// Добавляет сегмент к адресу

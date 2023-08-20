@@ -29,7 +29,7 @@ internal static class SerializersCreator
     public static void AddOrUpdateSerializer(ISerializer serializer)
     {
         // TODO Log
-        var key = serializer.GetType().FullName!;
+        var key = serializer.GetType().FullName ?? string.Empty;
         if (!_serializers.TryGetValue(key, out var existingSerializer))
         {
             _serializers.TryAdd(key, serializer);
@@ -46,7 +46,7 @@ internal static class SerializersCreator
     public static void AddOrUpdateDeserializer(IDeserializer deserializer)
     {
         // TODO Log
-        var key = deserializer.GetType().FullName!;
+        var key = deserializer.GetType().FullName ?? string.Empty;
         if (!_deserializers.TryGetValue(key, out var existingDeserializer))
         {
             _deserializers.TryAdd(key, deserializer);
@@ -64,7 +64,7 @@ internal static class SerializersCreator
     public static Validation<Error, ISerializer> GetSerializer<TSerializer>()
     {
         // TODO Log
-        var key = typeof(TSerializer).FullName!;
+        var key = typeof(TSerializer).FullName ?? string.Empty;
         return Try(() => _serializers[key])
             .ToValidation(exception =>
                 Error.New($"Во время получения сериалайзера с ключом '{key}' произошло исключение",
@@ -79,7 +79,7 @@ internal static class SerializersCreator
     public static Validation<Error, IDeserializer> GetDeserializer<TDeserializer>()
     {
         // TODO Log
-        var key = typeof(TDeserializer).FullName!;
+        var key = typeof(TDeserializer).FullName ?? string.Empty;
         return Try(() => _deserializers[key])
             .ToValidation(exception =>
                 Error.New($"Во время получения десериалайзера с ключом '{key}' произошло исключение",

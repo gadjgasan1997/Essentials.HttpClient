@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Essentials.HttpClient.Builders;
 using Essentials.HttpClient.Cache;
+using Essentials.HttpClient.Events.Args;
 using Essentials.HttpClient.Extensions;
 using LanguageExt;
 using LanguageExt.Common;
+using static Essentials.HttpClient.Events.EventsPublisher;
 
 namespace Essentials.HttpClient;
 
@@ -27,7 +29,7 @@ public static class RequestBuilderFactory
         }
         catch (Exception ex)
         {
-            // TODO Log
+            RaiseOnErrorCreateRequest(new ErrorCreateRequestEventArgs(uri, ex));
             return new FailRequestBuilder(ex);
         }
     }

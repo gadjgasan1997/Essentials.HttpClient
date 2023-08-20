@@ -1,12 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using System.Text;
+using Essentials.HttpClient.Events.Args;
 using Essentials.HttpClient.Extensions;
 using Essentials.HttpClient.Models;
 using LanguageExt;
 using LanguageExt.Common;
 using static Essentials.HttpClient.Dictionaries.KnownAuthenticationSchemes;
 using static LanguageExt.Prelude;
+using static Essentials.HttpClient.Dictionaries.ErrorMessages;
+using static Essentials.HttpClient.Events.EventsPublisher;
 #pragma warning disable CS1574 // XML comment has cref attribute that could not be resolved
 
 namespace Essentials.HttpClient.Builders;
@@ -80,15 +83,22 @@ internal class EssentialsRequestBuilder : IRequestBuilder
     /// <inheritdoc cref="IRequestBuilder.WithBasicAuthentication"/>
     public IRequestBuilder WithBasicAuthentication(string userName, string password)
     {
-        var authenticationString = Try(() => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{userName}:{password}")))
-            .Match(
-                Succ: @string => @string,
-                Fail: exception =>
-                {
-                    // TODO Log
-                    
-                    return string.Empty;
-                });
+        string authenticationString;
+        try
+        {
+            var bytes = Encoding.ASCII.GetBytes($"{userName}:{password}");
+            authenticationString = Convert.ToBase64String(bytes);
+        }
+        catch (Exception exception)
+        {
+            RaiseOnErrorCreateRequest(
+                new ErrorCreateRequestEventArgs(
+                    _uri,
+                    exception,
+                    "Во время получения авторизационной строки из логина и пароля произошло исключение"));
+
+            return this;
+        }
 
         return WithAuthentication(BASIC, authenticationString);
     }
@@ -121,13 +131,12 @@ internal class EssentialsRequestBuilder : IRequestBuilder
     /// <inheritdoc cref="IRequestBuilder.Build"/>
     public Validation<Error, IRequest> Build(string? clientName = null)
     {
-        // TODO Rename default client
-        return Try(() => BuildPrivate(clientName ?? nameof(IRequestBuilder)))
+        return Try(() => BuildPrivate(clientName ?? nameof(IEssentialsHttpClient)))
             .Match(
                 Succ: validation => validation,
                 Fail: exception =>
                 {
-                    // TODO Log
+                    RaiseOnErrorCreateRequest(new ErrorCreateRequestEventArgs(_uri, exception));
                     return Error.New(exception);
                 });
     }
@@ -149,8 +158,7 @@ internal class EssentialsRequestBuilder : IRequestBuilder
     /// <returns>Запрос</returns>
     private Validation<Error, IRequest> BuildPrivate(string clientName)
     {
-        // TODO Log Trace
-        return new Request(
+        var request = new Request(
             clientName,
             _uri,
             _mediaTypeHeader,
@@ -158,6 +166,9 @@ internal class EssentialsRequestBuilder : IRequestBuilder
             _headers,
             _modifyRequestActions,
             _timeout);
+        
+        RaiseOnSuccessCreateRequest(new SuccessCreateRequestEventArgs(request));
+        return request;
     }
 
     /// <summary>
@@ -167,14 +178,15 @@ internal class EssentialsRequestBuilder : IRequestBuilder
     /// <returns>Билдер</returns>
     private EssentialsRequestBuilder ModifyRequest(Action modifyRequestAction)
     {
-        // TODO Log if fail
-        _ = Try(() =>
-            {
-                modifyRequestAction();
-                return this;
-            })
-            .Try()
-            .IfFail(_ => { });
+        try
+        {
+            modifyRequestAction();
+        }
+        catch (Exception ex)
+        {
+            var errorMessage = string.Format(ErrorModifyRequest, ex.Message);
+            RaiseOnErrorCreateRequest(new ErrorCreateRequestEventArgs(_uri, ex, errorMessage));
+        }
         
         return this;
     }
