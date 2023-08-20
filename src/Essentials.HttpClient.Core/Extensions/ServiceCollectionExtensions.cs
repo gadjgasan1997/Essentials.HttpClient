@@ -1,5 +1,6 @@
 ﻿using Essentials.HttpClient.Cache.Extensions;
 using Essentials.HttpClient.Clients;
+using Essentials.HttpClient.Logging;
 using Essentials.HttpClient.Metrics.Extensions;
 using Essentials.HttpClient.Options;
 using Essentials.HttpClient.Serialization;
@@ -23,13 +24,17 @@ public static class ServiceCollectionExtensions
     /// <param name="configuration">Опции конфигурации</param>
     /// <param name="serializers">Список сериалайзеров</param>
     /// <param name="deserializers">Список десериалайзеров</param>
+    /// <param name="loggingOptions">Опции логирования</param>
     /// <returns></returns>
     public static IServiceCollection ConfigureEssentialsHttpClient(
         this IServiceCollection services,
         IConfiguration configuration,
         List<IEssentialsSerializer>? serializers = null,
-        List<IEssentialsDeserializer>? deserializers = null)
+        List<IEssentialsDeserializer>? deserializers = null,
+        LoggingOptions? loggingOptions = null)
     {
+        new LogSubscriber(loggingOptions).SubscribeToLogEvents();
+        
         services.AddHttpClient(nameof(IEssentialsHttpClient));
         
         AddOrUpdateSerializers(serializers);

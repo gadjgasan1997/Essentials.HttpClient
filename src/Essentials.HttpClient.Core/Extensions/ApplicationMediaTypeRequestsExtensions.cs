@@ -11,6 +11,7 @@ namespace Essentials.HttpClient.Extensions;
 /// Методы расширения для отправки Http запросов
 /// </summary>
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class ApplicationMediaTypeRequestsExtensions
 {
     /// <summary>

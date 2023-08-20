@@ -1,10 +1,14 @@
-﻿using System.Text.Json;
+﻿using NLog;
+using System.Text.Json;
 using System.Xml;
 using Essentials.HttpClient.Extensions;
+using Essentials.HttpClient.Logging;
 using Essentials.HttpClient.Sample.Client;
 using Essentials.HttpClient.Sample.Client.Implementations;
 using Essentials.HttpClient.Serialization;
 using Essentials.HttpClient.Serialization.Implementations;
+
+LogManager.Setup(setupBuilder => setupBuilder.LoadConfigurationFromFile("nlog.config"));
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,14 +30,22 @@ builder.Host.ConfigureServices(services =>
             PropertyNameCaseInsensitive = true
         });
 
+    // Через объект loggingOptions можно переопределять опции логирования,
+    // регистрируя свои обработчики событий, позволяющие по своему их логировать
+    var loggingOptions = new LoggingOptions
+    {
+        ErrorCreateRequestHandler = _ => Console.WriteLine("Test Override ErrorCreateRequestHandler!")
+    };
+    
     services.ConfigureEssentialsHttpClient(
         builder.Configuration,
-        new List<IEssentialsSerializer> {customXmlSerializer},
-        new List<IEssentialsDeserializer>
+        serializers: new List<IEssentialsSerializer> {customXmlSerializer},
+        deserializers: new List<IEssentialsDeserializer>
         {
             customXmlSerializer,
             customJsonDeserializer
-        });
+        },
+        loggingOptions: loggingOptions);
 
     services.AddTransient<IGetRequestsSamplesService, GetRequestsSamplesService>();
     services.AddTransient<IHeadRequestsSamplesService, HeadRequestsSamplesService>();

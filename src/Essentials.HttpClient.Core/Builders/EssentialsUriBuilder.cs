@@ -136,7 +136,7 @@ internal class EssentialsUriBuilder : IUriBuilder
         }
         catch (Exception ex)
         {
-            var errorMessage = $"Во время построения адреса запроса произошла ошибка. Некорректный адрес: '{UriBuilder}'.";
+            var errorMessage = string.Format(ErrorCreateUri, $"Некорректный адрес: '{UriBuilder}'");
             
             RaiseOnErrorCreateUri(new ErrorCreateUriEventArgs(UriBuilder.ToString(), ex, errorMessage));
             return Fail<Error, Uri>(errorMessage);

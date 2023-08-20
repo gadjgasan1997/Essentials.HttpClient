@@ -67,13 +67,13 @@ internal static class SerializationExtensions
 
         Error OnNone()
         {
-            RaiseOnDeserializeError(new DeserializeErrorEventArgs(response, stream, DeserializeNull));
+            RaiseOnDeserializeError(new DeserializeErrorEventArgs(response, DeserializeNull));
             return Error.New(DeserializeNull);
         }
         
         Error OnFail(Exception exception)
         {
-            RaiseOnDeserializeError(new DeserializeErrorEventArgs(response, stream, exception));
+            RaiseOnDeserializeError(new DeserializeErrorEventArgs(response, exception));
             return Error.New(exception);
         }
     }
