@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B75976E1-DBCD-4707-BD59-FCB97B0131AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "publsih", "publsih", "{F2CD02C0-EE7B-46D0-85B4-45D9CE4BDB5D}"
+	ProjectSection(SolutionItems) = preProject
+		publish\publish.bat = publish\publish.bat
+		publish\settings.bat = publish\settings.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solutionItems", "solutionItems", "{A9B35025-474E-425C-806E-2E0E6F437ABA}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+		.idea\.idea.Essentials.HttpClient\.idea\workspace.xml = .idea\.idea.Essentials.HttpClient\.idea\workspace.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B7A9DABF-B8E8-4D4B-A9E7-2BE64B8DEE87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Essentials.HttpClient.Core", "src\Essentials.HttpClient.Core\Essentials.HttpClient.Core.csproj", "{C4646449-94B3-4622-838F-C3ECB61F665B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Essentials.HttpClient.Sample.Client", "src\sample\Essentials.HttpClient.Sample.Client\Essentials.HttpClient.Sample.Client.csproj", "{D3E0DE20-1F2E-4F3A-8663-2B1723A8ED73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Essentials.HttpClient.Tests", "tests\Essentials.HttpClient.Tests\Essentials.HttpClient.Tests.csproj", "{20AB493E-828D-4905-92CA-B24D93E7EAC3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{10C18428-EA9F-42E2-B415-A9C216C1EAAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Essentials.HttpClient.Sample.Server", "src\sample\Essentials.HttpClient.Sample.Server\Essentials.HttpClient.Sample.Server.csproj", "{92DC6123-1753-4EA0-B4BB-F055070B5D9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Essentials.HttpClient.Common", "src\sample\Essentials.HttpClient.Common\Essentials.HttpClient.Common.csproj", "{7F477948-6803-4C06-91D1-8FA558E37D71}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C4646449-94B3-4622-838F-C3ECB61F665B} = {B75976E1-DBCD-4707-BD59-FCB97B0131AE}
+		{20AB493E-828D-4905-92CA-B24D93E7EAC3} = {B7A9DABF-B8E8-4D4B-A9E7-2BE64B8DEE87}
+		{10C18428-EA9F-42E2-B415-A9C216C1EAAD} = {B75976E1-DBCD-4707-BD59-FCB97B0131AE}
+		{D3E0DE20-1F2E-4F3A-8663-2B1723A8ED73} = {10C18428-EA9F-42E2-B415-A9C216C1EAAD}
+		{92DC6123-1753-4EA0-B4BB-F055070B5D9E} = {10C18428-EA9F-42E2-B415-A9C216C1EAAD}
+		{7F477948-6803-4C06-91D1-8FA558E37D71} = {10C18428-EA9F-42E2-B415-A9C216C1EAAD}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4646449-94B3-4622-838F-C3ECB61F665B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4646449-94B3-4622-838F-C3ECB61F665B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4646449-94B3-4622-838F-C3ECB61F665B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4646449-94B3-4622-838F-C3ECB61F665B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3E0DE20-1F2E-4F3A-8663-2B1723A8ED73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3E0DE20-1F2E-4F3A-8663-2B1723A8ED73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3E0DE20-1F2E-4F3A-8663-2B1723A8ED73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3E0DE20-1F2E-4F3A-8663-2B1723A8ED73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20AB493E-828D-4905-92CA-B24D93E7EAC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20AB493E-828D-4905-92CA-B24D93E7EAC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20AB493E-828D-4905-92CA-B24D93E7EAC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20AB493E-828D-4905-92CA-B24D93E7EAC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92DC6123-1753-4EA0-B4BB-F055070B5D9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92DC6123-1753-4EA0-B4BB-F055070B5D9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92DC6123-1753-4EA0-B4BB-F055070B5D9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92DC6123-1753-4EA0-B4BB-F055070B5D9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F477948-6803-4C06-91D1-8FA558E37D71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F477948-6803-4C06-91D1-8FA558E37D71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F477948-6803-4C06-91D1-8FA558E37D71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F477948-6803-4C06-91D1-8FA558E37D71}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
