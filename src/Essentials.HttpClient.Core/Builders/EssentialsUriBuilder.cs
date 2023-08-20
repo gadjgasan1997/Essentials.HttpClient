@@ -2,10 +2,13 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Web;
+using Essentials.HttpClient.Events.Args;
 using Essentials.HttpClient.Extensions;
 using LanguageExt;
 using LanguageExt.Common;
 using static LanguageExt.Prelude;
+using static Essentials.HttpClient.Dictionaries.ErrorMessages;
+using static Essentials.HttpClient.Events.EventsPublisher;
 
 namespace Essentials.HttpClient.Builders;
 
@@ -14,6 +17,8 @@ namespace Essentials.HttpClient.Builders;
 internal class EssentialsUriBuilder : IUriBuilder
 {
     private const string SEPARATOR = "/";
+
+    private readonly Uri _originalUri;
 
     /// <inheritdoc cref="IUriBuilder.Segments" />
     public List<string> Segments { get; }
@@ -28,6 +33,8 @@ internal class EssentialsUriBuilder : IUriBuilder
     {
         ArgumentNullException.ThrowIfNull(uri);
 
+        _originalUri = uri;
+        
         UriBuilder = new UriBuilder(uri);
         Query = HttpUtility.ParseQueryString(UriBuilder.Query);
         Segments = UriBuilder.Path.Split(SEPARATOR).Where(@string => !string.IsNullOrWhiteSpace(@string)).ToList();
@@ -124,15 +131,15 @@ internal class EssentialsUriBuilder : IUriBuilder
             var uri = new Uri(UriBuilder.ToString());
             uri.Validate();
             
-            // TODO Log Trace
+            RaiseOnSuccessCreateUri(new SuccessCreateUriEventArgs(uri));
             return uri;
         }
         catch (Exception ex)
         {
-            var message = $"Во время построения адреса запроса произошла ошибка. Некорректный адрес: '{UriBuilder}'.";
+            var errorMessage = $"Во время построения адреса запроса произошла ошибка. Некорректный адрес: '{UriBuilder}'.";
             
-            // TODO Log
-            return Fail<Error, Uri>(message);
+            RaiseOnErrorCreateUri(new ErrorCreateUriEventArgs(UriBuilder.ToString(), ex, errorMessage));
+            return Fail<Error, Uri>(errorMessage);
         }
     }
 
@@ -146,15 +153,19 @@ internal class EssentialsUriBuilder : IUriBuilder
     /// <returns></returns>
     private EssentialsUriBuilder ModifyRequest(Action modifyAddressAction)
     {
-        // TODO Log if fail
-        _ = Try(() =>
-            {
-                modifyAddressAction();
-                return this;
-            })
-            .Try()
-            .IfFail(_ => { });
-        
+        try
+        {
+            modifyAddressAction();
+        }
+        catch (Exception exception)
+        {
+            RaiseOnErrorCreateUri(
+                new ErrorCreateUriEventArgs(
+                    _originalUri.ToString(),
+                    exception,
+                    string.Format(ErrorModifyUri, exception.Message)));
+        }
+
         return this;
     }
 }

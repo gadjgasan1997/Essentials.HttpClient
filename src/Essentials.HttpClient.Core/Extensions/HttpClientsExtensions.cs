@@ -261,7 +261,7 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
-        return await BuildStreamContent<TData, TSerializer>(data)
+        return await BuildStreamContent<TData, TSerializer>(request, data)
             .BindAsync(async content =>
                 await httpClient.PostAsync(request, content, token).ConfigureAwait(false))
             .ConfigureAwait(false);
@@ -350,7 +350,7 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
-        return await BuildStreamContent<TData, TSerializer>(data)
+        return await BuildStreamContent<TData, TSerializer>(request, data)
             .BindAsync(async content =>
                 await httpClient.PutAsync(request, content, token).ConfigureAwait(false))
             .ConfigureAwait(false);
@@ -439,7 +439,7 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
-        return await BuildStreamContent<TData, TSerializer>(data)
+        return await BuildStreamContent<TData, TSerializer>(request, data)
             .BindAsync(async content =>
                 await httpClient.PatchAsync(request, content, token).ConfigureAwait(false))
             .ConfigureAwait(false);
@@ -495,15 +495,18 @@ public static class HttpClientsExtensions
     /// <summary>
     /// Создает содержимое запроса с потоком из данных
     /// </summary>
+    /// <param name="request">Запрос</param>
     /// <param name="data">Данные</param>
     /// <typeparam name="TData">Тип данных</typeparam>
     /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
     /// <returns></returns>
-    private static Validation<Error, StreamContent> BuildStreamContent<TData, TSerializer>(TData data)
+    private static Validation<Error, StreamContent> BuildStreamContent<TData, TSerializer>(
+        IRequest request,
+        TData data)
     {
         return SerializersCreator
             .GetSerializer<TSerializer>()
-            .Bind(serializer => serializer.SerializeObject(data))
+            .Bind(serializer => serializer.SerializeObject(request, data))
             .Bind<StreamContent>(stream => new StreamContent(stream));
     }
 }
