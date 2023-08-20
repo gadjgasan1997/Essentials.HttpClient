@@ -10,32 +10,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3b99f82c-823e-422e-9a45-b0c2d2f47450" name="Changes" comment="Изменил методы добавления заголовков к запросу">
-      <change afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Builders/FailRequestBuilder.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Helpers/HttpRequestsHelpers.cs" afterDir="false" />
+    <list default="true" id="3b99f82c-823e-422e-9a45-b0c2d2f47450" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.Essentials.HttpClient/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Logging/LogSubscriber.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Logging/LoggingOptions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Client/nlog.config" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Essentials.HttpClient/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Essentials.HttpClient/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Essentials.HttpClient.Core.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Essentials.HttpClient.Core.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Builders/EssentialsUriBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Builders/EssentialsUriBuilder.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Events/Args/DeserializeErrorEventArgs.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Events/Args/DeserializeErrorEventArgs.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Extensions/ApplicationMediaTypeRequestsExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Extensions/ApplicationMediaTypeRequestsExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Extensions/TextMediaTypeRequestsExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Extensions/TextMediaTypeRequestsExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/IEssentialsHttpClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/IEssentialsHttpClient.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/IRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/IRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/IRequestBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/IRequestBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/MediaTypes/Application/Json.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/MediaTypes/Application/Xml.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/MediaTypes/Interfaces/IMediaType.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/MediaTypes/Storage.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/MediaTypes/Text/Plain.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/MediaTypes/Text/Xml.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Models/Request.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Models/Request.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/RequestBuilderFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/RequestBuilderFactory.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Client/Implementations/PostRequestsSamplesService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Client/Implementations/PostRequestsSamplesService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Serialization/Extensions/SerializationExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/Serialization/Extensions/SerializationExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/UriBuilderFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Essentials.HttpClient.Core/UriBuilderFactory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Client/Essentials.HttpClient.Sample.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Client/Essentials.HttpClient.Sample.Client.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Client/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Client/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Server/Controllers/GetController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Server/Controllers/GetController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Server/Controllers/PostController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Server/Controllers/PostController.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -59,7 +47,7 @@
     <option name="PREVIEW_PUSH_PROTECTED_ONLY" value="true" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/asyncMethodsFix" />
+        <entry key="$PROJECT_DIR$" value="develop" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -85,6 +73,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/74abc636fb0a4fe1baf1355b8446fc402600/f6/221fcc11/ValidationExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7e62198beab24380bbac29171862d1d8adf10/a2/6beba9a5/JsonSerializer.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8a5c4f46aeee4106855ab9e28f1a114cc43888/7c/56cfed0c/Func`1.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8a5c4f46aeee4106855ab9e28f1a114cc43888/a2/b233abc7/SpanAction`2.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8a5c4f46aeee4106855ab9e28f1a114cc43888/a4/6fad9431/EventHandler`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8a5c4f46aeee4106855ab9e28f1a114cc43888/d7/555a4e8b/ICollection`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8da463d3606f4128a83a1ddec43210675000/85/97881f9e/ValidationExtensions.cs" root0="SKIP_HIGHLIGHTING" />
@@ -113,12 +102,14 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ab1622aeec2f42379fd43b2156b25fa5160878/27/c13b1216/JsonSerializer.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/b9de6681789f44ec88c4e98b13729d9c7a0888/63/366cd59c/XmlSerializer.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/130bd5644213c7ca75ecd4216db0f3de6ce41dde4defb5bf358258d4b93/Environment.CoreCLR.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/13e79b2a7b78394ccf591d3454bff5bfb14e692da011a7e38b66c2312b365a/String.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1c5428c7c48240f3b87140d85937a11069880/_1c664/MediaTypeNames.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1c898c4ed5e46bd5369e25ca4eb8ac516d5c82f70a3d6fd3614f79a56c1be5/HttpConnectionHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1f572b47fedd7b82c90d758d2f5d4c490ea8a818f12928073449690694f5c68/HttpConnection.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/22bf657f8ad5b28978e7ed47613afd23c3dc53fa2d51dff4ad2b82fb77e/HttpMessageInvoker.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2565b9d99fdde488bc7801b84387b2cc864959cfb63212e1ff576fc9c6bb7e/CancellationToken.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/261e79c5b946ae4a389b423778ad3af3af955599327f11b2cb58edeac4e6/HttpRequestMessage.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/27ae63546b9c0106dde951592599054e7dff06f1227b29ab9f0ed46f4bef4da/UriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2de49f3a72b1d7c9a5e7bc8c62c618ead45d8ff5e42435ceff4b89a7318/SocketsHttpHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2ef7859cb65fcd674d6c5d342e613167685baeecd1e17b8e5f51d98d7fffac25/MediaTypeHeaderValue.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3146526cace5c153434b15691561ac6ba930a9e7453c78d803b9b6fa41a65/StringContent.cs" root0="SKIP_HIGHLIGHTING" />
@@ -144,19 +135,23 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/79f2d20a832ff69d325178ce5bd272c8bd4c44f7ea505fe85e85f5cc63df9/Task.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7c3733e63ee5f6aee38e1aefabad8466fc311c9141c3a697c1d98225c49bfb/HttpContent.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7d97cfd6ca816439ef9746ae3e75af1bfa6249dfb97e177b2f01b66d9cde7/ContentResult.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8230f2798fd5ad80ef10c9ea9b333ed3c58dafcdefc56aa09ddfbd168e56bf15/ArgumentOutOfRangeException.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8810ce80846dad737d7986aaa3f0836f22c04f155997e25bbda69d1452bf48/HttpRequestOptions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/88678e65a8b5e8243299e49dd2e4580b5359014a2311708287d851a3857bb3/Http2Connection.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/88df157ffd97de15429b4ac1f483ea7acc146982653e2cd118097ed3e4292/Contracts.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8a5c4f46aeee4106855ab9e28f1a114cc43888/_e3efc/ConfigureAwaitOptions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8a7b359f4d07e1923b2e1d727c6a3fdfdfd9a783c22c0934ea43f806fbfdc/JsonSerializer.Read.Span.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/913f14c7813a7557302b974688250d49a9bec46cd5ad082e99910f0d211be/CodePageDataItem.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/92babe8112867ada958d7443496d6510f9173f428dbe621a94a6d174937/IHttpClientFactory.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/97deec18ecbbb12f30d72262882c737197873aaaa156f8c6c3341e0b18b1bc0/ActiveHandlerTrackingEntry.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/9bcbad825277a85a3f997143b924fae3744171fade3c30f287b2109ae26b/ArgumentException.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/9dd7727f135d40a35779fb1968654f26bc5efee698bbf1883447fd2e43a2eaf/HttpClientFactoryOptions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a1fef6b6f7d8e2b0465141ae068c579f6e025d5edd4d69657d8e0af43bf9f/String.CoreCLR.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a33ef23255814b8735d8e319e4266860e646385925e88c8989b5a5aaa9048/AuthenticationHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b42552e83c9f219959117ecbe44fb05c776abf7c0667af284c8bcea37ce2d/DefaultHttpClientFactory.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bd1d5c50194fea68ff3559c160230b0ab50f5acf4ce3061bffd6d62958e2182/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c19378de8d1a63bac6d465c383f69897753aee6f5f2b1f95bd81a19173b8234c/ByteArrayContent.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c1c946eaa6d8ddaaea1b63e936ca8ed2791d9316c5b025a41d445891e8a59ecd/DefaultInterpolatedStringHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c439425da351c75ac7d966a1cc8324b51a9c471865af79d2f2f3fcb65e392/HttpClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c813e7bdcabcc4782d1013e4289b2d719d95f48e14ef45fb96c456da91fdc9/TaskAwaiter.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/cb359df82c4395cc7aa30b2a453d8a6665aeb15c7511f33515fe7dcd52b06d/HttpConnectionPoolManager.cs" root0="SKIP_HIGHLIGHTING" />
@@ -174,13 +169,27 @@
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Builders/EssentialsUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Cache/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Cache/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Cache/Options/CacheOptions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Cache/Options/CacheOptions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
@@ -188,25 +197,76 @@
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Clients/EssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/EssentialsRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/EssentialsUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Events/Args/DeserializeErrorEventArgs.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ApplicationMediaTypeRequestsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ApplicationMediaTypeRequestsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ApplicationMediaTypeRequestsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ApplicationMediaTypeRequestsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ApplicationMediaTypeRequestsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ApplicationMediaTypeRequestsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ApplicationMediaTypeRequestsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ApplicationMediaTypeRequestsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpClientsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpResponseMessageExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpResponseMessageExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpResponseMessageExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpResponseMessageExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpResponseMessageExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/HttpResponseMessageExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ResponseExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/ServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/SpecificDeserializerResponseExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/SpecificDeserializerResponseExtensions.cs" root0="SKIP_HIGHLIGHTING" />
@@ -215,9 +275,12 @@
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/TextMediaTypeRequestsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/TextMediaTypeRequestsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/TextMediaTypeRequestsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Extensions/TextMediaTypeRequestsExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IEssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IEssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Essentials.HttpClient.Core/IEssentialsHttpClient.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IEssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IEssentialsHttpClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IEssentialsHttpRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IEssentialsHttpRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IEssentialsHttpRequest.cs" root0="SKIP_HIGHLIGHTING" />
@@ -225,16 +288,80 @@
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IRequestBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/IUriBuilder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Models/EssentialsHttpRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Models/EssentialsHttpRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Models/EssentialsHttpRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Models/Request.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Models/Request.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Options/ClientsOptions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Options/ClientsOptions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/RequestBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/RequestBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/RequestBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/RequestBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/RequestBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/RequestBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/RequestBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/RequestBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/RequestBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/RequestBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/RequestBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Extensions/SerializationExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Extensions/SerializationExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Extensions/SerializationExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Extensions/SerializationExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Extensions/SerializationExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Extensions/SerializationExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Extensions/SerializationExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Extensions/SerializationExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Extensions/SerializationExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Extensions/SerializationExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Extensions/SerializationExtensions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Implementations/NativeJsonSerializer.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Implementations/NewtonsoftJsonSerializer.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/Implementations/XmlSerializer.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/SerializersCreator.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/Serialization/SerializersCreator.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/UriBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/UriBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/UriBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/UriBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/UriBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/UriBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/Essentials.HttpClient.Core/UriBuilderFactory.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Common/Helpers/SerializationHelpers.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/GetRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
@@ -248,10 +375,21 @@
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/PostRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/PostRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/PostRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/PostRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Implementations/PostRequestsSamplesService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Models/Person.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Program.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Program.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Program.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Client/Program.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Server/Controllers/GetController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Server/Controllers/GetController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Server/Controllers/PostController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Server/Controllers/PostController.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/gadjg/source/repos/Essentials.HttpClient/main/src/sample/Essentials.HttpClient.Sample.Server/Controllers/PostController.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -277,7 +415,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "feature/structureRefactoring",
+    "git-widget-placeholder": "feature/logging",
     "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -575,7 +713,15 @@
       <option name="project" value="LOCAL" />
       <updated>1692408520140</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Реализовал систему событий">
+      <option name="closed" value="true" />
+      <created>1692531626885</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1692531626885</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -663,30 +809,19 @@
     <MESSAGE value="Переименовал ряд классов, вынес создание билдеров в фабрики" />
     <MESSAGE value="Дополнил методы добавления заголовков к запросу" />
     <MESSAGE value="Изменил методы добавления заголовков к запросу" />
-    <option name="LAST_COMMIT_MESSAGE" value="Изменил методы добавления заголовков к запросу" />
+    <MESSAGE value="Реализовал систему событий" />
+    <option name="LAST_COMMIT_MESSAGE" value="Реализовал систему событий" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/src/sample/Essentials.HttpClient.Sample.Client/Implementations/PostRequestsSamplesService.cs</url>
-          <line>72</line>
-          <properties documentPath="C:\Users\gadjg\source\repos\Essentials.HttpClient\main\src\sample\Essentials.HttpClient.Sample.Client\Implementations\PostRequestsSamplesService.cs" initialLine="72" containingFunctionPresentation="Method 'RunSample_GetPersonsInXml'">
-            <startOffsets>
-              <option value="2529" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2530" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="125" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="Type#LanguageExt.DataTypes.Serialisation.ValidationData`2" memberName="Success" />
       </pinned-members>
     </pin-to-top-manager>
+    <watches-manager>
+      <configuration name="LaunchSettings">
+        <watch expression="persons2" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

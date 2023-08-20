@@ -62,7 +62,7 @@ public class PostController : Controller
             return new ContentResult
             {
                 Content = SerializeInXml(GetPersons(request.Name, request.Age)),
-                ContentType = MediaTypeNames.Application.Json.ToString()
+                ContentType = MediaTypeNames.Application.Json
             };
         }
         catch (Exception ex)
