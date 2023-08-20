@@ -10,5 +10,5 @@ public static class Loggers
     /// <summary>
     /// Основной логгер
     /// </summary>
-    public static Logger MainLogger { get; } = LogManager.GetLogger("Essentials.HttpClient.Main");
+    public static Logger MainLogger { get; } = LogManager.GetLogger("Essentials.HttpClient.MainLogger");
 }

@@ -1,8 +1,8 @@
-﻿using NLog;
-using Essentials.HttpClient.Events.Args;
+﻿using Essentials.HttpClient.Events.Args;
 using Essentials.HttpClient.Extensions;
 using static System.Environment;
 using static Essentials.Func.Utils.Helpers.JsonHelpers;
+using static Essentials.HttpClient.Dictionaries.Loggers;
 using static Essentials.HttpClient.Events.EventsPublisher;
 
 namespace Essentials.HttpClient.Logging;
@@ -13,7 +13,6 @@ namespace Essentials.HttpClient.Logging;
 internal class LogSubscriber
 {
     private readonly LoggingOptions _options;
-    private static readonly Logger _defaultLogger = LogManager.GetLogger("Essentials.HttpClient.MainLogger");
 
     public LogSubscriber(LoggingOptions? options = null)
     {
@@ -22,105 +21,105 @@ internal class LogSubscriber
     
     public void SubscribeToLogEvents()
     {
-        OnSuccessCreateUri += _options.SuccessCreateUriHandler ?? OnSuccessCreateUriHandler;
-        OnErrorCreateUri += _options.ErrorCreateUriHandler ?? OnErrorCreateUriHandler;
-        OnSuccessCreateRequest += _options.SuccessCreateRequestHandler ?? OnSuccessCreateRequestHandler;
-        OnErrorCreateRequest += _options.ErrorCreateRequestHandler ?? OnErrorCreateRequestHandler;
-        OnBadRequest += _options.BadRequestHandler ?? OnBadRequestHandler;
-        OnSerializeError += _options.SerializeErrorHandler ?? OnSerializeErrorHandler;
-        OnSuccessSend += _options.SuccessSendHandler ?? OnSuccessSendHandler;
-        OnErrorSend += _options.ErrorSendHandler ?? OnErrorSendHandler;
-        OnBadStatusCode += _options.BadStatusCodeHandler ?? OnBadStatusCodeHandler;
-        OnErrorReadContent += _options.ErrorReadContentHandler ?? OnErrorReadContentHandler;
-        OnDeserializeError += _options.DeserializeErrorHandler ?? OnDeserializeErrorHandler;
+        OnSuccessCreateUri += _options.SuccessCreateUriHandler ?? SuccessCreateUriHandler;
+        OnErrorCreateUri += _options.ErrorCreateUriHandler ?? ErrorCreateUriHandler;
+        OnSuccessCreateRequest += _options.SuccessCreateRequestHandler ?? SuccessCreateRequestHandler;
+        OnErrorCreateRequest += _options.ErrorCreateRequestHandler ?? ErrorCreateRequestHandler;
+        OnBadRequest += _options.BadRequestHandler ?? BadRequestHandler;
+        OnSerializeError += _options.SerializeErrorHandler ?? SerializeErrorHandler;
+        OnSuccessSend += _options.SuccessSendHandler ?? SuccessSendHandler;
+        OnErrorSend += _options.ErrorSendHandler ?? ErrorSendHandler;
+        OnBadStatusCode += _options.BadStatusCodeHandler ?? BadStatusCodeHandler;
+        OnErrorReadContent += _options.ErrorReadContentHandler ?? ErrorReadContentHandler;
+        OnDeserializeError += _options.DeserializeErrorHandler ?? DeserializeErrorHandler;
     }
 
-    private static void OnSuccessCreateUriHandler(SuccessCreateUriEventArgs args)
+    private static void SuccessCreateUriHandler(SuccessCreateUriEventArgs args)
     {
-        _defaultLogger.Debug($"Uri был успешно создан. Uri: '{args.Uri}'");
+        MainLogger.Debug($"Uri был успешно создан. Uri: '{args.Uri}'");
     }
 
-    private static void OnErrorCreateUriHandler(ErrorCreateUriEventArgs args)
+    private static void ErrorCreateUriHandler(ErrorCreateUriEventArgs args)
     {
-        _defaultLogger.Error(
+        MainLogger.Error(
             args.Exception,
             message: $"{args.ErrorMessage}{NewLine}Используемый базовый адрес: '{args.Address}'.");
     }
 
-    private static void OnSuccessCreateRequestHandler(SuccessCreateRequestEventArgs args)
+    private static void SuccessCreateRequestHandler(SuccessCreateRequestEventArgs args)
     {
-        _defaultLogger.Debug(
+        MainLogger.Debug(
             $"Запрос по адресу '{args.Request.Uri}' был успешно создан." +
             $"{NewLine}Используемый Http клиент: '{args.Request.ClientName}'");
         
-        _defaultLogger.Trace(
+        MainLogger.Trace(
             $"Запрос по адресу '{args.Request.Uri}' был успешно создан." +
             $"{NewLine}Запрос: '{Serialize(args.Request)}'");
     }
 
-    private static void OnErrorCreateRequestHandler(ErrorCreateRequestEventArgs args)
+    private static void ErrorCreateRequestHandler(ErrorCreateRequestEventArgs args)
     {
-        _defaultLogger.Error(
+        MainLogger.Error(
             args.Exception,
             message: $"{args.ErrorMessage}{NewLine}Используемый адрес: '{args.Uri}'.");
     }
 
-    private static void OnBadRequestHandler(BadRequestEventArgs args)
+    private static void BadRequestHandler(BadRequestEventArgs args)
     {
-        _defaultLogger.Error(args.Exception);
+        MainLogger.Error(args.Exception);
     }
 
-    private static void OnSerializeErrorHandler(SerializeErrorEventArgs args)
+    private static void SerializeErrorHandler(SerializeErrorEventArgs args)
     {
-        _defaultLogger.Error(
+        MainLogger.Error(
             args.Exception,
             args.ErrorMessage +
             $"{NewLine}Запрос: '{Serialize(args.Request)}'" +
             $"{NewLine}Содержимое запроса: '{Serialize(args.Content)}'");
     }
 
-    private static void OnSuccessSendHandler(SuccessSendRequestEventArgs args)
+    private static void SuccessSendHandler(SuccessSendRequestEventArgs args)
     {
-        _defaultLogger.Info(
+        MainLogger.Info(
             $"Запрос по адресу '{args.Request.Uri}' был успешно отправлен. " +
             $"Код ответа: '{args.Response.ResponseMessage.StatusCode}'");
         
-        _defaultLogger.Debug(
+        MainLogger.Debug(
             $"Запрос по адресу '{args.Request.Uri}' был успешно отправлен. " +
             $"Код ответа: '{args.Response.ResponseMessage.StatusCode}'" +
             $"{NewLine}Запрос: '{Serialize(args.Request)}'" +
             $"{NewLine}Ответ: '{Serialize(args.Response)}'");
     }
 
-    private static void OnErrorSendHandler(ErrorSendRequestEventArgs args)
+    private static void ErrorSendHandler(ErrorSendRequestEventArgs args)
     {
-        _defaultLogger.Error(
+        MainLogger.Error(
             args.Exception,
             args.ErrorMessage +
             $"{NewLine}Запрос: '{Serialize(args.Request)}'");
     }
 
-    private static void OnBadStatusCodeHandler(BadStatusCodeEventArgs args)
+    private static void BadStatusCodeHandler(BadStatusCodeEventArgs args)
     {
-        _defaultLogger.Error(
+        MainLogger.Error(
             $"В ответ на Http запрос был получен ошибочный Http код ответа: '{args.ErrorCode}'" +
             $"{NewLine}Запрос: '{Serialize(args.Request)}'" +
             $"{NewLine}Ответ: '{Serialize(args.ResponseMessage)}'");
     }
 
-    private static void OnErrorReadContentHandler(ErrorReadContentEventArgs args)
+    private static void ErrorReadContentHandler(ErrorReadContentEventArgs args)
     {
-        _defaultLogger.Error(
+        MainLogger.Error(
             args.Exception,
             args.ErrorMessage +
             $"{NewLine}Ответ: '{Serialize(args.ResponseMessage)}'");
     }
 
-    private static void OnDeserializeErrorHandler(DeserializeErrorEventArgs args)
+    private static void DeserializeErrorHandler(DeserializeErrorEventArgs args)
     {
         var responseString = args.Response.ResponseMessage.ReceiveStringUnsafeAsync().Result;
 
-        _defaultLogger.Error(
+        MainLogger.Error(
             args.Exception,
             args.ErrorMessage +
             $"{NewLine}Ответ: '{Serialize(args.Response)}'" +

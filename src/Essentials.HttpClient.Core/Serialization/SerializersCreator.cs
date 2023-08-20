@@ -2,6 +2,7 @@
 using LanguageExt;
 using LanguageExt.Common;
 using static LanguageExt.Prelude;
+using static Essentials.HttpClient.Dictionaries.Loggers;
 using ISerializer = Essentials.HttpClient.Serialization.IEssentialsSerializer;
 using IDeserializer = Essentials.HttpClient.Serialization.IEssentialsDeserializer;
 
@@ -28,7 +29,6 @@ internal static class SerializersCreator
     /// <param name="serializer">Сериалайзер</param>
     public static void AddOrUpdateSerializer(ISerializer serializer)
     {
-        // TODO Log
         var key = serializer.GetType().FullName ?? string.Empty;
         if (!_serializers.TryGetValue(key, out var existingSerializer))
         {
@@ -45,7 +45,6 @@ internal static class SerializersCreator
     /// <param name="deserializer">Десериалайзер</param>
     public static void AddOrUpdateDeserializer(IDeserializer deserializer)
     {
-        // TODO Log
         var key = deserializer.GetType().FullName ?? string.Empty;
         if (!_deserializers.TryGetValue(key, out var existingDeserializer))
         {
@@ -63,12 +62,15 @@ internal static class SerializersCreator
     /// <returns></returns>
     public static Validation<Error, ISerializer> GetSerializer<TSerializer>()
     {
-        // TODO Log
         var key = typeof(TSerializer).FullName ?? string.Empty;
         return Try(() => _serializers[key])
             .ToValidation(exception =>
-                Error.New($"Во время получения сериалайзера с ключом '{key}' произошло исключение",
-                    exception));
+            {
+                var errorMessage = $"Во время получения сериалайзера с ключом '{key}' произошло исключение";
+                
+                MainLogger.Error(errorMessage);
+                return Error.New(errorMessage, exception);
+            });
     }
     
     /// <summary>
@@ -82,7 +84,11 @@ internal static class SerializersCreator
         var key = typeof(TDeserializer).FullName ?? string.Empty;
         return Try(() => _deserializers[key])
             .ToValidation(exception =>
-                Error.New($"Во время получения десериалайзера с ключом '{key}' произошло исключение",
-                    exception));
+            {
+                var errorMessage = $"Во время получения десериалайзера с ключом '{key}' произошло исключение";
+                
+                MainLogger.Error(errorMessage);
+                return Error.New(errorMessage, exception);
+            });
     }
 }
