@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>Essentials.HttpClient.Sample.Server</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Essentials.HttpClient.Common\Essentials.HttpClient.Common.csproj" />
+      <ProjectReference Include="..\..\Essentials.HttpClient.Core\Essentials.HttpClient.Core.csproj" />
+    </ItemGroup>
+    
+</Project>

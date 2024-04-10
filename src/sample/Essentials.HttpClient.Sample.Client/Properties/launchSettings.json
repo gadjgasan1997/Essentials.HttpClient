@@ -1,0 +1,14 @@
+﻿{
+  "profiles": {
+    "Debug": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5002",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Debug",
+        "ASPNETCORE_URLS": "http://*:5002;http://*:9950"
+      }
+    }
+  }
+}

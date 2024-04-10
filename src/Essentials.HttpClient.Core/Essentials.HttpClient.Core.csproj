@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Essentials.HttpClient</RootNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>Essentials.HttpClient</PackageId>
+        <Version>1.0.0.0</Version>
+        <Authors>Gadzhinskiy</Authors>
+        <Product>Essentials.HttpClient</Product>
+        <Description>
+            Http клиент для отправки запросов
+        </Description>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="App.Metrics.App.All" Version="4.3.0" />
+      <PackageReference Include="Essentials.Configuration" Version="1.0.0" />
+      <PackageReference Include="Essentials.Functional" Version="1.1.0" />
+      <PackageReference Include="Essentials.Logging" Version="1.1.0" />
+      <PackageReference Include="Essentials.Serialization" Version="1.1.0" />
+      <PackageReference Include="Essentials.Utils" Version="1.1.0" />
+    </ItemGroup>
+
+</Project>

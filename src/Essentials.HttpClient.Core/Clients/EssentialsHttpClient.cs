@@ -1,0 +1,280 @@
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
+using System.Net.Sockets;
+using Essentials.Utils.Extensions;
+using Essentials.HttpClient.Errors;
+using Essentials.HttpClient.Metrics;
+using Essentials.HttpClient.Models;
+using LanguageExt;
+using LanguageExt.Common;
+using Essentials.HttpClient.Extensions;
+using Essentials.Functional.Extensions;
+using static LanguageExt.Prelude;
+using static Essentials.HttpClient.Events.EventsPublisher;
+using static Essentials.HttpClient.Dictionaries.ErrorMessages;
+using SystemHttpClient = System.Net.Http.HttpClient;
+using Token = System.Threading.CancellationToken;
+
+namespace Essentials.HttpClient.Clients;
+
+/// <inheritdoc cref="IEssentialsHttpClient" />
+[SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
+[SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract")]
+[SuppressMessage("ReSharper", "InvertIf")]
+public class EssentialsHttpClient : IEssentialsHttpClient
+{
+    private readonly IMetricsService _metrics;
+    private readonly IHttpClientFactory _factory;
+
+    /// <summary>
+    /// Конструктор
+    /// </summary>
+    /// <param name="metricsService"></param>
+    /// <param name="factory"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public EssentialsHttpClient(
+        IMetricsService metricsService,
+        IHttpClientFactory factory)
+    {
+        _metrics = metricsService.CheckNotNull();
+        _factory = factory.CheckNotNull();
+    }
+
+    /// <inheritdoc cref="IEssentialsHttpClient.GetAsync(IRequest, Token?)" />
+    public Task<Validation<Error, IResponse>> GetAsync(IRequest request, Token? token = null) =>
+        SendRequestWithoutContentAsync(request, HttpMethod.Get, token);
+
+    /// <inheritdoc cref="IEssentialsHttpClient.HeadAsync(IRequest, Token?)" />
+    public Task<Validation<Error, IResponse>> HeadAsync(IRequest request, Token? token = null) =>
+        SendRequestWithoutContentAsync(request, HttpMethod.Head, token);
+
+    /// <inheritdoc cref="IEssentialsHttpClient.PostAsync(IRequest, HttpContent, Token?)" />
+    public Task<Validation<Error, IResponse>> PostAsync(IRequest request, HttpContent content, Token? token = null) =>
+        SendRequestWithContentAsync(request, content, HttpMethod.Post, token);
+
+    /// <inheritdoc cref="IEssentialsHttpClient.PutAsync(IRequest, HttpContent, Token?)" />
+    public Task<Validation<Error, IResponse>> PutAsync(IRequest request, HttpContent content, Token? token = null) =>
+        SendRequestWithContentAsync(request, content, HttpMethod.Put, token);
+
+    /// <inheritdoc cref="IEssentialsHttpClient.PatchAsync(IRequest, HttpContent, Token?)" />
+    public Task<Validation<Error, IResponse>> PatchAsync(IRequest request, HttpContent content, Token? token = null) =>
+        SendRequestWithContentAsync(request, content, HttpMethod.Patch, token);
+
+    /// <inheritdoc cref="IEssentialsHttpClient.DeleteAsync(IRequest, Token?)" />
+    public Task<Validation<Error, IResponse>> DeleteAsync(IRequest request, Token? token = null) =>
+        SendRequestWithoutContentAsync(request, HttpMethod.Delete, token);
+
+    #region Additional Methods
+
+    /// <summary>
+    /// Отправляет запрос без содержимого
+    /// </summary>
+    /// <param name="request">Http запрос</param>
+    /// <param name="httpMethod">Http метод</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns></returns>
+    private async Task<Validation<Error, IResponse>> SendRequestWithoutContentAsync(
+        IRequest request,
+        HttpMethod httpMethod,
+        Token? token = null)
+    {
+        if (request is null)
+            return Error.New(EmptyRequest);
+        
+        return await SendRequestAsync(request, httpMethod, token: token).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Отправляет запрос с содержимым
+    /// </summary>
+    /// <param name="request">Http запрос</param>
+    /// <param name="content">Содержимое</param>
+    /// <param name="httpMethod">Http метод</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns></returns>
+    private async Task<Validation<Error, IResponse>> SendRequestWithContentAsync(
+        IRequest request,
+        HttpContent content,
+        HttpMethod httpMethod,
+        Token? token = null)
+    {
+        if (request is null)
+            return Error.New(EmptyRequest);
+
+        if (content is null)
+            return Error.New(EmptyContent);
+
+        return await SendRequestAsync(request, httpMethod, content, token).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Отправляет запрос
+    /// </summary>
+    /// <param name="request">Запрос</param>
+    /// <param name="httpMethod">Http метод</param>
+    /// <param name="httpContent">Содержимое запроса</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns></returns>
+    private async Task<Validation<Error, IResponse>> SendRequestAsync(
+        IRequest request,
+        HttpMethod httpMethod,
+        HttpContent? httpContent = null,
+        Token? token = null)
+    {
+        using var scope = HttpRequestContext.CreateContext(request);
+        
+        return await CreateClient(request).BindAsync(SendFunc).ConfigureAwait(false);
+
+        async Task<Validation<Error, IResponse>> SendFunc(SystemHttpClient client)
+        {
+            return await SendWithMetricsAsync(
+                    request: request,
+                    async () => await SendAsync(request, client, httpMethod, httpContent, token).ConfigureAwait(false))
+                .ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// Отправляет запрос с добавлением метрик
+    /// </summary>
+    /// <param name="request">Http запрос</param>
+    /// <param name="sendFunc">Делегат отправки запроса</param>
+    /// <returns>Http ответ</returns>
+    protected virtual async Task<Validation<Error, IResponse>> SendWithMetricsAsync(
+        IRequest request,
+        Func<Task<Validation<Error, IResponse>>> sendFunc)
+    {
+        using var timer = request.MetricsOptions.MatchUnsafe(
+            Some: options => _metrics.StartRequestTimer(options.Name, options.Tags),
+            None: () => _metrics.StartRequestTimer(request.ClientName, request.TypeId));
+
+        request.IncrementMetric(
+            Some: options => _metrics.HttpRequestSent(options.Name, options.Tags),
+            None: () => _metrics.HttpRequestSent(request.ClientName, request.TypeId));
+        
+        var validation = await sendFunc().ConfigureAwait(false);
+        
+        validation.Match(
+            Succ: _ =>
+            {
+                request.IncrementMetric(
+                    Some: options => _metrics.HttpRequestSuccessSent(options.Name, options.Tags),
+                    None: () => _metrics.HttpRequestSuccessSent(request.ClientName, request.TypeId));
+            },
+            Fail: _ =>
+            {
+                request.IncrementMetric(
+                    Some: options => _metrics.HttpRequestErrorSent(options.Name, options.Tags),
+                    None: () => _metrics.HttpRequestErrorSent(request.ClientName, request.TypeId));
+            });
+        
+        return validation;
+    }
+
+    /// <summary>
+    /// Отправляет Http запрос
+    /// </summary>
+    /// <param name="request">Http запрос</param>
+    /// <param name="httpClient">Http клиент</param>
+    /// <param name="httpMethod">Http метод</param>
+    /// <param name="httpContent">Содержимое запроса</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Http ответ</returns>
+    protected virtual async Task<Validation<Error, IResponse>> SendAsync(
+        IRequest request,
+        SystemHttpClient httpClient,
+        HttpMethod httpMethod,
+        HttpContent? httpContent = null,
+        Token? token = null)
+    {
+        Contract.Assert(HttpRequestContext.Current is not null);
+        
+        var clock = new Stopwatch();
+        clock.Start();
+        
+        HttpResponseMessage responseMessage;
+        using var requestMessage = new HttpRequestMessage();
+
+        try
+        {
+            requestMessage.RequestUri = request.Uri;
+            requestMessage.Method = httpMethod;
+
+            HttpRequestContext.Current.RequestMessage = requestMessage;
+
+            foreach (var action in request.ModifyRequestActions)
+                action(requestMessage);
+
+            if (httpContent is not null)
+            {
+                request.MediaType.IfSome(mediaType => httpContent.Headers.ContentType = mediaType);
+                requestMessage.Content = httpContent;
+            }
+
+            request.RaiseEvent(nameof(OnBeforeSend), RaiseOnBeforeSend);
+
+            responseMessage = await httpClient.SendAsync(requestMessage, token ?? Token.None).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            clock.Stop();
+
+            var errorMessage = exception switch
+            {
+                TimeoutException or { InnerException: TimeoutException } =>
+                    string.Format(TimeoutError, request.Uri, exception.Message),
+                SocketException or { InnerException: SocketException } =>
+                    string.Format(SocketErrorMessage, request.Uri, exception.Message),
+                _ => null
+            };
+
+            HttpRequestContext.Current.SetError(
+                exception,
+                clock.ElapsedMilliseconds,
+                errorMessage);
+            
+            request.RaiseEvent(nameof(OnErrorSend), RaiseOnErrorSend);
+            return Error.New(exception);
+        }
+
+        clock.Stop();
+        
+        HttpRequestContext.Current.SetResponse(responseMessage, clock.ElapsedMilliseconds);
+        
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            request.RaiseEvent(nameof(OnBadStatusCode), RaiseOnBadStatusCode);
+            
+            return BadStatusCodeError.New(
+                responseMessage,
+                string.Format(BadStatusCode, responseMessage.StatusCode));
+        }
+        
+        request.RaiseEvent(nameof(OnSuccessSend), RaiseOnSuccessSend);
+        return new Response(request, responseMessage, clock.ElapsedMilliseconds);
+    }
+    
+    /// <summary>
+    /// Создает Http клиент
+    /// </summary>
+    /// <param name="request">Http запрос</param>
+    /// <returns>Http клиент</returns>
+    protected virtual Validation<Error, SystemHttpClient> CreateClient(IRequest request)
+    {
+        return Try(() => _factory.CreateClient(request.ClientName))
+            .Match(
+                Succ: client =>
+                {
+                    request.Timeout.IfSome(timeout => client.Timeout = timeout);
+                    return client;
+                },
+                Fail: exception =>
+                {
+                    var errorMessage = string.Format(ErrorCreateClient, exception.Message);
+                    return Fail<Error, SystemHttpClient>(Error.New(errorMessage, exception));
+                });
+    }
+
+    #endregion
+}
