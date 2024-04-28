@@ -1,13 +1,14 @@
 ﻿using Essentials.HttpClient.Cache.Extensions;
 using Essentials.HttpClient.Clients;
-using Essentials.HttpClient.Logging;
 using Essentials.HttpClient.Metrics.Extensions;
 using Essentials.HttpClient.Options;
+using Essentials.HttpClient.Logging;
+using Essentials.HttpClient.Configuration;
+using Essentials.HttpClient.Serialization;
+using Essentials.Configuration.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Essentials.Configuration.Extensions;
-using Essentials.HttpClient.Serialization;
 
 namespace Essentials.HttpClient.Extensions;
 
@@ -23,27 +24,44 @@ public static class ServiceCollectionExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration">Опции конфигурации</param>
-    /// <param name="loggingOptions">Опции логирования</param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureEssentialsHttpClient(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        return services.AtomicConfigureService(
+            ref _isConfigured,
+            () => services.ConfigureEssentialsHttpClientPrivate(configuration));
+    }
+    
+    /// <summary>
+    /// Настраивает Http клиент
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration">Опции конфигурации</param>
+    /// <param name="configureHttpClientAction">Действие по конфигурации клиента</param>
     /// <returns></returns>
     public static IServiceCollection ConfigureEssentialsHttpClient(
         this IServiceCollection services,
         IConfiguration configuration,
-        LoggingOptions? loggingOptions = null)
+        Action<EssentialsHttpClientConfigurator> configureHttpClientAction)
     {
         return services.AtomicConfigureService(
             ref _isConfigured,
-            () => services.ConfigureEssentialsHttpClientPrivate(configuration, loggingOptions));
+            () =>
+            {
+                configureHttpClientAction(new EssentialsHttpClientConfigurator());
+                services.ConfigureEssentialsHttpClientPrivate(configuration);
+            });
     }
 
     private static void ConfigureEssentialsHttpClientPrivate(
         this IServiceCollection services,
-        IConfiguration configuration,
-        LoggingOptions? loggingOptions = null)
+        IConfiguration configuration)
     {
-        if (loggingOptions is null || !loggingOptions.DisableDefaultLogging)
-            new LogSubscriber(loggingOptions).SubscribeToLogEvents();
-        
         services.AddHttpClient(nameof(IEssentialsHttpClient));
+        
+        LogSubscriber.Subscribe();
         
         SerializersManager.RegisterSerializers();
         SerializersManager.RegisterDeserializers();

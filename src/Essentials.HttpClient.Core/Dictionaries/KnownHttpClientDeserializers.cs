@@ -3,7 +3,7 @@
 /// <summary>
 /// Известные десериалайзеры, использующиеся для Http клиентов
 /// </summary>
-public static class KnownHttpClientDeserializers
+internal static class KnownHttpClientDeserializers
 {
     /// <summary>
     /// Newtonsoft.Json

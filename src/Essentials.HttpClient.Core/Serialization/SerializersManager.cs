@@ -16,15 +16,31 @@ namespace Essentials.HttpClient.Serialization;
 /// </summary>
 internal static class SerializersManager
 {
+    public static XmlSerializer? XmlSerializer = null;
+    public static NativeJsonSerializer? NativeJsonSerializer = null;
+    public static NewtonsoftJsonSerializer? NewtonsoftJsonSerializer = null;
+    
+    public static XmlDeserializer? XmlDeserializer = null;
+    public static NativeJsonDeserializer? NativeJsonDeserializer = null;
+    public static NewtonsoftJsonDeserializer? NewtonsoftJsonDeserializer = null;
+    
     /// <summary>
     /// Регистрирует сериалайзеры
     /// </summary>
     /// <returns></returns>
     public static void RegisterSerializers()
     {
-        AddByTypeAndKey(KnownHttpClientSerializers.XML, () => new XmlSerializer());
-        AddByTypeAndKey(KnownHttpClientSerializers.NATIVE_JSON, () => new NativeJsonSerializer());
-        AddByTypeAndKey(KnownHttpClientSerializers.NEWTONSOFT_JSON, () => new NewtonsoftJsonSerializer());
+        AddOrUpdateByTypeAndKey(
+            KnownHttpClientSerializers.XML,
+            func: () => XmlSerializer ?? new XmlSerializer());
+        
+        AddOrUpdateByTypeAndKey(
+            KnownHttpClientSerializers.NATIVE_JSON,
+            func: () => NativeJsonSerializer ?? new NativeJsonSerializer());
+        
+        AddOrUpdateByTypeAndKey(
+            KnownHttpClientSerializers.NEWTONSOFT_JSON,
+            func: () => NewtonsoftJsonSerializer ?? new NewtonsoftJsonSerializer());
     }
 
     /// <summary>
@@ -33,9 +49,17 @@ internal static class SerializersManager
     /// <returns></returns>
     public static void RegisterDeserializers()
     {
-        AddByTypeAndKey(KnownHttpClientDeserializers.XML, () => new XmlDeserializer());
-        AddByTypeAndKey(KnownHttpClientDeserializers.NATIVE_JSON, () => new NativeJsonDeserializer());
-        AddByTypeAndKey(KnownHttpClientDeserializers.NEWTONSOFT_JSON, () => new NewtonsoftJsonDeserializer());
+        AddOrUpdateByTypeAndKey(
+            KnownHttpClientDeserializers.XML,
+            func: () => XmlDeserializer ?? new XmlDeserializer());
+        
+        AddOrUpdateByTypeAndKey(
+            KnownHttpClientDeserializers.NATIVE_JSON,
+            func: () => NativeJsonDeserializer ?? new NativeJsonDeserializer());
+        
+        AddOrUpdateByTypeAndKey(
+            KnownHttpClientDeserializers.NEWTONSOFT_JSON,
+            func: () => NewtonsoftJsonDeserializer ?? new NewtonsoftJsonDeserializer());
     }
     
     /// <summary>

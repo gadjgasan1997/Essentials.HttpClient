@@ -5,6 +5,7 @@ using static Essentials.Serialization.Helpers.JsonHelpers;
 using static Essentials.HttpClient.Logging.LogManager;
 using static Essentials.HttpClient.Dictionaries.KnownDatesFormats;
 using static Essentials.HttpClient.Events.EventsPublisher;
+using static Essentials.HttpClient.Logging.LoggingOptions;
 using Context = Essentials.HttpClient.HttpRequestContext;
 
 namespace Essentials.HttpClient.Logging;
@@ -12,27 +13,23 @@ namespace Essentials.HttpClient.Logging;
 /// <summary>
 /// Класс-подписчик на события для их логирования
 /// </summary>
-internal class LogSubscriber
+internal static class LogSubscriber
 {
-    private readonly LoggingOptions _options;
-
-    public LogSubscriber(LoggingOptions? options = null)
+    public static void Subscribe()
     {
-        _options = options ?? new LoggingOptions();
-    }
-    
-    public void SubscribeToLogEvents()
-    {
-        OnSerializeError += _options.SerializeErrorHandler ?? SerializeErrorHandler;
-        OnBeforeSend += _options.BeforeSendHandler ?? BeforeSendHandler;
-        OnSuccessSend += _options.SuccessSendHandler ?? SuccessSendHandler;
-        OnErrorSend += _options.ErrorSendHandler ?? ErrorSendHandler;
-        OnBadStatusCode += _options.BadStatusCodeHandler ?? BadStatusCodeHandler;
-        OnErrorReadContent += _options.ErrorReadContentHandler ?? ErrorReadContentHandler;
-        OnDeserializeError += _options.DeserializeErrorHandler ?? DeserializeErrorHandler;
+        if (DisableDefaultLogging)
+            return;
+        
+        OnSerializeError += SerializeErrorHandler ?? DefaultSerializeErrorHandler;
+        OnBeforeSend += BeforeSendHandler ?? DefaultBeforeSendHandler;
+        OnSuccessSend += SuccessSendHandler ?? DefaultSuccessSendHandler;
+        OnErrorSend += ErrorSendHandler ?? DefaultErrorSendHandler;
+        OnBadStatusCode += BadStatusCodeHandler ?? DefaultBadStatusCodeHandler;
+        OnErrorReadContent += ErrorReadContentHandler ?? DefaultErrorReadContentHandler;
+        OnDeserializeError += DeserializeErrorHandler ?? DefaultDeserializeErrorHandler;
     }
 
-    private static void SerializeErrorHandler()
+    private static void DefaultSerializeErrorHandler()
     {
         TryLog(() =>
         {
@@ -47,7 +44,7 @@ internal class LogSubscriber
         }, nameof(OnSerializeError));
     }
 
-    private static void BeforeSendHandler()
+    private static void DefaultBeforeSendHandler()
     {
         TryLog(() =>
         {
@@ -81,7 +78,7 @@ internal class LogSubscriber
         }, nameof(OnBeforeSend));
     }
 
-    private static void SuccessSendHandler()
+    private static void DefaultSuccessSendHandler()
     {
         TryLog(() =>
         {
@@ -116,7 +113,7 @@ internal class LogSubscriber
         }, nameof(OnSuccessSend));
     }
 
-    private static void ErrorSendHandler()
+    private static void DefaultErrorSendHandler()
     {
         TryLog(() =>
         {
@@ -139,7 +136,7 @@ internal class LogSubscriber
         }, nameof(OnErrorSend));
     }
 
-    private static void BadStatusCodeHandler()
+    private static void DefaultBadStatusCodeHandler()
     {
         TryLog(() =>
         {
@@ -164,7 +161,7 @@ internal class LogSubscriber
         }, nameof(OnBadStatusCode));
     }
 
-    private static void ErrorReadContentHandler()
+    private static void DefaultErrorReadContentHandler()
     {
         TryLog(() =>
         {
@@ -180,7 +177,7 @@ internal class LogSubscriber
         }, nameof(OnErrorReadContent));
     }
 
-    private static void DeserializeErrorHandler()
+    private static void DefaultDeserializeErrorHandler()
     {
         TryLog(() =>
         {

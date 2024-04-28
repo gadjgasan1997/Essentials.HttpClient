@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Essentials.HttpClient.Events;
+﻿using Essentials.HttpClient.Events;
+using System.Diagnostics.CodeAnalysis;
 using static Essentials.HttpClient.Events.EventsPublisher;
 
 namespace Essentials.HttpClient.Logging;
@@ -9,45 +9,45 @@ namespace Essentials.HttpClient.Logging;
 /// </summary>
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 [SuppressMessage("ReSharper", "CollectionNeverUpdated.Global")]
-public class LoggingOptions
+internal static class LoggingOptions
 {
     /// <summary>
     /// Признак необходимости отключить логирование по умолчанию
     /// </summary>
-    public bool DisableDefaultLogging { get; init; }
+    public static bool DisableDefaultLogging { get; set; }
     
     /// <summary>
-    /// Обработчик события <see cref="OnSerializeError" /> 
+    /// Обработчик события <see cref="OnSerializeError" />
     /// </summary>
-    public Handler? SerializeErrorHandler { get; init; }
+    public static Handler? SerializeErrorHandler { get; set; }
     
     /// <summary>
-    /// Обработчик события <see cref="OnBeforeSend" /> 
+    /// Обработчик события <see cref="OnBeforeSend" />
     /// </summary>
-    public Handler? BeforeSendHandler { get; init; }
+    public static Handler? BeforeSendHandler { get; set; }
     
     /// <summary>
-    /// Обработчик события <see cref="OnSuccessSend" /> 
+    /// Обработчик события <see cref="OnSuccessSend" />
     /// </summary>
-    public Handler? SuccessSendHandler { get; init; }
+    public static Handler? SuccessSendHandler { get; set; }
     
     /// <summary>
-    /// Обработчик события <see cref="OnErrorSend" /> 
+    /// Обработчик события <see cref="OnErrorSend" />
     /// </summary>
-    public Handler? ErrorSendHandler { get; init; }
+    public static Handler? ErrorSendHandler { get; set; }
     
     /// <summary>
-    /// Обработчик события <see cref="OnBadStatusCode" /> 
+    /// Обработчик события <see cref="OnBadStatusCode" />
     /// </summary>
-    public Handler? BadStatusCodeHandler { get; init; }
+    public static Handler? BadStatusCodeHandler { get; set; }
     
     /// <summary>
-    /// Обработчик события <see cref="OnErrorReadContent" /> 
+    /// Обработчик события <see cref="OnErrorReadContent" />
     /// </summary>
-    public Handler? ErrorReadContentHandler { get; init; }
+    public static Handler? ErrorReadContentHandler { get; set; }
     
     /// <summary>
-    /// Обработчик события <see cref="OnDeserializeError" /> 
+    /// Обработчик события <see cref="OnDeserializeError" />
     /// </summary>
-    public Handler? DeserializeErrorHandler { get; init; }
+    public static Handler? DeserializeErrorHandler { get; set; }
 }
