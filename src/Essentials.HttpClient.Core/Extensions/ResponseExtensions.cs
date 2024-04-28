@@ -277,11 +277,11 @@ public static class ResponseExtensions
         if (!string.IsNullOrWhiteSpace(deserializerKey))
         {
             return await response.DeserializeResponseAsync<TData, TDeserializer>(
-                SerializersCreator.GetDeserializer<TDeserializer>(deserializerKey));
+                SerializersManager.GetDeserializer<TDeserializer>(deserializerKey));
         }
                 
         return await response.DeserializeResponseAsync<TData, TDeserializer>(
-            SerializersCreator.GetDeserializer<TDeserializer>());
+            SerializersManager.GetDeserializer<TDeserializer>());
     }
     
     /// <summary>

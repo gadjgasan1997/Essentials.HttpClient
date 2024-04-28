@@ -1,6 +1,5 @@
 ﻿using Essentials.HttpClient.Cache.Extensions;
 using Essentials.HttpClient.Clients;
-using Essentials.HttpClient.Dictionaries;
 using Essentials.HttpClient.Logging;
 using Essentials.HttpClient.Metrics.Extensions;
 using Essentials.HttpClient.Options;
@@ -8,10 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Essentials.Configuration.Extensions;
-using Essentials.Serialization.Deserializers;
-using Essentials.Serialization.Serializers;
-using static Essentials.Serialization.EssentialsSerializersFactory;
-using static Essentials.Serialization.EssentialsDeserializersFactory;
+using Essentials.HttpClient.Serialization;
 
 namespace Essentials.HttpClient.Extensions;
 
@@ -49,8 +45,8 @@ public static class ServiceCollectionExtensions
         
         services.AddHttpClient(nameof(IEssentialsHttpClient));
         
-        AddSerializers();
-        AddDeserializers();
+        SerializersManager.RegisterSerializers();
+        SerializersManager.RegisterDeserializers();
 
         var options = new ClientsOptions();
         var section = configuration.GetSection(ClientsOptions.Section);
@@ -64,27 +60,5 @@ public static class ServiceCollectionExtensions
         
         services.ConfigureMetrics(options.Metrics).ConfigureCache(options.Cache);
         services.AddHostedService<HttpClientHostedService>();
-    }
-
-    /// <summary>
-    /// Добаляет сериалайзеры
-    /// </summary>
-    /// <returns></returns>
-    private static void AddSerializers()
-    {
-        AddByTypeAndKey(KnownHttpClientSerializers.XML, () => new XmlSerializer());
-        AddByTypeAndKey(KnownHttpClientSerializers.NATIVE_JSON, () => new NativeJsonSerializer());
-        AddByTypeAndKey(KnownHttpClientSerializers.NEWTONSOFT_JSON, () => new NewtonsoftJsonSerializer());
-    }
-
-    /// <summary>
-    /// Добаляет десериалайзеры
-    /// </summary>
-    /// <returns></returns>
-    private static void AddDeserializers()
-    {
-        AddByTypeAndKey(KnownHttpClientDeserializers.XML, () => new XmlDeserializer());
-        AddByTypeAndKey(KnownHttpClientDeserializers.NATIVE_JSON, () => new NativeJsonDeserializer());
-        AddByTypeAndKey(KnownHttpClientDeserializers.NEWTONSOFT_JSON, () => new NewtonsoftJsonDeserializer());
     }
 }

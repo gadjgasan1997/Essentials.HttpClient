@@ -560,7 +560,7 @@ public static class HttpClientsExtensions
         TData data)
         where TSerializer : IEssentialsSerializer
     {
-        return SerializersCreator
+        return SerializersManager
             .GetSerializer<TSerializer>()
             .Bind(serializer => BuildStreamContent(serializer, request, data));
     }
@@ -580,7 +580,7 @@ public static class HttpClientsExtensions
         string serializerKey)
         where TSerializer : IEssentialsSerializer
     {
-        return SerializersCreator
+        return SerializersManager
             .GetSerializer<TSerializer>(serializerKey)
             .Bind(serializer => BuildStreamContent(serializer, request, data));
     }

@@ -1,7 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Essentials.Functional.Extensions;
-using LanguageExt;
+﻿using LanguageExt;
 using LanguageExt.Common;
+using System.Diagnostics.CodeAnalysis;
+using Essentials.Functional.Extensions;
 using Essentials.Serialization.Serializers;
 using static Essentials.HttpClient.Helpers.HttpRequestsHelpers;
 using static Essentials.HttpClient.Dictionaries.KnownHttpClientSerializers;
