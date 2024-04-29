@@ -19,17 +19,14 @@ internal static class ServiceCollectionExtensions
         this IServiceCollection services,
         HttpClientsMetricsOptions? metricsOptions)
     {
-        // todo реализовать отдуча метрик
-        return services.ConfigureMockMetrics();
-        
-        /*if (metricsOptions is null)
+        if (metricsOptions is null)
             return services.ConfigureMockMetrics();
 
         if (!metricsOptions.UseMetrics)
             return services.ConfigureMockMetrics();
 
         services.TryAddSingleton<IMetricsService, MetricsService>();
-        return services;*/
+        return services;
     }
 
     /// <summary>

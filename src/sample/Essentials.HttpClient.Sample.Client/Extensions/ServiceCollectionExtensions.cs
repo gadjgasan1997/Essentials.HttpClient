@@ -24,19 +24,19 @@ public static class ServiceCollectionExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
-    public static void ConfigureSampleClient(
+    public static IServiceCollection ConfigureSampleClient(
         this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddTestsServices();
         
         #region Конфигурация клиента через fluent api
-
+        
         // Через fluent api можно переопределять опции логирования, метрик и сериализации
         // Для логирования, например, можно переопределить обработчики логирования
         // Или полностью отменить встроенные логи через метод DisableDefaultLogging на конфигураторе логирования
         // В делегатах, как и при обработке событий выше, будет доступ к контексту запроса
-
+        
         #region Добавление кастомных обработчиков событий
         
         // В процессе отправки запроса выстреливают события
@@ -72,7 +72,7 @@ public static class ServiceCollectionExtensions
         
         // ВНИМАНИЕ !!!
         // Данная возможность переопределяет стандартное поведение при сборе логов или метрик,
-        // не заменяя собой ваши обработчики, добавленные через EventsPublisher
+        // не заменяя собой ваши обработчики, добавленные через конфигуратор событий
         // Ниже приведен пример переопределения некоторых событий
         Action<LoggingConfigurator> configureLogsAction = loggingConfigurator =>
             loggingConfigurator
@@ -85,14 +85,14 @@ public static class ServiceCollectionExtensions
                 /*.DisableDefaultLogging()*/;
         
         #endregion
-
+        
         #region Переопределение метрик
 
         Action<MetricsConfigurator> configureMetricsAction = metricsConfigurator =>
             { };
 
         #endregion
-
+        
         #region Переопределение сериализации/десериализации
 
         // При старте сервиса можно переопределить существующие сериалайзеры/десериалайзеры через fluent api
@@ -100,9 +100,6 @@ public static class ServiceCollectionExtensions
         // через которые можно контролировать его поведение.
         // Также можно передать кастомный сериалайзер
         var customXmlSerializer = new XmlSerializer(new XmlWriterSettings());
-
-        // Например, можно проставить свойство PropertyNameCaseInsensitive в false и убедиться,
-        // что ответы от сервера не будут корректно десериализовываться
         var customJsonDeserializer = new NativeJsonDeserializer(
             new JsonSerializerOptions
             {
@@ -121,7 +118,7 @@ public static class ServiceCollectionExtensions
         services.ConfigureEssentialsHttpClient(
             configuration
             
-            // Разинактивить блок, чтобы увидеть результат переопределения стандартных действий (логирования, метрик и сериализации)
+            // Разинактивить блок, чтобы увидеть результат переопределения стандартных действий и подписки на события
             /*,
             configurator =>
                 configurator
@@ -129,6 +126,8 @@ public static class ServiceCollectionExtensions
                     .ConfigureMetrics(configureMetricsAction)
                     .ConfigureSerialization(configureSerializationAction)
                     .SubscribeToEvents(configureEventsAction)*/);
+
+        return services;
     }
 
     private static void AddTestsServices(this IServiceCollection services)

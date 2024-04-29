@@ -14,18 +14,23 @@
     </ItemGroup>
     
     <ItemGroup>
-        <Content Update="appsettings.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-        </Content>
-    </ItemGroup>
-    
-    <ItemGroup>
       <None Update="Properties\launchSettings.json">
         <CopyToOutputDirectory>Never</CopyToOutputDirectory>
         <CopyToPublishDirectory>Never</CopyToPublishDirectory>
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       </None>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <PackageReference Include="App.Metrics.AspNetCore.Mvc" Version="4.3.0" />
+      <PackageReference Include="App.Metrics.Formatters.Prometheus" Version="4.3.0" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Content Update="Configuration\appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

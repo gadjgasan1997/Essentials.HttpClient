@@ -9,7 +9,7 @@
 
     <PropertyGroup>
         <PackageId>Essentials.HttpClient</PackageId>
-        <Version>2.2.0.0</Version>
+        <Version>2.2.1.0</Version>
         <Authors>Gadzhinskiy</Authors>
         <Product>Essentials.HttpClient</Product>
         <Description>
@@ -20,7 +20,7 @@
 
     <ItemGroup>
       <PackageReference Include="App.Metrics.App.All" Version="4.3.0" />
-      <PackageReference Include="Essentials.Configuration" Version="1.0.0" />
+      <PackageReference Include="Essentials.Configuration" Version="1.2.2" />
       <PackageReference Include="Essentials.Functional" Version="1.1.0" />
       <PackageReference Include="Essentials.Logging" Version="1.1.0" />
       <PackageReference Include="Essentials.Serialization" Version="1.1.0" />

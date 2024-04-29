@@ -1,11 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Net.Http.Headers;
-using LanguageExt;
+﻿using LanguageExt;
 using LanguageExt.Common;
 using Essentials.HttpClient.Cache;
 using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Extensions;
 using Essentials.Utils.Extensions;
+using System.Net.Http.Headers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Essentials.HttpClient;
 

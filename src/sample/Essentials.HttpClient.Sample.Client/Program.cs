@@ -1,29 +1,20 @@
 ﻿using NLog;
-using NLog.Web;
-using NLog.Extensions.Logging;
+using Essentials.Configuration.Helpers;
+using Essentials.Configuration.Extensions;
 using Essentials.HttpClient.Sample.Client;
 using Essentials.HttpClient.Sample.Client.Extensions;
 
-LogManager.Setup(setupBuilder => setupBuilder.LoadConfigurationFromFile("nlog.config"));
+LogManager.Setup(setupBuilder => setupBuilder.LoadConfigurationFromFile(
+    LoggingHelpers.GetNLogConfigPath("nlog.config")));
 
-var builder = new HostBuilder();
+var builder = WebApplication.CreateBuilder(args);
 
-builder
-    .ConfigureAppConfiguration(config =>
-        config.AddJsonFile("appsettings.json").AddEnvironmentVariables())
-    .ConfigureLogging(loggingBuilder => loggingBuilder.ClearProviders().AddNLog())
-    .UseNLog(NLogAspNetCoreOptions.Default)
-    .ConfigureWebHostDefaults(host => host.Configure(applicationBuilder => applicationBuilder.UseRouting().Build()))
-    .ConfigureServices((host, services) => services.ConfigureSampleClient(host.Configuration));
+builder.ConfigureDefault(
+    configureServicesAction: (host, services) =>
+        services
+            .ConfigureSampleClient(host.Configuration)
+            .AddHostedService<HostedService>());
 
 var app = builder.Build();
-
-var getRequestsSamplesService = app.Services.GetRequiredService<IGetRequestsSamplesService>();
-var headRequestsSamplesService = app.Services.GetRequiredService<IHeadRequestsSamplesService>();
-var postRequestsSamplesService = app.Services.GetRequiredService<IPostRequestsSamplesService>();
-
-await getRequestsSamplesService.RunSamples();
-await headRequestsSamplesService.RunSamples();
-await postRequestsSamplesService.RunSamples();
 
 app.Run();
