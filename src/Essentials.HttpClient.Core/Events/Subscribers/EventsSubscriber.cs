@@ -4,14 +4,14 @@ using static Essentials.HttpClient.Events.EventsPublisher;
 namespace Essentials.HttpClient.Events.Subscribers;
 
 /// <summary>
-/// Подписчик на события
+/// Подписчик на события, обработчики которых контролируются клиентом
 /// </summary>
-internal static class EventsSubscriber
+internal class EventsSubscriber : BaseEvensSubscriber
 {
     /// <summary>
     /// Подписывается на события
     /// </summary>
-    public static void Subscribe()
+    public override void Subscribe()
     {
         SerializeErrorHandlers.ForEach(handler => OnSerializeError += handler);
         BeforeSendHandlers.ForEach(handler => OnBeforeSend += handler);

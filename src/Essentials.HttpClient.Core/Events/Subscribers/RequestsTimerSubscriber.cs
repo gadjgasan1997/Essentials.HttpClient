@@ -9,11 +9,11 @@ namespace Essentials.HttpClient.Events.Subscribers;
 /// <summary>
 /// Подписчик на события для замерки времени выполнения запросов
 /// </summary>
-internal static class RequestsTimerSubscriber
+internal class RequestsTimerSubscriber : BaseEvensSubscriber
 {
     private static readonly ConcurrentDictionary<string, Stopwatch> _timers = new();
 
-    public static void Subscribe()
+    public override void Subscribe()
     {
         OnBeforeSend += BeforeSendHandler;
         OnSuccessSend += SuccessSendHandler;
@@ -23,47 +23,59 @@ internal static class RequestsTimerSubscriber
 
     private static void BeforeSendHandler()
     {
-        Contract.Assert(Context.Current is not null);
+        TryHandle(() =>
+        {
+            Contract.Assert(Context.Current is not null);
         
-        var clock = new Stopwatch();
-        clock.Start();
+            var clock = new Stopwatch();
+            clock.Start();
         
-        _timers.AddOrUpdate(
-            Context.Current.Request.Id,
-            addValueFactory: _ => clock,
-            updateValueFactory: (_, stopwatch) => stopwatch);
+            _timers.AddOrUpdate(
+                Context.Current.Request.Id,
+                addValueFactory: _ => clock,
+                updateValueFactory: (_, stopwatch) => stopwatch);
+        }, nameof(OnBeforeSend));
     }
 
     private static void SuccessSendHandler()
     {
-        Contract.Assert(Context.Current is not null);
+        TryHandle(() =>
+        {
+            Contract.Assert(Context.Current is not null);
 
-        if (!_timers.TryRemove(Context.Current.Request.Id, out var clock))
-            return;
+            if (!_timers.TryRemove(Context.Current.Request.Id, out var clock))
+                return;
         
-        clock.Stop();
-        Context.Current.SetElapsedTime(clock.ElapsedMilliseconds);
+            clock.Stop();
+            Context.Current.SetElapsedTime(clock.ElapsedMilliseconds);
+        }, nameof(OnSuccessSend));
     }
 
     private static void ErrorSendHandler()
     {
-        Contract.Assert(Context.Current is not null);
+        TryHandle(() =>
+        {
+            Contract.Assert(Context.Current is not null);
 
-        if (!_timers.TryRemove(Context.Current.Request.Id, out var clock))
-            return;
+            if (!_timers.TryRemove(Context.Current.Request.Id, out var clock))
+                return;
         
-        clock.Stop();
-        Context.Current.SetElapsedTime(clock.ElapsedMilliseconds);
+            clock.Stop();
+            Context.Current.SetElapsedTime(clock.ElapsedMilliseconds);
+        }, nameof(OnErrorSend));
     }
 
     private static void BadStatusCodeHandler()
     {
-        Contract.Assert(Context.Current is not null);
+        TryHandle(() =>
+        {
+            Contract.Assert(Context.Current is not null);
 
-        if (!_timers.TryRemove(Context.Current.Request.Id, out var clock))
-            return;
+            if (!_timers.TryRemove(Context.Current.Request.Id, out var clock))
+                return;
         
-        clock.Stop();
-        Context.Current.SetElapsedTime(clock.ElapsedMilliseconds);
+            clock.Stop();
+            Context.Current.SetElapsedTime(clock.ElapsedMilliseconds);
+        }, nameof(OnBadStatusCode));
     }
 }

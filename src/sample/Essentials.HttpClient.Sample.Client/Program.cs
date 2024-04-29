@@ -15,6 +15,4 @@ builder.ConfigureDefault(
             .ConfigureSampleClient(host.Configuration)
             .AddHostedService<HostedService>());
 
-var app = builder.Build();
-
-app.Run();
+builder.Build().Run();

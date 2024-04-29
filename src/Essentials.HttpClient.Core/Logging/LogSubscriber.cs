@@ -1,9 +1,10 @@
 ﻿using System.Diagnostics.Contracts;
+using Essentials.HttpClient.Events;
 using static System.Environment;
 using static System.DateTime;
+using static Essentials.Utils.Dictionaries.KnownDatesFormats;
 using static Essentials.Serialization.Helpers.JsonHelpers;
 using static Essentials.HttpClient.Logging.LogManager;
-using static Essentials.HttpClient.Dictionaries.KnownDatesFormats;
 using static Essentials.HttpClient.Events.EventsPublisher;
 using static Essentials.HttpClient.Logging.LoggingOptions;
 using Context = Essentials.HttpClient.HttpRequestContext;
@@ -13,9 +14,12 @@ namespace Essentials.HttpClient.Logging;
 /// <summary>
 /// Класс-подписчик на события для их логирования
 /// </summary>
-internal static class LogSubscriber
+internal class LogSubscriber : BaseEvensSubscriber
 {
-    public static void Subscribe()
+    /// <summary>
+    /// Подписывается на события
+    /// </summary>
+    public override void Subscribe()
     {
         if (DisableDefaultLogging)
             return;
@@ -31,7 +35,7 @@ internal static class LogSubscriber
 
     private static void DefaultSerializeErrorHandler()
     {
-        TryLog(() =>
+        TryHandle(() =>
         {
             Contract.Assert(Context.Current is not null);
 
@@ -46,7 +50,7 @@ internal static class LogSubscriber
 
     private static void DefaultBeforeSendHandler()
     {
-        TryLog(() =>
+        TryHandle(() =>
         {
             Contract.Assert(Context.Current is not null);
             Contract.Assert(Context.Current.RequestMessage is not null);
@@ -80,7 +84,7 @@ internal static class LogSubscriber
 
     private static void DefaultSuccessSendHandler()
     {
-        TryLog(() =>
+        TryHandle(() =>
         {
             Contract.Assert(Context.Current is not null);
             Contract.Assert(Context.Current.ResponseMessage is not null);
@@ -115,7 +119,7 @@ internal static class LogSubscriber
 
     private static void DefaultErrorSendHandler()
     {
-        TryLog(() =>
+        TryHandle(() =>
         {
             Contract.Assert(Context.Current is not null);
             Contract.Assert(Context.Current.RequestMessage is not null);
@@ -138,7 +142,7 @@ internal static class LogSubscriber
 
     private static void DefaultBadStatusCodeHandler()
     {
-        TryLog(() =>
+        TryHandle(() =>
         {
             Contract.Assert(Context.Current is not null);
             Contract.Assert(Context.Current.ResponseMessage is not null);
@@ -163,7 +167,7 @@ internal static class LogSubscriber
 
     private static void DefaultErrorReadContentHandler()
     {
-        TryLog(() =>
+        TryHandle(() =>
         {
             Contract.Assert(Context.Current is not null);
             
@@ -179,7 +183,7 @@ internal static class LogSubscriber
 
     private static void DefaultDeserializeErrorHandler()
     {
-        TryLog(() =>
+        TryHandle(() =>
         {
             Contract.Assert(Context.Current is not null);
             Contract.Assert(Context.Current.ResponseMessage is not null);
@@ -195,18 +199,6 @@ internal static class LogSubscriber
                 $"{NewLine}Ответ: '{Serialize(Context.Current.ResponseMessage)}'" +
                 $"{NewLine}Строка ответа: '{responseString}'");
         }, nameof(OnDeserializeError));
-    }
-    
-    private static void TryLog(Action action, string eventName)
-    {
-        try
-        {
-            action();
-        }
-        catch (Exception ex)
-        {
-            MainLogger.Error(ex, $"Во время записи лога события '{eventName}' произошло исключение");
-        }
     }
     
     private static string GetElapsedTimeLogString(long? elapsedMilliseconds) =>

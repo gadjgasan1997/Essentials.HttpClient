@@ -3,17 +3,17 @@ using Essentials.HttpClient.Metrics;
 using Microsoft.Extensions.Hosting;
 using Essentials.Utils.Extensions;
 
-namespace Essentials.HttpClient;
+namespace Essentials.HttpClient.HostedServices;
 
 /// <summary>
-/// Сервис для автоматического выполнения необходимых действий после старта
+/// Сервис для автоматической регистрации http клиентов
 /// </summary>
-internal class HttpClientHostedService : IHostedService
+internal class RegisterHttpClientsHostedService : IHostedService
 {
     private readonly IMetricsService _metricsService;
     private readonly IHttpClientFactory _httpClientFactory;
     
-    public HttpClientHostedService(
+    public RegisterHttpClientsHostedService(
         IMetricsService metricsService,
         IHttpClientFactory httpClientFactory)
     {

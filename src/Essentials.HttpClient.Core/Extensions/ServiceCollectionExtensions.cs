@@ -5,8 +5,10 @@ using Essentials.HttpClient.Options;
 using Essentials.HttpClient.Logging;
 using Essentials.HttpClient.Configuration;
 using Essentials.HttpClient.Serialization;
-using Essentials.Configuration.Extensions;
+using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Events.Subscribers;
+using Essentials.HttpClient.HostedServices;
+using Essentials.Configuration.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -62,9 +64,12 @@ public static class ServiceCollectionExtensions
     {
         services.AddHttpClient(nameof(IEssentialsHttpClient));
         
-        RequestsTimerSubscriber.Subscribe();
-        LogSubscriber.Subscribe();
-        EventsSubscriber.Subscribe();
+        // Крайне важна последовательность регистрации подписчиков на события
+        services
+            .AddSingleton<BaseEvensSubscriber, RequestsTimerSubscriber>()
+            .AddSingleton<BaseEvensSubscriber, LogSubscriber>()
+            .AddSingleton<BaseEvensSubscriber, EventsSubscriber>()
+            .AddHostedService<EvensSubscriberHostedService>();
         
         SerializersManager.RegisterSerializers();
         SerializersManager.RegisterDeserializers();
@@ -80,6 +85,6 @@ public static class ServiceCollectionExtensions
                 lifetime: options.ServiceLifetime ?? ServiceLifetime.Transient));
         
         services.ConfigureMetrics(options.Metrics).ConfigureCache(options.Cache);
-        services.AddHostedService<HttpClientHostedService>();
+        services.AddHostedService<RegisterHttpClientsHostedService>();
     }
 }
