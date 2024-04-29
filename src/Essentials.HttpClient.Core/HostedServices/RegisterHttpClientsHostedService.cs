@@ -1,5 +1,4 @@
 ﻿using Essentials.HttpClient.Clients;
-using Essentials.HttpClient.Metrics;
 using Microsoft.Extensions.Hosting;
 using Essentials.Utils.Extensions;
 
@@ -10,20 +9,16 @@ namespace Essentials.HttpClient.HostedServices;
 /// </summary>
 internal class RegisterHttpClientsHostedService : IHostedService
 {
-    private readonly IMetricsService _metricsService;
     private readonly IHttpClientFactory _httpClientFactory;
     
-    public RegisterHttpClientsHostedService(
-        IMetricsService metricsService,
-        IHttpClientFactory httpClientFactory)
+    public RegisterHttpClientsHostedService(IHttpClientFactory httpClientFactory)
     {
-        _metricsService = metricsService.CheckNotNull();
         _httpClientFactory = httpClientFactory.CheckNotNull();
     }
     
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        var client = new EssentialsHttpClient(_metricsService, _httpClientFactory);
+        var client = new EssentialsHttpClient(_httpClientFactory);
         HttpClientsHolder.Push(client);
 
         return Task.CompletedTask;

@@ -5,7 +5,6 @@ using System.Diagnostics.Contracts;
 using System.Diagnostics.CodeAnalysis;
 using Essentials.Utils.Extensions;
 using Essentials.HttpClient.Errors;
-using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Models;
 using Essentials.HttpClient.Extensions;
 using Essentials.Functional.Extensions;
@@ -23,20 +22,15 @@ namespace Essentials.HttpClient.Clients;
 [SuppressMessage("ReSharper", "InvertIf")]
 public class EssentialsHttpClient : IEssentialsHttpClient
 {
-    private readonly IMetricsService _metrics;
     private readonly IHttpClientFactory _factory;
 
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="metricsService"></param>
     /// <param name="factory"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    public EssentialsHttpClient(
-        IMetricsService metricsService,
-        IHttpClientFactory factory)
+    public EssentialsHttpClient(IHttpClientFactory factory)
     {
-        _metrics = metricsService.CheckNotNull();
         _factory = factory.CheckNotNull();
     }
 
@@ -125,50 +119,8 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         
         return await CreateClient(request).BindAsync(SendFunc).ConfigureAwait(false);
 
-        async Task<Validation<Error, IResponse>> SendFunc(SystemHttpClient client)
-        {
-            return await SendWithMetricsAsync(
-                    request: request,
-                    async () => await SendAsync(request, client, httpMethod, httpContent, token).ConfigureAwait(false))
-                .ConfigureAwait(false);
-        }
-    }
-
-    /// <summary>
-    /// Отправляет запрос с добавлением метрик
-    /// </summary>
-    /// <param name="request">Http запрос</param>
-    /// <param name="sendFunc">Делегат отправки запроса</param>
-    /// <returns>Http ответ</returns>
-    protected virtual async Task<Validation<Error, IResponse>> SendWithMetricsAsync(
-        IRequest request,
-        Func<Task<Validation<Error, IResponse>>> sendFunc)
-    {
-        using var timer = request.MetricsOptions.MatchUnsafe(
-            Some: options => _metrics.StartRequestTimer(options.Name, options.Tags),
-            None: () => _metrics.StartRequestTimer(request.ClientName, request.TypeId));
-
-        request.IncrementMetric(
-            Some: options => _metrics.HttpRequestSent(options.Name, options.Tags),
-            None: () => _metrics.HttpRequestSent(request.ClientName, request.TypeId));
-        
-        var validation = await sendFunc().ConfigureAwait(false);
-        
-        validation.Match(
-            Succ: _ =>
-            {
-                request.IncrementMetric(
-                    Some: options => _metrics.HttpRequestSuccessSent(options.Name, options.Tags),
-                    None: () => _metrics.HttpRequestSuccessSent(request.ClientName, request.TypeId));
-            },
-            Fail: _ =>
-            {
-                request.IncrementMetric(
-                    Some: options => _metrics.HttpRequestErrorSent(options.Name, options.Tags),
-                    None: () => _metrics.HttpRequestErrorSent(request.ClientName, request.TypeId));
-            });
-        
-        return validation;
+        async Task<Validation<Error, IResponse>> SendFunc(SystemHttpClient client) =>
+            await SendAsync(request, client, httpMethod, httpContent, token).ConfigureAwait(false);
     }
 
     /// <summary>

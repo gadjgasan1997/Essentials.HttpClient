@@ -9,6 +9,7 @@ using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Events.Subscribers;
 using Essentials.HttpClient.HostedServices;
 using Essentials.Configuration.Extensions;
+using Essentials.HttpClient.Metrics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -68,6 +69,7 @@ public static class ServiceCollectionExtensions
         services
             .AddSingleton<BaseEvensSubscriber, RequestsTimerSubscriber>()
             .AddSingleton<BaseEvensSubscriber, LogSubscriber>()
+            .AddSingleton<BaseEvensSubscriber, MetricsSubscriber>()
             .AddSingleton<BaseEvensSubscriber, EventsSubscriber>()
             .AddHostedService<EvensSubscriberHostedService>();
         
