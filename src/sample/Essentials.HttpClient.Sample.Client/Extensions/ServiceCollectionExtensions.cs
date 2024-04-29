@@ -29,14 +29,44 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         services.AddTestsServices();
-        AddCustomEventsHandlers();
-
+        
         #region Конфигурация клиента через fluent api
 
         // Через fluent api можно переопределять опции логирования, метрик и сериализации
         // Для логирования, например, можно переопределить обработчики логирования
         // Или полностью отменить встроенные логи через метод DisableDefaultLogging на конфигураторе логирования
         // В делегатах, как и при обработке событий выше, будет доступ к контексту запроса
+
+        #region Добавление кастомных обработчиков событий
+        
+        // В процессе отправки запроса выстреливают события
+        // На них можно подписываться чтобы как-нибудь обработать
+        // Существуют и стандартные обработчики, собирающие логи и метрики
+        // Данный функционал нужен для сценариев, когда стандартных обработчиков недостаточно
+
+        Action<EventsConfigurator> configureEventsAction = eventsConfigurator =>
+            eventsConfigurator
+                .AttachBeforeSendHandler(() =>
+                {
+                    // Ваш обработчик
+                    // Здесь, как и во всех событиях, будет доступ к контексту запроса
+
+                    // ВНИМАНИЕ !!!
+                    // Не все свойства контекста доступны во всех событиях! Проверяйте на null, если не уверены
+                    MainSampleLogger.Info($"My custom handler for BeforeSend: '{HttpRequestContext.Current!.Request.Uri}'!");
+                })
+                .AttachSuccessSendHandler(() =>
+                {
+                    // Ваш обработчик
+                    // Здесь, как и во всех событиях, будет доступ к контексту запроса
+
+                    // ВНИМАНИЕ !!!
+                    // Не все свойства контекста доступны во всех событиях! Проверяйте на null, если не уверены
+                    MainSampleLogger.Info(
+                        $"My custom handler for SuccessSendEvent: '{HttpRequestContext.Current!.ElapsedMilliseconds}'!");
+                });
+        
+        #endregion
         
         #region Переопределение логов
         
@@ -97,26 +127,8 @@ public static class ServiceCollectionExtensions
                 configurator
                     .ConfigureLogging(configureLogsAction)
                     .ConfigureMetrics(configureMetricsAction)
-                    .ConfigureSerialization(configureSerializationAction)*/);
-    }
-
-    private static void AddCustomEventsHandlers()
-    {
-        // В процессе отправки запроса выстреливают события
-        // На них можно подписываться чтобы как-нибудь обработать
-        // Существуют и стандартные обработчики, собирающие логи и метрики
-        // Данный функционал нужен для сценариев, когда стандартных обработчиков недостаточно
-        EventsPublisher.OnBeforeSend += () =>
-        {
-            // Ваш обработчик
-            // Здесь, как и во всех событиях, будет доступ к контексту запроса
-            
-            // ВНИМАНИЕ !!!
-            // Не все свойства контекста доступны во всех событиях! Проверяйте на null, если не уверены
-            
-            // Разинактивить, чтобы увидеть результат
-            //MainSampleLogger.Info($"Test from BeforeSend to '{HttpRequestContext.Current!.Request.Uri}'!");
-        };
+                    .ConfigureSerialization(configureSerializationAction)
+                    .SubscribeToEvents(configureEventsAction)*/);
     }
 
     private static void AddTestsServices(this IServiceCollection services)

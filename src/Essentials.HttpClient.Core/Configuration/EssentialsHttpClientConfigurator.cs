@@ -1,4 +1,5 @@
 ﻿using Essentials.Utils.Extensions;
+using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Logging;
 using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Serialization;
@@ -49,6 +50,19 @@ public class EssentialsHttpClientConfigurator
         configureAction.CheckNotNull("Действие конфигурации сериализации не может быть null");
 
         configureAction(new SerializationConfigurator());
+        return this;
+    }
+
+    /// <summary>
+    /// Подписывается на события
+    /// </summary>
+    /// <param name="configureAction">Действие подписки на события</param>
+    /// <returns>Конфигуратор http клиента</returns>
+    public EssentialsHttpClientConfigurator SubscribeToEvents(Action<EventsConfigurator> configureAction)
+    {
+        configureAction.CheckNotNull("Действие конфигурации событий не может быть null");
+        
+        configureAction(new EventsConfigurator());
         return this;
     }
 }

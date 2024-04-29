@@ -64,6 +64,7 @@ public static class ServiceCollectionExtensions
         
         RequestsTimerSubscriber.Subscribe();
         LogSubscriber.Subscribe();
+        EventsSubscriber.Subscribe();
         
         SerializersManager.RegisterSerializers();
         SerializersManager.RegisterDeserializers();
