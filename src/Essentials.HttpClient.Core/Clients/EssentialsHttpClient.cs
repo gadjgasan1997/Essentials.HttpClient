@@ -1,13 +1,12 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
+﻿using LanguageExt;
+using LanguageExt.Common;
 using System.Net.Sockets;
+using System.Diagnostics.Contracts;
+using System.Diagnostics.CodeAnalysis;
 using Essentials.Utils.Extensions;
 using Essentials.HttpClient.Errors;
 using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Models;
-using LanguageExt;
-using LanguageExt.Common;
 using Essentials.HttpClient.Extensions;
 using Essentials.Functional.Extensions;
 using static LanguageExt.Prelude;
@@ -65,7 +64,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     public Task<Validation<Error, IResponse>> DeleteAsync(IRequest request, Token? token = null) =>
         SendRequestWithoutContentAsync(request, HttpMethod.Delete, token);
 
-    #region Additional Methods
+    #region Private Methods
 
     /// <summary>
     /// Отправляет запрос без содержимого
@@ -190,9 +189,6 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     {
         Contract.Assert(HttpRequestContext.Current is not null);
         
-        var clock = new Stopwatch();
-        clock.Start();
-        
         HttpResponseMessage responseMessage;
         using var requestMessage = new HttpRequestMessage();
 
@@ -218,8 +214,6 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         }
         catch (Exception exception)
         {
-            clock.Stop();
-
             var errorMessage = exception switch
             {
                 TimeoutException or { InnerException: TimeoutException } =>
@@ -229,18 +223,13 @@ public class EssentialsHttpClient : IEssentialsHttpClient
                 _ => null
             };
 
-            HttpRequestContext.Current.SetError(
-                exception,
-                clock.ElapsedMilliseconds,
-                errorMessage);
+            HttpRequestContext.Current.SetError(exception, errorMessage);
             
             request.RaiseEvent(nameof(OnErrorSend), RaiseOnErrorSend);
             return Error.New(exception);
         }
 
-        clock.Stop();
-        
-        HttpRequestContext.Current.SetResponse(responseMessage, clock.ElapsedMilliseconds);
+        HttpRequestContext.Current.SetResponse(responseMessage);
         
         if (!responseMessage.IsSuccessStatusCode)
         {
@@ -252,7 +241,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
         }
         
         request.RaiseEvent(nameof(OnSuccessSend), RaiseOnSuccessSend);
-        return new Response(request, responseMessage, clock.ElapsedMilliseconds);
+        return new Response(request, responseMessage);
     }
     
     /// <summary>

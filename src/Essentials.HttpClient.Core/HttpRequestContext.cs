@@ -62,7 +62,7 @@ public static class HttpRequestContext
         try
         {
             var scope = CreateContext(response.Request);
-            Current.SetResponse(response.ResponseMessage, response.ElapsedMilliseconds);
+            Current.SetResponse(response.ResponseMessage);
             return scope;
         }
         catch (Exception exception)
@@ -112,7 +112,7 @@ public static class HttpRequestContext
         public string? ErrorMessage { get; private set; }
     
         /// <summary>
-        /// Затраченно время на обработку запроса, в мс
+        /// Затраченное время на обработку запроса, в мс
         /// </summary>
         public long? ElapsedMilliseconds { get; private set; }
 
@@ -120,27 +120,9 @@ public static class HttpRequestContext
         /// Устанавливает ответ
         /// </summary>
         /// <param name="responseMessage">Сообщение с ответом</param>
-        /// <param name="elapsedMilliseconds">Затраченно время на обработку запроса, в мс</param>
-        internal void SetResponse(HttpResponseMessage responseMessage, long elapsedMilliseconds)
+        internal void SetResponse(HttpResponseMessage responseMessage)
         {
             ResponseMessage = responseMessage.CheckNotNull();
-            ElapsedMilliseconds = elapsedMilliseconds;
-        }
-
-        /// <summary>
-        /// Устанавливает ошибку
-        /// </summary>
-        /// <param name="exception">Возникше исключение</param>
-        /// <param name="elapsedMilliseconds">Затраченно время на обработку запроса, в мс</param>
-        /// <param name="errorMessage">Сообщение об ошибке</param>
-        internal void SetError(
-            Exception exception,
-            long elapsedMilliseconds = 0,
-            string? errorMessage = null)
-        {
-            Exception = exception.CheckNotNull();
-            ElapsedMilliseconds = elapsedMilliseconds;
-            ErrorMessage = errorMessage ?? ErrorSendRequest;
         }
 
         /// <summary>
@@ -155,5 +137,11 @@ public static class HttpRequestContext
             Exception = exception.CheckNotNull();
             ErrorMessage = errorMessage ?? ErrorSendRequest;
         }
+
+        /// <summary>
+        /// Устанавливает затраченное время на обработку запроса, в мс
+        /// </summary>
+        /// <param name="elapsedMilliseconds">Затраченное время на обработку запроса, в мс</param>
+        internal void SetElapsedTime(long elapsedMilliseconds) => ElapsedMilliseconds = elapsedMilliseconds;
     }
 }

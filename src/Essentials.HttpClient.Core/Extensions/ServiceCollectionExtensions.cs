@@ -6,6 +6,7 @@ using Essentials.HttpClient.Logging;
 using Essentials.HttpClient.Configuration;
 using Essentials.HttpClient.Serialization;
 using Essentials.Configuration.Extensions;
+using Essentials.HttpClient.Events.Subscribers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -61,6 +62,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddHttpClient(nameof(IEssentialsHttpClient));
         
+        RequestsTimerSubscriber.Subscribe();
         LogSubscriber.Subscribe();
         
         SerializersManager.RegisterSerializers();

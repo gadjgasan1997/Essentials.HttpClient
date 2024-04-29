@@ -99,7 +99,7 @@ internal static class LogSubscriber
                 logger.Debug(
                     $"Запрос по адресу '{request.Uri}' " +
                     $"вернул код '{responseMessage.StatusCode}' в '{Now.ToString(LogDateLongFormat)}'. " +
-                    $"Время выполнения запроса, в милисекундах: '{Context.Current.ElapsedMilliseconds}'." +
+                    GetElapsedTimeLogString(Context.Current.ElapsedMilliseconds) +
                     $"{NewLine}Ответ: '{Serialize(responseMessage)}'" +
                     $"{NewLine}Строка ответа: '{responseString}'");
                 
@@ -109,7 +109,7 @@ internal static class LogSubscriber
             logger.Info(
                 $"Запрос по адресу '{request.Uri}' " +
                 $"вернул код '{responseMessage.StatusCode}' в '{Now.ToString(LogDateLongFormat)}'. " +
-                $"Время выполнения запроса, в милисекундах: '{Context.Current.ElapsedMilliseconds}'.");
+                GetElapsedTimeLogString(Context.Current.ElapsedMilliseconds));
         }, nameof(OnSuccessSend));
     }
 
@@ -130,7 +130,7 @@ internal static class LogSubscriber
                 Context.Current.Exception,
                 Context.Current.ErrorMessage +
                 $"{NewLine}Дата и время получения исключения: '{Now.ToString(LogDateLongFormat)}'. " +
-                $"Время выполнения запроса, в милисекундах: '{Context.Current.ElapsedMilliseconds}'." +
+                GetElapsedTimeLogString(Context.Current.ElapsedMilliseconds) +
                 $"{NewLine}Запрос: '{Serialize(requestMessage)}'" +
                 $"{NewLine}Строка запроса: '{requestString ?? "No http content"}'");
         }, nameof(OnErrorSend));
@@ -154,7 +154,7 @@ internal static class LogSubscriber
             logger.Error(
                 $"В ответ на Http запрос был получен ошибочный Http код ответа: '{responseMessage.StatusCode}'" +
                 $"{NewLine}Дата и время получения ответа: '{Now.ToString(LogDateLongFormat)}'. " +
-                $"Время выполнения запроса, в милисекундах: '{Context.Current.ElapsedMilliseconds}'." +
+                GetElapsedTimeLogString(Context.Current.ElapsedMilliseconds) +
                 $"{NewLine}Запрос: '{Serialize(requestMessage)}'" +
                 $"{NewLine}Строка запроса: '{requestString}'" +
                 $"{NewLine}Ответ: '{Serialize(responseMessage)}'");
@@ -208,4 +208,9 @@ internal static class LogSubscriber
             MainLogger.Error(ex, $"Во время записи лога события '{eventName}' произошло исключение");
         }
     }
+    
+    private static string GetElapsedTimeLogString(long? elapsedMilliseconds) =>
+        string.IsNullOrWhiteSpace(elapsedMilliseconds?.ToString())
+            ? "Не удалось засечь время выполнения запроса"
+            : $"Время выполнения запроса, в милисекундах: '{elapsedMilliseconds}'.";
 }
