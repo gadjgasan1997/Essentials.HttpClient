@@ -80,7 +80,7 @@ public static class ServiceCollectionExtensions
                 implementationType: typeof(EssentialsHttpClient),
                 lifetime: options.ServiceLifetime ?? ServiceLifetime.Transient));
         
-        services.ConfigureMetrics(options.Metrics).ConfigureCache(options.Cache);
+        services.ConfigureMetrics().ConfigureCache(options.Cache);
         services.AddHostedService<RegisterHttpClientsHostedService>();
     }
 

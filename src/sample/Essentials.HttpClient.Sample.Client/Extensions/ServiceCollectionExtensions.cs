@@ -65,20 +65,6 @@ public static class ServiceCollectionExtensions
         
         #endregion
         
-        #region Переопределение логов
-        
-        Action<LoggingConfigurator> configureLogsAction = loggingConfigurator =>
-            { };
-        
-        #endregion
-        
-        #region Переопределение метрик
-
-        Action<MetricsConfigurator> configureMetricsAction = metricsConfigurator =>
-            { };
-
-        #endregion
-        
         #region Переопределение сериализации/десериализации
 
         // При старте сервиса можно переопределить существующие сериалайзеры/десериалайзеры через fluent api
@@ -110,9 +96,7 @@ public static class ServiceCollectionExtensions
                     .AttachDefaultInterceptor<LoggingInterceptor>()
                     
                     // Разинактивить блок, чтобы увидеть результат переопределения стандартных действий и подписки на события
-                    /*.ConfigureLogging(configureLogsAction)
-                    .ConfigureMetrics(configureMetricsAction)
-                    .ConfigureSerialization(configureSerializationAction)
+                    /*.ConfigureSerialization(configureSerializationAction)
                     .SubscribeToEvents(configureEventsAction)*/
                     );
 
@@ -121,11 +105,13 @@ public static class ServiceCollectionExtensions
 
     private static void AddTestsServices(this IServiceCollection services)
     {
-        services.AddHttpClient<GetRequestsSamplesService>();
-        services.AddHttpClient<HeadRequestsSamplesService>();
-        services.AddHttpClient<PostRequestsSamplesService>();
         services.AddTransient<IGetRequestsSamplesService, GetRequestsSamplesService>();
         services.AddTransient<IHeadRequestsSamplesService, HeadRequestsSamplesService>();
         services.AddTransient<IPostRequestsSamplesService, PostRequestsSamplesService>();
+        
+        // Клиенты можно не добавлять, тогда будет использоваться клиент по-умолчанию
+        services.AddHttpClient<GetRequestsSamplesService>();
+        services.AddHttpClient<HeadRequestsSamplesService>();
+        services.AddHttpClient<PostRequestsSamplesService>();
     }
 }

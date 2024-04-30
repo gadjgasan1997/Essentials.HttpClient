@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Essentials.HttpClient.Cache.Options;
-using Essentials.HttpClient.Metrics.Options;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Essentials.HttpClient.Options;
@@ -20,11 +19,6 @@ internal class ClientsOptions
     /// Время жизни сервиса при регистрации
     /// </summary>
     public ServiceLifetime? ServiceLifetime { get; set; }
-    
-    /// <summary>
-    /// Опции метрик
-    /// </summary>
-    public MetricsOptions? Metrics { get; set; }
     
     /// <summary>
     /// Опции кеша

@@ -1,12 +1,10 @@
-﻿using System.Collections.Concurrent;
+﻿using LanguageExt;
 using App.Metrics;
-using App.Metrics.Counter;
 using App.Metrics.Timer;
-using LanguageExt;
-using Microsoft.Extensions.Options;
+using App.Metrics.Counter;
 using Essentials.Utils.Extensions;
+using System.Collections.Concurrent;
 using static Essentials.HttpClient.Metrics.Dictionaries.KnownMetricsTags;
-using HttpRequestsMetricsOptions = Essentials.HttpClient.Metrics.Options.MetricsOptions;
 
 namespace Essentials.HttpClient.Metrics.Implementations;
 
@@ -14,23 +12,19 @@ namespace Essentials.HttpClient.Metrics.Implementations;
 internal class MetricsService : IMetricsService
 {
     private readonly IMetrics _metrics;
-    private readonly IOptions<HttpRequestsMetricsOptions> _options;
     private static readonly ConcurrentDictionary<(string, string?), MetricTags> _defaultTags = new();
     private static readonly ConcurrentDictionary<string, CounterOptions> _counters = new();
     private static readonly ConcurrentDictionary<string, TimerOptions> _timers = new();
 
-    public MetricsService(
-        IMetrics metrics,
-        IOptions<HttpRequestsMetricsOptions> options)
+    public MetricsService(IMetrics metrics)
     {
         _metrics = metrics.CheckNotNull();
-        _options = options.CheckNotNull();
     }
 
     /// <inheritdoc cref="IMetricsService.StartRequestTimer(string, Option{string})" />
     public IDisposable? StartRequestTimer(string clientName, Option<string> requestTypeId)
     {
-        if (string.IsNullOrWhiteSpace(clientName) || !_options.Value.NeedMetrics(clientName))
+        if (string.IsNullOrWhiteSpace(clientName))
             return null;
         
         var timer = GetTimer(clientName);
@@ -41,7 +35,7 @@ internal class MetricsService : IMetricsService
     /// <inheritdoc cref="IMetricsService.HttpRequestSent(string, Option{string})" />
     public void HttpRequestSent(string clientName, Option<string> requestTypeId)
     {
-        if (string.IsNullOrWhiteSpace(clientName) || !_options.Value.NeedMetrics(clientName))
+        if (string.IsNullOrWhiteSpace(clientName))
             return;
         
         IncrementDefaultCounter($"{clientName} Request Counter", clientName, requestTypeId);
@@ -50,7 +44,7 @@ internal class MetricsService : IMetricsService
     /// <inheritdoc cref="IMetricsService.HttpRequestSuccessSent(string, Option{string})" />
     public void HttpRequestSuccessSent(string clientName, Option<string> requestTypeId)
     {
-        if (string.IsNullOrWhiteSpace(clientName) || !_options.Value.NeedMetrics(clientName))
+        if (string.IsNullOrWhiteSpace(clientName))
             return;
 
         IncrementDefaultCounter($"{clientName} Valid Request Counter", clientName, requestTypeId);
@@ -59,7 +53,7 @@ internal class MetricsService : IMetricsService
     /// <inheritdoc cref="IMetricsService.HttpRequestErrorSent(string, Option{string})" />
     public void HttpRequestErrorSent(string clientName, Option<string> requestTypeId)
     {
-        if (string.IsNullOrWhiteSpace(clientName) || !_options.Value.NeedMetrics(clientName))
+        if (string.IsNullOrWhiteSpace(clientName))
             return;
 
         IncrementDefaultCounter($"{clientName} Invalid Request Counter", clientName, requestTypeId);
@@ -68,7 +62,7 @@ internal class MetricsService : IMetricsService
     /// <inheritdoc cref="IMetricsService.StartRequestTimer(string, MetricTags)" />
     public IDisposable? StartRequestTimer(string metricName, MetricTags tags)
     {
-        if (string.IsNullOrWhiteSpace(metricName) || !_options.Value.NeedMetrics(metricName))
+        if (string.IsNullOrWhiteSpace(metricName))
             return null;
 
         var timer = GetTimer(metricName);
@@ -78,7 +72,7 @@ internal class MetricsService : IMetricsService
     /// <inheritdoc cref="IMetricsService.HttpRequestSent(string, MetricTags)" />
     public void HttpRequestSent(string metricName, MetricTags tags)
     {
-        if (string.IsNullOrWhiteSpace(metricName) || !_options.Value.NeedMetrics(metricName))
+        if (string.IsNullOrWhiteSpace(metricName))
             return;
 
         IncrementCounter($"{metricName} Request Counter", ref tags);
@@ -87,7 +81,7 @@ internal class MetricsService : IMetricsService
     /// <inheritdoc cref="IMetricsService.HttpRequestSuccessSent(string, MetricTags)" />
     public void HttpRequestSuccessSent(string metricName, MetricTags tags)
     {
-        if (string.IsNullOrWhiteSpace(metricName) || !_options.Value.NeedMetrics(metricName))
+        if (string.IsNullOrWhiteSpace(metricName))
             return;
 
         IncrementCounter($"{metricName} Valid Request Counter", ref tags);
@@ -96,7 +90,7 @@ internal class MetricsService : IMetricsService
     /// <inheritdoc cref="IMetricsService.HttpRequestErrorSent(string, MetricTags)" />
     public void HttpRequestErrorSent(string metricName, MetricTags tags)
     {
-        if (string.IsNullOrWhiteSpace(metricName) || !_options.Value.NeedMetrics(metricName))
+        if (string.IsNullOrWhiteSpace(metricName))
             return;
 
         IncrementCounter($"{metricName} Invalid Request Counter", ref tags);
