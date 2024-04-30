@@ -3,7 +3,7 @@ using LanguageExt;
 using LanguageExt.Common;
 using static LanguageExt.Prelude;
 using static Essentials.HttpClient.Dictionaries.ErrorMessages;
-using static Essentials.HttpClient.Events.EventsPublisher;
+using static Essentials.HttpClient.Events.EventsStorage;
 
 namespace Essentials.HttpClient.Extensions;
 

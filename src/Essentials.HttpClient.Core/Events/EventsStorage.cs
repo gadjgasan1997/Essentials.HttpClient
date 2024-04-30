@@ -8,7 +8,7 @@ public delegate void Handler();
 /// <summary>
 /// Класс с отдаваемыми событиями
 /// </summary>
-internal static class EventsPublisher
+internal static class EventsStorage
 {
     /// <summary>
     /// Событие ошибки сериализации объекта

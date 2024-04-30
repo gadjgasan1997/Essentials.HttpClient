@@ -10,7 +10,7 @@ using Essentials.HttpClient.Extensions;
 using Essentials.Functional.Extensions;
 using Essentials.HttpClient.RequestsInterception;
 using static LanguageExt.Prelude;
-using static Essentials.HttpClient.Events.EventsPublisher;
+using static Essentials.HttpClient.Events.EventsStorage;
 using static Essentials.HttpClient.Dictionaries.ErrorMessages;
 using SystemHttpClient = System.Net.Http.HttpClient;
 using Token = System.Threading.CancellationToken;

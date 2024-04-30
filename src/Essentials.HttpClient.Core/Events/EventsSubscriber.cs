@@ -1,5 +1,5 @@
 ﻿using static Essentials.HttpClient.Events.EventsOptions;
-using static Essentials.HttpClient.Events.EventsPublisher;
+using static Essentials.HttpClient.Events.EventsStorage;
 
 namespace Essentials.HttpClient.Events;
 

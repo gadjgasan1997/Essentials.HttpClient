@@ -294,7 +294,7 @@ public static class RequestBuilderExtensions
         return validation.ModifyRequest(builder =>
             () =>
             {
-                builder.SetHandler(nameof(EventsPublisher.OnSerializeError), handler);
+                builder.SetHandler(nameof(EventsStorage.OnSerializeError), handler);
             });
     }
 
@@ -311,7 +311,7 @@ public static class RequestBuilderExtensions
         return validation.ModifyRequest(builder =>
             () =>
             {
-                builder.SetHandler(nameof(EventsPublisher.OnBeforeSend), handler);
+                builder.SetHandler(nameof(EventsStorage.OnBeforeSend), handler);
             });
     }
 
@@ -328,7 +328,7 @@ public static class RequestBuilderExtensions
         return validation.ModifyRequest(builder =>
             () =>
             {
-                builder.SetHandler(nameof(EventsPublisher.OnSuccessSend), handler);
+                builder.SetHandler(nameof(EventsStorage.OnSuccessSend), handler);
             });
     }
 
@@ -345,7 +345,7 @@ public static class RequestBuilderExtensions
         return validation.ModifyRequest(builder =>
             () =>
             {
-                builder.SetHandler(nameof(EventsPublisher.OnErrorSend), handler);
+                builder.SetHandler(nameof(EventsStorage.OnErrorSend), handler);
             });
     }
 
@@ -362,7 +362,7 @@ public static class RequestBuilderExtensions
         return validation.ModifyRequest(builder =>
             () =>
             {
-                builder.SetHandler(nameof(EventsPublisher.OnBadStatusCode), handler);
+                builder.SetHandler(nameof(EventsStorage.OnBadStatusCode), handler);
             });
     }
 
@@ -379,7 +379,7 @@ public static class RequestBuilderExtensions
         return validation.ModifyRequest(builder =>
             () =>
             {
-                builder.SetHandler(nameof(EventsPublisher.OnErrorReadContent), handler);
+                builder.SetHandler(nameof(EventsStorage.OnErrorReadContent), handler);
             });
     }
 
@@ -396,7 +396,7 @@ public static class RequestBuilderExtensions
         return validation.ModifyRequest(builder =>
             () =>
             {
-                builder.SetHandler(nameof(EventsPublisher.OnDeserializeError), handler);
+                builder.SetHandler(nameof(EventsStorage.OnDeserializeError), handler);
             });
     }
 

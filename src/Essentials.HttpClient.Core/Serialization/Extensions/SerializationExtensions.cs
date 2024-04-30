@@ -5,7 +5,7 @@ using LanguageExt.Common;
 using Essentials.Utils.IO.Extensions;
 using Essentials.Serialization;
 using static LanguageExt.Prelude;
-using static Essentials.HttpClient.Events.EventsPublisher;
+using static Essentials.HttpClient.Events.EventsStorage;
 using static Essentials.HttpClient.Dictionaries.ErrorMessages;
 
 namespace Essentials.HttpClient.Serialization.Extensions;

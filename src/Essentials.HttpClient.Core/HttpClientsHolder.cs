@@ -1,7 +1,6 @@
-﻿using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
-using LanguageExt;
+﻿using LanguageExt;
 using LanguageExt.Common;
+using System.Diagnostics.CodeAnalysis;
 using static LanguageExt.Prelude;
 
 namespace Essentials.HttpClient;
@@ -12,7 +11,7 @@ namespace Essentials.HttpClient;
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class HttpClientsHolder
 {
-    private static readonly ConcurrentStack<IEssentialsHttpClient> _clients = new();
+    private static readonly Stack<IEssentialsHttpClient> _clients = new();
 
     /// <summary>
     /// Добавляет Http клиент
