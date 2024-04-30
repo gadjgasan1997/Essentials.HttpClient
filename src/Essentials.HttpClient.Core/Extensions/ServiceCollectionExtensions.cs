@@ -5,7 +5,6 @@ using Essentials.HttpClient.Options;
 using Essentials.HttpClient.Configuration;
 using Essentials.HttpClient.Serialization;
 using Essentials.HttpClient.Events;
-using Essentials.HttpClient.Events.Subscribers;
 using Essentials.HttpClient.HostedServices;
 using Essentials.Configuration.Extensions;
 using Essentials.HttpClient.RequestsInterception;
@@ -65,11 +64,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddHttpClient(nameof(IEssentialsHttpClient));
         
-        // Крайне важна последовательность регистрации подписчиков на события
-        services
-            .AddSingleton<BaseEvensSubscriber, EventsSubscriber>()
-            .AddHostedService<EvensSubscriberHostedService>();
-        
+        EventsSubscriber.Subscribe();
         SerializersManager.RegisterSerializers();
         SerializersManager.RegisterDeserializers();
         

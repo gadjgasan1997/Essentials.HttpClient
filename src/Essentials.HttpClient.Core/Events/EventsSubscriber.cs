@@ -1,17 +1,17 @@
 ﻿using static Essentials.HttpClient.Events.EventsOptions;
 using static Essentials.HttpClient.Events.EventsPublisher;
 
-namespace Essentials.HttpClient.Events.Subscribers;
+namespace Essentials.HttpClient.Events;
 
 /// <summary>
 /// Подписчик на события, обработчики которых контролируются клиентом
 /// </summary>
-internal class EventsSubscriber : BaseEvensSubscriber
+internal static class EventsSubscriber
 {
     /// <summary>
     /// Подписывается на события
     /// </summary>
-    public override void Subscribe()
+    public static void Subscribe()
     {
         SerializeErrorHandlers.ForEach(handler => OnSerializeError += handler);
         BeforeSendHandlers.ForEach(handler => OnBeforeSend += handler);
