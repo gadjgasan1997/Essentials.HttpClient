@@ -25,7 +25,12 @@ public static class UriExtensions
     /// Осуществляет Http запрос по адресу, возвращая строку в качестве результата
     /// </summary>
     /// <param name="uri">Адрес</param>
-    /// <returns></returns>
-    public static TaskAwaiter<string?> GetAwaiter(this Uri uri) =>
-        HttpClientsHolder.PeekUnsafe()?.GetStringAsync(uri).GetAwaiter() ?? new TaskAwaiter<string?>();
+    /// <returns>Строка ответа</returns>
+    public static TaskAwaiter<string?> GetAwaiter(this Uri uri)
+    {
+        if (HttpClientsHolder.PeekUnsafe() is not { } client)
+            throw new InvalidOperationException($"Не найден http клиент для отправки запроса по адресу: '{uri}'");
+            
+        return client.GetStringAsync(uri).GetAwaiter();
+    }
 }
