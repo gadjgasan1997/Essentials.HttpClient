@@ -1,5 +1,6 @@
 ﻿using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Logging;
+using Essentials.HttpClient.Metrics;
 
 namespace Essentials.HttpClient.RequestsInterception;
 
@@ -10,7 +11,8 @@ internal static class InterceptorsStorage
 {
     private static readonly List<Type> _interceptors = [
         typeof(RequestsTimerInterceptor),
-        typeof(LoggingInterceptor)];
+        typeof(LoggingInterceptor),
+        typeof(MetricsInterceptor)];
 
     /// <summary>
     /// Пытается добавить интерсептор для регистрации, если он еще не был добавлен

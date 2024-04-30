@@ -8,7 +8,6 @@ using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Events.Subscribers;
 using Essentials.HttpClient.HostedServices;
 using Essentials.Configuration.Extensions;
-using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.RequestsInterception;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -68,7 +67,6 @@ public static class ServiceCollectionExtensions
         
         // Крайне важна последовательность регистрации подписчиков на события
         services
-            .AddSingleton<BaseEvensSubscriber, MetricsSubscriber>()
             .AddSingleton<BaseEvensSubscriber, EventsSubscriber>()
             .AddHostedService<EvensSubscriberHostedService>();
         
