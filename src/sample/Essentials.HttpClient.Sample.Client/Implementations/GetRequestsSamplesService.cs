@@ -1,8 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using LanguageExt;
+using LanguageExt.Common;
+using System.Diagnostics.CodeAnalysis;
+using Essentials.HttpClient.Events;
+using Essentials.HttpClient.Logging;
+using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Extensions;
 using Essentials.HttpClient.Sample.Client.Models;
-using LanguageExt;
-using LanguageExt.Common;
 using static Essentials.HttpClient.Sample.Client.Dictionaries.CommonConsts;
 
 namespace Essentials.HttpClient.Sample.Client.Implementations;
@@ -41,6 +44,9 @@ public class GetRequestsSamplesService : IGetRequestsSamplesService
             .CreateBuilder(uriValidation)
             .SetTypeId("GetPersonsInJson")
             .WithHeader("personName", "as")
+            .WithInterceptor<RequestsTimerInterceptor>()
+            .WithInterceptor<LoggingInterceptor>()
+            .WithInterceptor<MetricsInterceptor>()
             .BuildAsync<GetRequestsSamplesService>();
     
         var persons = await _httpClient
@@ -86,6 +92,9 @@ public class GetRequestsSamplesService : IGetRequestsSamplesService
                 .WithRequestId("Cached_Request_Id")
                 .SetTypeId("GetPersonsInJson_WithCache")
                 .WithHeader("personName", "as")
+                .WithInterceptor<RequestsTimerInterceptor>()
+                .WithInterceptor<LoggingInterceptor>()
+                .WithInterceptor<MetricsInterceptor>()
                 .BuildAsync<GetRequestsSamplesService>();
     }
 
@@ -99,6 +108,9 @@ public class GetRequestsSamplesService : IGetRequestsSamplesService
         var requestValidation = await HttpRequestBuilder
             .CreateBuilder(uriValidation)
             .SetTypeId("GetPersonsInXml")
+            .WithInterceptor<RequestsTimerInterceptor>()
+            .WithInterceptor<LoggingInterceptor>()
+            .WithInterceptor<MetricsInterceptor>()
             .BuildAsync<GetRequestsSamplesService>();
 
         var persons = await _httpClient
