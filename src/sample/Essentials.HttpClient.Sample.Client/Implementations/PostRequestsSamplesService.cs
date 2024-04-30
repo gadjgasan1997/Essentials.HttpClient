@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Extensions;
+using Essentials.HttpClient.Logging;
 using Essentials.HttpClient.Sample.Client.Models;
 using Essentials.HttpClient.Sample.Client.Models.Requests;
 using static Essentials.HttpClient.Common.Helpers.SerializationHelpers;
@@ -48,6 +49,7 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
             .WithRequestId("Test_Request_Id")
             .SetTypeId("GetPersonsInJson")
             .WithInterceptor<RequestsTimerInterceptor>()
+            .WithInterceptor<LoggingInterceptor>()
             
             /* Данным методом мы можем переопределить все существующие обработчики соответствующего события
                  Например, для события OnBeforeSend мы отменяем логирование по-умолчанию и производим свое
