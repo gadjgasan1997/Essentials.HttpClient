@@ -40,14 +40,14 @@ public class EssentialsHttpClientConfigurator
     }
     
     /// <summary>
-    /// Добавляет интерсептор по-умолчанию, который будет автоматически добавляться ко всем запросам
+    /// Добавляет глобальный интерсептор, который будет автоматически добавляться ко всем запросам
     /// </summary>
     /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
     /// <returns>Конфигуратор http клиента</returns>
-    public EssentialsHttpClientConfigurator AttachDefaultInterceptor<TInterceptor>()
+    public EssentialsHttpClientConfigurator AttachGlobalInterceptor<TInterceptor>()
         where TInterceptor : IRequestInterceptor
     {
-        InterceptorsStorage.TryAttachDefaultInterceptor<TInterceptor>();
+        InterceptorsStorage.TryAttachGlobalInterceptor<TInterceptor>();
         return this;
     }
 

@@ -9,6 +9,7 @@ using Essentials.HttpClient.Models;
 using Essentials.HttpClient.RequestsInterception;
 using static LanguageExt.Prelude;
 using static Essentials.HttpClient.Dictionaries.KnownAuthenticationSchemes;
+// ReSharper disable ConvertToLambdaExpression
 
 namespace Essentials.HttpClient.Extensions;
 
@@ -282,6 +283,22 @@ public static class RequestBuilderExtensions
     }
 
     /// <summary>
+    /// Отключает глобальный интерсептор для запроса
+    /// </summary>
+    /// <param name="validation"></param>
+    /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
+    /// <returns>Билдер</returns>
+    public static Validation<Error, HttpRequestBuilder> DisableGlobalInterceptor<TInterceptor>(
+        this Validation<Error, HttpRequestBuilder> validation)
+    {
+        return validation.ModifyRequest(builder =>
+            () =>
+            {
+                builder.IgnoredGlobalInterceptors.Add(typeof(TInterceptor));
+            });
+    }
+
+    /// <summary>
     /// Устанавливает обработчик события ошибки сериализации объекта
     /// </summary>
     /// <param name="validation"></param>
@@ -489,10 +506,13 @@ public static class RequestBuilderExtensions
         HttpRequestBuilder builder,
         string clientName)
     {
-        var interceptors = InterceptorsStorage.GetInterceptorsToAttach(builder.Interceptors);
-        
+        var interceptors = InterceptorsStorage.GetInterceptorsToAttach(
+            builder.Interceptors,
+            builder.IgnoredGlobalInterceptors);
+
         return Try(() =>
-                new Request(
+            {
+                return new Request(
                     builder.Id ?? Guid.NewGuid().ToString(),
                     clientName,
                     builder.TypeId,
@@ -502,7 +522,8 @@ public static class RequestBuilderExtensions
                     Optional(builder.MetricsOptions),
                     builder.Actions,
                     interceptors,
-                    builder.EventsHandlers))
+                    builder.EventsHandlers);
+            })
             .Try()
             .Match(
                 Succ: request => request,
