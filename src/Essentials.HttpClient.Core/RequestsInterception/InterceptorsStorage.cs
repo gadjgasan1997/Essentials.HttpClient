@@ -1,11 +1,14 @@
-﻿namespace Essentials.HttpClient.RequestsInterception;
+﻿using Essentials.HttpClient.Events;
+
+namespace Essentials.HttpClient.RequestsInterception;
 
 /// <summary>
 /// Хранилище интерсепторов
 /// </summary>
 internal static class InterceptorsStorage
 {
-    private static readonly List<Type> _interceptors = [];
+    private static readonly List<Type> _interceptors = [
+        typeof(RequestsTimerInterceptor)];
 
     /// <summary>
     /// Пытается добавить интерсептор для регистрации, если он еще не был добавлен

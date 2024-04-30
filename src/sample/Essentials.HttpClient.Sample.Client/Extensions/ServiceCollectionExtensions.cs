@@ -125,7 +125,8 @@ public static class ServiceCollectionExtensions
                     .ConfigureLogging(configureLogsAction)
                     .ConfigureMetrics(configureMetricsAction)
                     .ConfigureSerialization(configureSerializationAction)
-                    .SubscribeToEvents(configureEventsAction)*/);
+                    .SubscribeToEvents(configureEventsAction)*/
+                    );
 
         return services;
     }

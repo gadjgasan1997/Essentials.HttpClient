@@ -69,7 +69,6 @@ public static class ServiceCollectionExtensions
         
         // Крайне важна последовательность регистрации подписчиков на события
         services
-            .AddSingleton<BaseEvensSubscriber, RequestsTimerSubscriber>()
             .AddSingleton<BaseEvensSubscriber, LogSubscriber>()
             .AddSingleton<BaseEvensSubscriber, MetricsSubscriber>()
             .AddSingleton<BaseEvensSubscriber, EventsSubscriber>()
