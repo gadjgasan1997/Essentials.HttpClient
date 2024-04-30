@@ -102,13 +102,15 @@ public static class ServiceCollectionExtensions
         #endregion
         
         services.ConfigureEssentialsHttpClient(
-            configuration
-            
-            // Разинактивить блок, чтобы увидеть результат переопределения стандартных действий и подписки на события
-            /*,
+            configuration,
             configurator =>
                 configurator
-                    .ConfigureLogging(configureLogsAction)
+                    .AttachDefaultInterceptor<RequestsTimerInterceptor>()
+                    .AttachDefaultInterceptor<MetricsInterceptor>()
+                    .AttachDefaultInterceptor<LoggingInterceptor>()
+                    
+                    // Разинактивить блок, чтобы увидеть результат переопределения стандартных действий и подписки на события
+                    /*.ConfigureLogging(configureLogsAction)
                     .ConfigureMetrics(configureMetricsAction)
                     .ConfigureSerialization(configureSerializationAction)
                     .SubscribeToEvents(configureEventsAction)*/

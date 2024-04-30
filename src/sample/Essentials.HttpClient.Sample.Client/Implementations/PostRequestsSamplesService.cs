@@ -1,8 +1,5 @@
 ﻿using System.Net.Mime;
 using System.Diagnostics.CodeAnalysis;
-using Essentials.HttpClient.Events;
-using Essentials.HttpClient.Logging;
-using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Extensions;
 using Essentials.HttpClient.Sample.Client.Models;
 using Essentials.HttpClient.Sample.Client.Models.Requests;
@@ -49,9 +46,6 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
             .CreateBuilder(uriValidation)
             .WithRequestId("Test_Request_Id")
             .SetTypeId("GetPersonsInJson")
-            .WithInterceptor<RequestsTimerInterceptor>()
-            .WithInterceptor<LoggingInterceptor>()
-            .WithInterceptor<MetricsInterceptor>()
             
             /* Данным методом мы можем переопределить все существующие обработчики соответствующего события
                  Например, для события OnBeforeSend мы отменяем логирование по-умолчанию и производим свое
@@ -84,9 +78,6 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
         var requestValidation = await HttpRequestBuilder
             .CreateBuilder(uriValidation)
             .SetTypeId("GetPersonsInXml")
-            .WithInterceptor<RequestsTimerInterceptor>()
-            .WithInterceptor<LoggingInterceptor>()
-            .WithInterceptor<MetricsInterceptor>()
             
             /* Данным методом мы можем переопределить все существующие обработчики соответствующего события
                  Например, для события OnSuccessSend мы отменяем логирование по-умолчанию и производим свое
@@ -122,9 +113,6 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
             .CreateBuilder(uriValidation)
             .SetTypeId("GetPersonsInPlainXmlText")
             .SetMediaTypeHeader(MediaTypeNames.Text.Xml)
-            .WithInterceptor<RequestsTimerInterceptor>()
-            .WithInterceptor<LoggingInterceptor>()
-            .WithInterceptor<MetricsInterceptor>()
             .BuildAsync<PostRequestsSamplesService>();
 
         var response = await _httpClient

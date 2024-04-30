@@ -66,6 +66,18 @@ public class EssentialsHttpClientConfigurator
         configureAction(new EventsConfigurator());
         return this;
     }
+    
+    /// <summary>
+    /// Добавляет интерсептор по-умолчанию, который будет автоматически добавляться ко всем запросам
+    /// </summary>
+    /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
+    /// <returns>Конфигуратор http клиента</returns>
+    public EssentialsHttpClientConfigurator AttachDefaultInterceptor<TInterceptor>()
+        where TInterceptor : IRequestInterceptor
+    {
+        InterceptorsStorage.TryAttachDefaultInterceptor<TInterceptor>();
+        return this;
+    }
 
     /// <summary>
     /// Регистрирует интерсептор
@@ -75,7 +87,7 @@ public class EssentialsHttpClientConfigurator
     public EssentialsHttpClientConfigurator RegisterInterceptor<TInterceptor>()
         where TInterceptor : IRequestInterceptor
     {
-        InterceptorsStorage.TryAddInterceptor<TInterceptor>();
+        InterceptorsStorage.TryAddInterceptorToRegister<TInterceptor>();
         return this;
     }
 }

@@ -9,22 +9,39 @@ namespace Essentials.HttpClient.RequestsInterception;
 /// </summary>
 internal static class InterceptorsStorage
 {
-    private static readonly List<Type> _interceptors = [
+    private static readonly List<Type> _defaultInterceptors = [];
+    
+    private static readonly List<Type> _interceptorsToRegister = [
         typeof(RequestsTimerInterceptor),
         typeof(LoggingInterceptor),
         typeof(MetricsInterceptor)];
+    
+    /// <summary>
+    /// Пытается добавить по-умолчанию, который будет автоматически добавляться ко всем запросам
+    /// </summary>
+    /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
+    public static void TryAttachDefaultInterceptor<TInterceptor>()
+        where TInterceptor : IRequestInterceptor
+    {
+        TryAddInterceptorToRegister<TInterceptor>();
+        
+        if (_defaultInterceptors.Contains(typeof(TInterceptor)))
+            return;
+        
+        _defaultInterceptors.Add(typeof(TInterceptor));
+    }
 
     /// <summary>
     /// Пытается добавить интерсептор для регистрации, если он еще не был добавлен
     /// </summary>
     /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
-    public static void TryAddInterceptor<TInterceptor>()
+    public static void TryAddInterceptorToRegister<TInterceptor>()
         where TInterceptor : IRequestInterceptor
     {
-        if (_interceptors.Contains(typeof(TInterceptor)))
+        if (_interceptorsToRegister.Contains(typeof(TInterceptor)))
             return;
         
-        _interceptors.Add(typeof(TInterceptor));
+        _interceptorsToRegister.Add(typeof(TInterceptor));
     }
 
     /// <summary>
@@ -35,17 +52,24 @@ internal static class InterceptorsStorage
     public static void CheckInterceptorIsRegistered<TInterceptor>()
         where TInterceptor : IRequestInterceptor
     {
-        if (_interceptors.Contains(typeof(TInterceptor)))
+        if (_interceptorsToRegister.Contains(typeof(TInterceptor)))
             return;
         
         throw new KeyNotFoundException(
             $"Интерсептор с типом '{typeof(TInterceptor)}' не был зарегистрирован. " +
             $"Зарегистрируйте его с помощью конфигуратора http клиента");
     }
+
+    /// <summary>
+    /// Возвращает список интерсепторов по-умолчанию
+    /// </summary>
+    /// <returns></returns>
+    public static List<Type> GetInterceptorsToAttach(IEnumerable<Type> requestInterceptors) =>
+        _defaultInterceptors.Concat(requestInterceptors).ToList();
     
     /// <summary>
     /// Возвращает список интерсепторов для регистрации
     /// </summary>
     /// <returns>Список интерсепторов</returns>
-    public static List<Type> GetInterceptorsToRegister() => _interceptors;
+    public static List<Type> GetInterceptorsToRegister() => _interceptorsToRegister;
 }
