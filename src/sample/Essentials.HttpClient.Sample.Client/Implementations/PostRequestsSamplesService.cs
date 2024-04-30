@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Essentials.HttpClient.Extensions;
 using Essentials.HttpClient.Logging;
-using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Sample.Client.Models;
 using Essentials.HttpClient.Sample.Client.Models.Requests;
 using static Essentials.HttpClient.Common.Helpers.SerializationHelpers;
@@ -29,7 +28,7 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
     {
         await RunSample_GetPersonsInJson();
         await RunSample_GetPersonsInXml();
-        //await RunSample_GetPersonsInText();
+        await RunSample_GetPersonsInText();
     }
     
     private async Task RunSample_GetPersonsInJson()
@@ -56,7 +55,7 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
             /*.OnBeforeSend(() =>
             {
                 _logger.LogInformation(
-                    $"Тест переопределения отправки запроса '{HttpRequestContext.Current!.Request.TypeId}'");
+                    $"Тест переопределения события отправки запроса '{HttpRequestContext.Current!.Request.TypeId}'");
             })*/
             .BuildAsync<PostRequestsSamplesService>();
 
@@ -86,7 +85,7 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
             // Последовательность имеет значение
             
             // С помощью данного метода можно отключить глобальный интерсептор, в данном случае - интерсептор логов
-            .DisableGlobalInterceptor<MetricsInterceptor>()
+            .DisableGlobalInterceptor<LoggingInterceptor>()
             
             // Затем можно добавить свой интерсептор, для простоты примера снова добавляется интерсептор логов
             .WithInterceptor<LoggingInterceptor>()
@@ -101,7 +100,7 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
             /*.OnSuccessSend(() =>
             {
                 _logger.LogInformation(
-                    $"Тест переопределения обработки ответ '{HttpRequestContext.Current!.Request.TypeId}'");
+                    $"Тест переопределения события обработки ответа '{HttpRequestContext.Current!.Request.TypeId}'");
             })*/
             .BuildAsync<PostRequestsSamplesService>();
 

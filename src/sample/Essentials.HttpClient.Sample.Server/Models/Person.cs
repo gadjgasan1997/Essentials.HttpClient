@@ -24,7 +24,7 @@ public static class PersonsStorage
 {
     public static List<Person> DefaultPersons => new()
     {
-        new Person("Gasan", 26),
-        new Person("Umid", 24)
+        new Person("test_1", 26),
+        new Person("test_2", 24)
     };
 }

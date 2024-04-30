@@ -1,6 +1,7 @@
 ﻿using LanguageExt;
 using LanguageExt.Common;
 using System.Diagnostics.CodeAnalysis;
+using Essentials.Functional.Extensions;
 using Essentials.HttpClient.Extensions;
 using Essentials.HttpClient.Sample.Client.Models;
 using static Essentials.HttpClient.Sample.Client.Dictionaries.CommonConsts;
@@ -27,6 +28,7 @@ public class GetRequestsSamplesService : IGetRequestsSamplesService
         await RunSample_GetPersonsInJson();
         await RunSample_GetPersonsInJson_WithCache();
         await RunSample_GetPersonsInXml();
+        await RunSample_StaticClient();
     }
 
     private async Task RunSample_GetPersonsInJson()
@@ -104,5 +106,23 @@ public class GetRequestsSamplesService : IGetRequestsSamplesService
         var persons = await _httpClient
             .GetAsync(requestValidation)
             .ReceiveXmlContentAsync<List<Person>>();
+    }
+
+    private static async Task RunSample_StaticClient()
+    {
+        var uriValidation = await HttpUriBuilder
+            .CreateBuilder(SERVER_URL)
+            .WithSegments("get", "GetPersonsInXml")
+            .BuildAsync();
+
+        var requestValidation = await HttpRequestBuilder
+            .CreateBuilder(uriValidation)
+            .SetTypeId("GetPersonsInXml")
+            .BuildAsync<GetRequestsSamplesService>();
+        
+        var persons = await HttpClientsHolder
+            .Peek()
+            .BindAsync(client => client.GetAsync(requestValidation))
+            .ReceiveXmlContentUnsafeAsync<List<Person>>();
     }
 }

@@ -1,12 +1,16 @@
 ﻿// ReSharper disable RedundantUsingDirective
+using Polly;
+using Polly.Retry;
 using System.Xml;
 using System.Text.Json;
+using Polly.Extensions.Http;
+using Essentials.Utils.Extensions;
 using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Extensions;
 using Essentials.HttpClient.Logging;
 using Essentials.HttpClient.Metrics;
-using Essentials.HttpClient.Sample.Client.Implementations;
 using Essentials.HttpClient.Serialization;
+using Essentials.HttpClient.Sample.Client.Implementations;
 using Essentials.Serialization;
 using Essentials.Serialization.Serializers;
 using Essentials.Serialization.Deserializers;
@@ -110,8 +114,34 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IPostRequestsSamplesService, PostRequestsSamplesService>();
         
         // Клиенты можно не добавлять, тогда будет использоваться клиент по-умолчанию
-        services.AddHttpClient<GetRequestsSamplesService>();
-        services.AddHttpClient<HeadRequestsSamplesService>();
-        services.AddHttpClient<PostRequestsSamplesService>();
+        services
+            .AddHttpClient<GetRequestsSamplesService>()
+            .AddPolicyHandler(GetRetryPolicy());
+        
+        services
+            .AddHttpClient<HeadRequestsSamplesService>()
+            .AddPolicyHandler(GetRetryPolicy());
+        
+        services
+            .AddHttpClient<PostRequestsSamplesService>()
+            .AddPolicyHandler(GetRetryPolicy());
+    }
+    
+    private static AsyncRetryPolicy<HttpResponseMessage> GetRetryPolicy()
+    {
+        return HttpPolicyExtensions
+            .HandleTransientHttpError()
+            .WaitAndRetryAsync(
+                3,
+                sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                onRetry: (_, span) =>
+                {
+                    // Внутри данного делегата также доступен контекст запроса
+                    var context = HttpRequestContext.Current.CheckNotNull();
+                    var request = context.Request;
+                    
+                    MainSampleLogger.Error(
+                        $"Ошибка отправки запроса по происшествию '{span}' по адресу '{request.Uri}'");
+                });
     }
 }
