@@ -51,6 +51,11 @@ public class HttpRequestBuilder
     public List<Action<HttpRequestMessage>> Actions { get; } = new();
 
     /// <summary>
+    /// Список перехватчиков запросов
+    /// </summary>
+    public List<Type> Interceptors { get; } = [];
+
+    /// <summary>
     /// Обработчики событий запроса
     /// </summary>
     public Dictionary<string, Handler> EventsHandlers { get; } = new();
@@ -128,12 +133,7 @@ public class HttpRequestBuilder
         if (string.IsNullOrWhiteSpace(eventMame))
             return;
 
-        if (EventsHandlers.ContainsKey(eventMame))
-        {
+        if (!EventsHandlers.TryAdd(eventMame, handler))
             EventsHandlers[eventMame] = handler;
-            return;
-        }
-        
-        EventsHandlers.Add(eventMame, handler);
     }
 }

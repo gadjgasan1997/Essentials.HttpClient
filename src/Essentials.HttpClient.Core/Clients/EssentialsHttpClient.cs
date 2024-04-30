@@ -8,6 +8,7 @@ using Essentials.HttpClient.Errors;
 using Essentials.HttpClient.Models;
 using Essentials.HttpClient.Extensions;
 using Essentials.Functional.Extensions;
+using Essentials.HttpClient.RequestsInterception;
 using static LanguageExt.Prelude;
 using static Essentials.HttpClient.Events.EventsPublisher;
 using static Essentials.HttpClient.Dictionaries.ErrorMessages;
@@ -23,15 +24,18 @@ namespace Essentials.HttpClient.Clients;
 public class EssentialsHttpClient : IEssentialsHttpClient
 {
     private readonly IHttpClientFactory _factory;
+    private readonly IEnumerable<IRequestInterceptor> _interceptors;
 
     /// <summary>
     /// Конструктор
     /// </summary>
     /// <param name="factory"></param>
+    /// <param name="interceptors"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    public EssentialsHttpClient(IHttpClientFactory factory)
+    public EssentialsHttpClient(IHttpClientFactory factory, IEnumerable<IRequestInterceptor> interceptors)
     {
         _factory = factory.CheckNotNull();
+        _interceptors = interceptors;
     }
 
     /// <inheritdoc cref="IEssentialsHttpClient.GetAsync(IRequest, Token?)" />
@@ -162,7 +166,20 @@ public class EssentialsHttpClient : IEssentialsHttpClient
 
             request.RaiseEvent(nameof(OnBeforeSend), RaiseOnBeforeSend);
 
-            responseMessage = await httpClient.SendAsync(requestMessage, token ?? Token.None).ConfigureAwait(false);
+            responseMessage = await request.Interceptors
+                .Select(type => _interceptors.FirstOrDefault(interceptor => interceptor.GetType() == type))
+                .OfType<IRequestInterceptor>()
+                .Aggregate(
+                    (NextRequestDelegate) SeedAsync,
+                    (next, interceptor) => () => NextAsync(next, interceptor))
+                .Invoke();
+
+            // ReSharper disable once AccessToDisposedClosure
+            async Task<HttpResponseMessage> SeedAsync() =>
+                await httpClient.SendAsync(requestMessage, token ?? Token.None).ConfigureAwait(false);
+
+            async Task<HttpResponseMessage> NextAsync(NextRequestDelegate next, IRequestInterceptor interceptor) =>
+                await interceptor.Intercept(next).ConfigureAwait(false);
         }
         catch (Exception exception)
         {

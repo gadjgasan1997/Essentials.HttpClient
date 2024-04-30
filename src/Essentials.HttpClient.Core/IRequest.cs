@@ -56,6 +56,13 @@ public interface IRequest
     IEnumerable<Action<HttpRequestMessage>> ModifyRequestActions { get; }
     
     /// <summary>
+    /// Список перехватчиков запросов
+    /// </summary>
+    [Newtonsoft.Json.JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
+    IEnumerable<Type> Interceptors { get; }
+    
+    /// <summary>
     /// Обработчики событий запроса
     /// </summary>
     [Newtonsoft.Json.JsonIgnore]

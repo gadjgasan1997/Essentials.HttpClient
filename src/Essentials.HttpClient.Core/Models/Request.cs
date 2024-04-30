@@ -1,7 +1,7 @@
-﻿using System.Net.Http.Headers;
-using LanguageExt;
-using Essentials.HttpClient.Events;
+﻿using LanguageExt;
+using System.Net.Http.Headers;
 using Essentials.Utils.Extensions;
+using Essentials.HttpClient.Events;
 
 namespace Essentials.HttpClient.Models;
 
@@ -15,6 +15,7 @@ internal record Request(
     Option<TimeSpan> Timeout,
     Option<RequestMetricsOptions> MetricsOptions,
     IEnumerable<Action<HttpRequestMessage>>? ModifyRequestActions = null,
+    IEnumerable<Type>? Interceptors = null,
     Dictionary<string, Handler>? EventsHandlers = null) : IRequest
 {
     /// <inheritdoc cref="IRequest.Id" />
@@ -41,6 +42,9 @@ internal record Request(
     /// <inheritdoc cref="IRequest.ModifyRequestActions" />
     public IEnumerable<Action<HttpRequestMessage>> ModifyRequestActions { get; } =
         ModifyRequestActions ?? Array.Empty<Action<HttpRequestMessage>>();
+
+    /// <inheritdoc cref="IRequest.Interceptors" />
+    public IEnumerable<Type> Interceptors { get; } = Interceptors ?? Array.Empty<Type>();
 
     /// <inheritdoc cref="IRequest.EventsHandlers" />
     public Dictionary<string, Handler> EventsHandlers { get; } =
