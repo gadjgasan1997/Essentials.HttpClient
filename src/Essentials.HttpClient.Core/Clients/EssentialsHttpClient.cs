@@ -18,10 +18,8 @@ using Token = System.Threading.CancellationToken;
 namespace Essentials.HttpClient.Clients;
 
 /// <inheritdoc cref="IEssentialsHttpClient" />
-[SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
 [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract")]
-[SuppressMessage("ReSharper", "InvertIf")]
-public class EssentialsHttpClient : IEssentialsHttpClient
+internal sealed class EssentialsHttpClient : IEssentialsHttpClient
 {
     private readonly IHttpClientFactory _factory;
     private readonly IEnumerable<IRequestInterceptor> _interceptors;
@@ -136,7 +134,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     /// <param name="httpContent">Содержимое запроса</param>
     /// <param name="token">Токен отмены</param>
     /// <returns>Http ответ</returns>
-    protected virtual async Task<Validation<Error, IResponse>> SendAsync(
+    private async Task<Validation<Error, IResponse>> SendAsync(
         IRequest request,
         SystemHttpClient httpClient,
         HttpMethod httpMethod,
@@ -218,7 +216,7 @@ public class EssentialsHttpClient : IEssentialsHttpClient
     /// </summary>
     /// <param name="request">Http запрос</param>
     /// <returns>Http клиент</returns>
-    protected virtual Validation<Error, SystemHttpClient> CreateClient(IRequest request)
+    private Validation<Error, SystemHttpClient> CreateClient(IRequest request)
     {
         return Try(() => _factory.CreateClient(request.ClientName))
             .Match(
