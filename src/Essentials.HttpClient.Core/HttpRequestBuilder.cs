@@ -54,6 +54,11 @@ public class HttpRequestBuilder
     /// Список перехватчиков запросов
     /// </summary>
     public List<Type> Interceptors { get; } = [];
+    
+    /// <summary>
+    /// Список глобальных перехватчиков запросов, которые необходимо игнорировать
+    /// </summary>
+    public List<Type> IgnoredGlobalInterceptors { get; } = [];
 
     /// <summary>
     /// Обработчики событий запроса

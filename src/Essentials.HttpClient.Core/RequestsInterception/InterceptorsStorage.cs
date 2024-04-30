@@ -9,26 +9,27 @@ namespace Essentials.HttpClient.RequestsInterception;
 /// </summary>
 internal static class InterceptorsStorage
 {
-    private static readonly List<Type> _defaultInterceptors = [];
+    private static readonly List<Type> _globalInterceptors = [];
     
     private static readonly List<Type> _interceptorsToRegister = [
         typeof(RequestsTimerInterceptor),
         typeof(LoggingInterceptor),
-        typeof(MetricsInterceptor)];
+        typeof(MetricsInterceptor)
+    ];
     
     /// <summary>
     /// Пытается добавить по-умолчанию, который будет автоматически добавляться ко всем запросам
     /// </summary>
     /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
-    public static void TryAttachDefaultInterceptor<TInterceptor>()
+    public static void TryAttachGlobalInterceptor<TInterceptor>()
         where TInterceptor : IRequestInterceptor
     {
-        TryAddInterceptorToRegister<TInterceptor>();
-        
-        if (_defaultInterceptors.Contains(typeof(TInterceptor)))
+        if (_globalInterceptors.Contains(typeof(TInterceptor)))
             return;
         
-        _defaultInterceptors.Add(typeof(TInterceptor));
+        TryAddInterceptorToRegister<TInterceptor>();
+        
+        _globalInterceptors.Add(typeof(TInterceptor));
     }
 
     /// <summary>
@@ -63,9 +64,19 @@ internal static class InterceptorsStorage
     /// <summary>
     /// Возвращает список интерсепторов по-умолчанию
     /// </summary>
+    /// <param name="requestInterceptors">Список перехватчиков запросов</param>
+    /// <param name="ignoredGlobalInterceptors">Список глобальных перехватчиков запросов, которые необходимо игнорировать</param>
     /// <returns></returns>
-    public static List<Type> GetInterceptorsToAttach(IEnumerable<Type> requestInterceptors) =>
-        _defaultInterceptors.Concat(requestInterceptors).ToList();
+    public static List<Type> GetInterceptorsToAttach(
+        IEnumerable<Type> requestInterceptors,
+        IEnumerable<Type> ignoredGlobalInterceptors)
+    {
+        return _globalInterceptors
+            .Except(ignoredGlobalInterceptors)
+            .Concat(requestInterceptors)
+            .Distinct()
+            .ToList();
+    }
     
     /// <summary>
     /// Возвращает список интерсепторов для регистрации

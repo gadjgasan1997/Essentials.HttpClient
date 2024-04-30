@@ -32,14 +32,12 @@ public static class ServiceCollectionExtensions
         
         #region Конфигурация клиента через fluent api
         
-        // Через fluent api можно переопределять опции логирования, метрик и сериализации
+        // Через fluent api можно переопределять разные опции отправки запросов
         
         #region Добавление кастомных обработчиков событий
         
         // В процессе отправки запроса выстреливают события
         // На них можно подписываться чтобы как-нибудь обработать
-        // Существуют и стандартные обработчики, собирающие логи и метрики
-        // Данный функционал нужен для сценариев, когда стандартных обработчиков недостаточно
 
         Action<EventsConfigurator> configureEventsAction = eventsConfigurator =>
             eventsConfigurator
@@ -50,7 +48,7 @@ public static class ServiceCollectionExtensions
 
                     // ВНИМАНИЕ !!!
                     // Не все свойства контекста доступны во всех событиях! Проверяйте на null, если не уверены
-                    MainSampleLogger.Info($"My custom handler for BeforeSend: '{HttpRequestContext.Current!.Request.Uri}'!");
+                    MainSampleLogger.Info($"My custom handler for BeforeSendEvent: '{HttpRequestContext.Current!.Request.Uri}'!");
                 })
                 .AttachSuccessSendHandler(() =>
                 {
@@ -91,13 +89,15 @@ public static class ServiceCollectionExtensions
             configuration,
             configurator =>
                 configurator
-                    .AttachDefaultInterceptor<RequestsTimerInterceptor>()
-                    .AttachDefaultInterceptor<MetricsInterceptor>()
-                    .AttachDefaultInterceptor<LoggingInterceptor>()
+                    // Интерсепторы применяются в той последовательности, в которой были добавлены,
+                    // а также единожды вне зависимости от того, сколько раз вызван метод с одним и тем же типом
+                    .AttachGlobalInterceptor<RequestsTimerInterceptor>()
+                    .AttachGlobalInterceptor<MetricsInterceptor>()
+                    .AttachGlobalInterceptor<LoggingInterceptor>()
                     
                     // Разинактивить блок, чтобы увидеть результат переопределения стандартных действий и подписки на события
-                    /*.ConfigureSerialization(configureSerializationAction)
-                    .SubscribeToEvents(configureEventsAction)*/
+                    //.ConfigureSerialization(configureSerializationAction)
+                    //.SubscribeToEvents(configureEventsAction)
                     );
 
         return services;

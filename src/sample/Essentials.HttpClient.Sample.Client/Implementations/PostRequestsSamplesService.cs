@@ -1,6 +1,8 @@
 ﻿using System.Net.Mime;
 using System.Diagnostics.CodeAnalysis;
 using Essentials.HttpClient.Extensions;
+using Essentials.HttpClient.Logging;
+using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Sample.Client.Models;
 using Essentials.HttpClient.Sample.Client.Models.Requests;
 using static Essentials.HttpClient.Common.Helpers.SerializationHelpers;
@@ -27,7 +29,7 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
     {
         await RunSample_GetPersonsInJson();
         await RunSample_GetPersonsInXml();
-        await RunSample_GetPersonsInText();
+        //await RunSample_GetPersonsInText();
     }
     
     private async Task RunSample_GetPersonsInJson()
@@ -79,8 +81,21 @@ public class PostRequestsSamplesService : IPostRequestsSamplesService
             .CreateBuilder(uriValidation)
             .SetTypeId("GetPersonsInXml")
             
+            // Далее идет добавление интерсепторов
+            // Интерсепторы запроса применяются строго после глобальных
+            // Последовательность имеет значение
+            
+            // С помощью данного метода можно отключить глобальный интерсептор, в данном случае - интерсептор логов
+            .DisableGlobalInterceptor<MetricsInterceptor>()
+            
+            // Затем можно добавить свой интерсептор, для простоты примера снова добавляется интерсептор логов
+            .WithInterceptor<LoggingInterceptor>()
+            
+            // Интерсептор применяется единожды вне зависимости от того, сколько раз был добавлен
+            .WithInterceptor<LoggingInterceptor>()
+            
             /* Данным методом мы можем переопределить все существующие обработчики соответствующего события
-                 Например, для события OnSuccessSend мы отменяем логирование по-умолчанию и производим свое
+                 Например, для события OnSuccessSend мы отменяем поведение по-умолчанию и производим свое
                  Но действовать это будет только на этом запросе */
             
             /*.OnSuccessSend(() =>
