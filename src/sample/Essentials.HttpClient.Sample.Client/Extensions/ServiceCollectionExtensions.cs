@@ -33,9 +33,6 @@ public static class ServiceCollectionExtensions
         #region Конфигурация клиента через fluent api
         
         // Через fluent api можно переопределять опции логирования, метрик и сериализации
-        // Для логирования, например, можно переопределить обработчики логирования
-        // Или полностью отменить встроенные логи через метод DisableDefaultLogging на конфигураторе логирования
-        // В делегатах, как и при обработке событий выше, будет доступ к контексту запроса
         
         #region Добавление кастомных обработчиков событий
         
@@ -70,19 +67,8 @@ public static class ServiceCollectionExtensions
         
         #region Переопределение логов
         
-        // ВНИМАНИЕ !!!
-        // Данная возможность переопределяет стандартное поведение при сборе логов или метрик,
-        // не заменяя собой ваши обработчики, добавленные через конфигуратор событий
-        // Ниже приведен пример переопределения некоторых событий
         Action<LoggingConfigurator> configureLogsAction = loggingConfigurator =>
-            loggingConfigurator
-                .SetupBeforeSendEventHandler(
-                    () => MainSampleLogger.Info("Test Override BeforeSendHandler!"))
-                .SetupSuccessSendEventHandler(
-                    () => MainSampleLogger.Info("Test Override SuccessSendHandler!"))
-            
-                // Полностью отключает стандартное логирование. Имеет приоритет над всеми остальными операциями в рамках данного конфигуратора
-                /*.DisableDefaultLogging()*/;
+            { };
         
         #endregion
         
@@ -125,7 +111,8 @@ public static class ServiceCollectionExtensions
                     .ConfigureLogging(configureLogsAction)
                     .ConfigureMetrics(configureMetricsAction)
                     .ConfigureSerialization(configureSerializationAction)
-                    .SubscribeToEvents(configureEventsAction)*/);
+                    .SubscribeToEvents(configureEventsAction)*/
+                    );
 
         return services;
     }

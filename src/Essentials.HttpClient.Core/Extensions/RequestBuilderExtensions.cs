@@ -1,11 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using LanguageExt;
+using LanguageExt.Common;
 using System.Text;
 using System.Net.Http.Headers;
-using LanguageExt;
-using LanguageExt.Common;
+using System.Diagnostics.CodeAnalysis;
 using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Logging;
 using Essentials.HttpClient.Models;
+using Essentials.HttpClient.RequestsInterception;
 using static LanguageExt.Prelude;
 using static Essentials.HttpClient.Dictionaries.KnownAuthenticationSchemes;
 
@@ -263,6 +264,24 @@ public static class RequestBuilderExtensions
     }
 
     /// <summary>
+    /// Добавляет интерсептор к запросу
+    /// </summary>
+    /// <param name="validation"></param>
+    /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
+    /// <returns>Билдер</returns>
+    public static Validation<Error, HttpRequestBuilder> WithInterceptor<TInterceptor>(
+        this Validation<Error, HttpRequestBuilder> validation)
+        where TInterceptor : IRequestInterceptor
+    {
+        return validation.ModifyRequest(builder =>
+            () =>
+            {
+                InterceptorsStorage.CheckInterceptorIsRegistered<TInterceptor>();
+                builder.Interceptors.Add(typeof(TInterceptor));
+            });
+    }
+
+    /// <summary>
     /// Устанавливает обработчик события ошибки сериализации объекта
     /// </summary>
     /// <param name="validation"></param>
@@ -480,6 +499,7 @@ public static class RequestBuilderExtensions
                     Optional(builder.Timeout),
                     Optional(builder.MetricsOptions),
                     builder.Actions,
+                    builder.Interceptors,
                     builder.EventsHandlers))
             .Try()
             .Match(

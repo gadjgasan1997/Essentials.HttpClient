@@ -2,17 +2,16 @@
 using Essentials.HttpClient.Clients;
 using Essentials.HttpClient.Metrics.Extensions;
 using Essentials.HttpClient.Options;
-using Essentials.HttpClient.Logging;
 using Essentials.HttpClient.Configuration;
 using Essentials.HttpClient.Serialization;
 using Essentials.HttpClient.Events;
-using Essentials.HttpClient.Events.Subscribers;
 using Essentials.HttpClient.HostedServices;
 using Essentials.Configuration.Extensions;
-using Essentials.HttpClient.Metrics;
+using Essentials.HttpClient.RequestsInterception;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+// ReSharper disable ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
 
 namespace Essentials.HttpClient.Extensions;
 
@@ -65,16 +64,11 @@ public static class ServiceCollectionExtensions
     {
         services.AddHttpClient(nameof(IEssentialsHttpClient));
         
-        // Крайне важна последовательность регистрации подписчиков на события
-        services
-            .AddSingleton<BaseEvensSubscriber, RequestsTimerSubscriber>()
-            .AddSingleton<BaseEvensSubscriber, LogSubscriber>()
-            .AddSingleton<BaseEvensSubscriber, MetricsSubscriber>()
-            .AddSingleton<BaseEvensSubscriber, EventsSubscriber>()
-            .AddHostedService<EvensSubscriberHostedService>();
-        
+        EventsSubscriber.Subscribe();
         SerializersManager.RegisterSerializers();
         SerializersManager.RegisterDeserializers();
+        
+        services.RegisterInterceptors();
 
         var options = new ClientsOptions();
         var section = configuration.GetSection(ClientsOptions.Section);
@@ -88,5 +82,18 @@ public static class ServiceCollectionExtensions
         
         services.ConfigureMetrics(options.Metrics).ConfigureCache(options.Cache);
         services.AddHostedService<RegisterHttpClientsHostedService>();
+    }
+
+    /// <summary>
+    /// Регистриует интерсепторы
+    /// </summary>
+    /// <param name="services"></param>
+    private static void RegisterInterceptors(this IServiceCollection services)
+    {
+        foreach (var type in InterceptorsStorage.GetInterceptorsToRegister())
+        {
+            var descriptor = new ServiceDescriptor(typeof(IRequestInterceptor), type, ServiceLifetime.Singleton);
+            services.Add(descriptor);
+        }
     }
 }

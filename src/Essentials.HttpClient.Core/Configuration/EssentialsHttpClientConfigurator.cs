@@ -3,6 +3,7 @@ using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Logging;
 using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Serialization;
+using Essentials.HttpClient.RequestsInterception;
 
 namespace Essentials.HttpClient.Configuration;
 
@@ -63,6 +64,18 @@ public class EssentialsHttpClientConfigurator
         configureAction.CheckNotNull("Действие конфигурации событий не может быть null");
         
         configureAction(new EventsConfigurator());
+        return this;
+    }
+
+    /// <summary>
+    /// Регистрирует интерсептор
+    /// </summary>
+    /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
+    /// <returns>Конфигуратор http клиента</returns>
+    public EssentialsHttpClientConfigurator RegisterInterceptor<TInterceptor>()
+        where TInterceptor : IRequestInterceptor
+    {
+        InterceptorsStorage.TryAddInterceptor<TInterceptor>();
         return this;
     }
 }
