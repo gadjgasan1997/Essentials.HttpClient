@@ -489,6 +489,8 @@ public static class RequestBuilderExtensions
         HttpRequestBuilder builder,
         string clientName)
     {
+        var interceptors = InterceptorsStorage.GetInterceptorsToAttach(builder.Interceptors);
+        
         return Try(() =>
                 new Request(
                     builder.Id ?? Guid.NewGuid().ToString(),
@@ -499,7 +501,7 @@ public static class RequestBuilderExtensions
                     Optional(builder.Timeout),
                     Optional(builder.MetricsOptions),
                     builder.Actions,
-                    builder.Interceptors,
+                    interceptors,
                     builder.EventsHandlers))
             .Try()
             .Match(

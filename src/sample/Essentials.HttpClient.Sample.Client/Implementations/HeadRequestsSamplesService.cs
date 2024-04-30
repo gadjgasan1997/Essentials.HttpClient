@@ -1,7 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Essentials.HttpClient.Events;
-using Essentials.HttpClient.Logging;
-using Essentials.HttpClient.Metrics;
 using Essentials.HttpClient.Extensions;
 using static Essentials.HttpClient.Sample.Client.Dictionaries.CommonConsts;
 
@@ -38,9 +35,6 @@ public class HeadRequestsSamplesService : IHeadRequestsSamplesService
             .CreateBuilder(uriValidation)
             .SetTypeId("Head")
             .WithHeader("User-Agent", "C# Program")
-            .WithInterceptor<RequestsTimerInterceptor>()
-            .WithInterceptor<LoggingInterceptor>()
-            .WithInterceptor<MetricsInterceptor>()
             .BuildAsync<HeadRequestsSamplesService>();
 
         var response = await _httpClient
