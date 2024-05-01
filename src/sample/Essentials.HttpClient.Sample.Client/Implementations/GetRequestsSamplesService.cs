@@ -42,6 +42,7 @@ public class GetRequestsSamplesService : IGetRequestsSamplesService
         var requestValidation = await HttpRequestBuilder
             .CreateBuilder(uriValidation)
             .SetTypeId("GetPersonsInJson")
+            .SetTimeout(TimeSpan.FromSeconds(5))
             .WithHeader("personName", "as")
             .BuildAsync<GetRequestsSamplesService>();
     

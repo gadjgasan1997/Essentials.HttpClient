@@ -1,6 +1,5 @@
 ﻿using LanguageExt;
 using LanguageExt.Common;
-using System.Net.Sockets;
 using System.Diagnostics.Contracts;
 using System.Diagnostics.CodeAnalysis;
 using Essentials.Utils.Extensions;
@@ -182,14 +181,7 @@ internal sealed class EssentialsHttpClient : IEssentialsHttpClient
         }
         catch (Exception exception)
         {
-            var errorMessage = exception switch
-            {
-                TimeoutException or { InnerException: TimeoutException } =>
-                    string.Format(TimeoutError, request.Uri, exception.Message),
-                SocketException or { InnerException: SocketException } =>
-                    string.Format(SocketErrorMessage, request.Uri, exception.Message),
-                _ => null
-            };
+            var errorMessage = exception.ToHttpRequestExceptionMessage(request);
 
             HttpRequestContext.Current.SetError(exception, errorMessage);
             

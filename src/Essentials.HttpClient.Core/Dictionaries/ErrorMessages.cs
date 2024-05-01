@@ -8,8 +8,9 @@ internal static class ErrorMessages
     public static string ErrorSendRequest => "Во время отправки запроса произошло исключение";
     public static string EmptyRequest => $"Передан пустой запрос ('{nameof(IRequest)}')";
     public static string EmptyContent => "Передано пустое содержимое запроса";
-    public static string TimeoutError => "Таймаут отправки запроса: '{0}'";
-    public static string SocketErrorMessage =>
+    public static string TimeoutError => "Таймаут отправки запроса по адресу '{0}'. Ошибка: '{1}'";
+    public static string TaskCanceledError => "Запрос по адресу '{0}' был отменен. Ошибка: '{1}'";
+    public static string SocketError =>
         "Ошибка при попытке обратиться по адресу '{0}'. Вероятно отсутствует сетевой доступ или нет слушателя по порту. Ошибка: '{1}'";
     public static string ErrorCreateClient => "Во время создания Http клиента произошло исключение: '{0}'";
     public static string BadStatusCode => "Ошибочный Http код ответа: '{0}'";
