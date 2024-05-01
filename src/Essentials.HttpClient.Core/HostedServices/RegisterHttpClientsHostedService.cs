@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Essentials.Utils.Extensions;
-using Essentials.HttpClient.Clients;
-using Essentials.HttpClient.RequestsInterception;
 
 namespace Essentials.HttpClient.HostedServices;
 
@@ -10,20 +8,16 @@ namespace Essentials.HttpClient.HostedServices;
 /// </summary>
 internal class RegisterHttpClientsHostedService : IHostedService
 {
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IEnumerable<IRequestInterceptor> _interceptors;
+    private readonly IEssentialsHttpClient _httpClient;
     
-    public RegisterHttpClientsHostedService(IHttpClientFactory factory, IEnumerable<IRequestInterceptor> interceptors)
+    public RegisterHttpClientsHostedService(IEssentialsHttpClient httpClient)
     {
-        _httpClientFactory = factory.CheckNotNull();
-        _interceptors = interceptors;
+        _httpClient = httpClient.CheckNotNull();
     }
     
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        var client = new EssentialsHttpClient(_httpClientFactory, _interceptors);
-        HttpClientsHolder.Push(client);
-
+        HttpClientsHolder.Push(_httpClient);
         return Task.CompletedTask;
     }
 
