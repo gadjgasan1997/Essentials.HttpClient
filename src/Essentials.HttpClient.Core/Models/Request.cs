@@ -10,7 +10,7 @@ namespace Essentials.HttpClient.Models;
 internal record Request : IRequest
 {
     public Request(
-        string id,
+        RequestId id,
         string clientName,
         Option<string> typeId,
         Uri uri,
@@ -21,7 +21,7 @@ internal record Request : IRequest
         IEnumerable<Type>? interceptors = null,
         Dictionary<string, Handler>? eventsHandlers = null)
     {
-        Id = id.CheckNotNullOrEmpty("Id запроса не может быть пустым");
+        Id = id.CheckNotNull("Id запроса не может быть пустым");
         ClientName = clientName.CheckNotNullOrEmpty("Название клиента не может быть пустым");
         TypeId = typeId;
         Uri = uri.CheckNotNull("Uri запроса не может быть пустым");
@@ -34,7 +34,7 @@ internal record Request : IRequest
     }
     
     /// <inheritdoc cref="IRequest.Id" />
-    public string Id { get; }
+    public RequestId Id { get; }
 
     /// <inheritdoc cref="IRequest.ClientName" />
     public string ClientName { get; }

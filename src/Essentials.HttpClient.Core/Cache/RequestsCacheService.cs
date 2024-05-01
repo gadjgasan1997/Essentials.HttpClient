@@ -1,7 +1,8 @@
-﻿using System.Collections.Concurrent;
-using LanguageExt;
+﻿using LanguageExt;
 using LanguageExt.Common;
+using System.Collections.Concurrent;
 using static Essentials.HttpClient.Logging.LogManager;
+// ReSharper disable InvertIf
 
 namespace Essentials.HttpClient.Cache;
 
@@ -15,7 +16,7 @@ internal static class RequestsCacheService
     /// <summary>
     /// Список Id запросов, которые не должны кешироваться
     /// </summary>
-    public static List<string> IgnoredIdList { private get; set; } = new();
+    public static List<string> IgnoredIdList { private get; set; } = [];
     
     /// <summary>
     /// Возвращает запрос из кеша по Id или создает новый
@@ -34,6 +35,9 @@ internal static class RequestsCacheService
         if (_requests.TryGetValue(id, out var cachedRequest))
         {
             MainLogger.Trace($"Запрос с Id '{id}' был успешно получен из кеша");
+            
+            cachedRequest.Id.RefreshIdIfDefault();
+            
             return Validation<Error, IRequest>.Success(cachedRequest);
         }
 
