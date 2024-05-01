@@ -9,7 +9,7 @@ namespace Essentials.HttpClient.Logging;
 /// Менеджер для получения логгеров
 /// </summary>
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal static class LogManager
+public static class LogManager
 {
     /// <summary>
     /// Мапа названий Http клиентов на их логгеры
@@ -19,14 +19,14 @@ internal static class LogManager
     /// <summary>
     /// Основной логгер
     /// </summary>
-    public static Logger MainLogger { get; } = NLog.LogManager.GetLogger("Essentials.HttpClient.MainLogger");
+    internal static Logger MainLogger { get; } = NLog.LogManager.GetLogger("Essentials.HttpClient.MainLogger");
 
     /// <summary>
     /// Возвращает логгер по названию Http клиента
     /// </summary>
     /// <param name="clientName"></param>
     /// <returns></returns>
-    public static Logger GetLogger(string clientName)
+    internal static Logger GetLogger(string clientName)
     {
         try
         {

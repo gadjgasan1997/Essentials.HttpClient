@@ -34,8 +34,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddTestsServices();
         
-        #region Конфигурация клиента через fluent api
-        
         // Через fluent api можно переопределять разные опции отправки запросов
         
         #region Добавление кастомных обработчиков событий
@@ -63,7 +61,9 @@ public static class ServiceCollectionExtensions
                     // Не все свойства контекста доступны во всех событиях! Проверяйте на null, если не уверены
                     MainSampleLogger.Info(
                         $"My custom handler for SuccessSendEvent: '{HttpRequestContext.Current!.ElapsedMilliseconds}'!");
-                });
+                })
+                // Имеются и другие события
+                ;
         
         #endregion
         
@@ -86,23 +86,33 @@ public static class ServiceCollectionExtensions
                 .SetupDefaultNativeJsonDeserializer(customJsonDeserializer);
 
         #endregion
-        
-        #endregion
+
+        #region Вызов метода конфигурации клиента
         
         services.ConfigureEssentialsHttpClient(
             configuration,
             configurator =>
                 configurator
+                    
                     // Интерсепторы применяются в той последовательности, в которой были добавлены,
                     // а также единожды вне зависимости от того, сколько раз вызван метод с одним и тем же типом
-                    .AttachGlobalInterceptor<RequestsTimerInterceptor>()
+                    
+                    // Данный интерсептор можно не использовать, интерсептор логов автоматически засекает таймер для отображения в логах
+                    // Однако если необходимо в контексте запроса видеть свойство ElapsedMilliseconds, тогда можно добавить
+                    //.AttachGlobalInterceptor<RequestsTimerInterceptor>()
+                    
+                    // Метрики
                     .AttachGlobalInterceptor<MetricsInterceptor>()
+                    
+                    // Логи
                     .AttachGlobalInterceptor<LoggingInterceptor>()
                     
                     // Разинактивить блок, чтобы увидеть результат переопределения стандартных действий и подписки на события
                     //.ConfigureSerialization(configureSerializationAction)
                     //.SubscribeToEvents(configureEventsAction)
                     );
+
+        #endregion
 
         return services;
     }

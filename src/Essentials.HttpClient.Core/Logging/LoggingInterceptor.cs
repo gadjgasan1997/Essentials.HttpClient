@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using Essentials.HttpClient.RequestsInterception;
 using static System.Environment;
 using static System.DateTime;
@@ -20,6 +21,9 @@ public sealed class LoggingInterceptor : IRequestInterceptor
     {
         Contract.Assert(Context.Current is not null);
         Contract.Assert(Context.Current.RequestMessage is not null);
+        
+        var clock = new Stopwatch();
+        clock.Start();
         
         var request = Context.Current.Request;
         var requestMessage = Context.Current.RequestMessage;
@@ -53,18 +57,22 @@ public sealed class LoggingInterceptor : IRequestInterceptor
         }
         catch (Exception exception)
         {
+            clock.Stop();
+            
             requestString ??= await ReadRequestDataAsync(requestMessage).ConfigureAwait(false);
             
             logger.Error(
                 exception,
                 exception.Message +
                 $"{NewLine}Дата и время получения исключения: '{Now.ToString(LogDateLongFormat)}'. " +
-                GetElapsedTimeLogString(Context.Current.ElapsedMilliseconds) +
+                GetElapsedTimeLogString(clock.ElapsedMilliseconds) +
                 $"{NewLine}Запрос: '{Serialize(requestMessage)}'" +
                 $"{NewLine}Строка запроса: '{requestString}'");
             
             throw;
         }
+        
+        clock.Stop();
         
         if (!responseMessage.IsSuccessStatusCode)
         {
@@ -73,7 +81,7 @@ public sealed class LoggingInterceptor : IRequestInterceptor
             logger.Error(
                 $"В ответ на Http запрос был получен ошибочный Http код ответа: '{responseMessage.StatusCode}'" +
                 $"{NewLine}Дата и время получения ответа: '{Now.ToString(LogDateLongFormat)}'. " +
-                GetElapsedTimeLogString(Context.Current.ElapsedMilliseconds) +
+                GetElapsedTimeLogString(clock.ElapsedMilliseconds) +
                 $"{NewLine}Запрос: '{Serialize(requestMessage)}'" +
                 $"{NewLine}Строка запроса: '{requestString}'" +
                 $"{NewLine}Ответ: '{Serialize(responseMessage)}'");
@@ -88,7 +96,7 @@ public sealed class LoggingInterceptor : IRequestInterceptor
             logger.Debug(
                 $"Запрос по адресу '{request.Uri}' " +
                 $"вернул код '{responseMessage.StatusCode}' в '{Now.ToString(LogDateLongFormat)}'. " +
-                GetElapsedTimeLogString(Context.Current.ElapsedMilliseconds) +
+                GetElapsedTimeLogString(clock.ElapsedMilliseconds) +
                 $"{NewLine}Ответ: '{Serialize(responseMessage)}'" +
                 $"{NewLine}Строка ответа: '{responseString}'");
         }
@@ -97,7 +105,7 @@ public sealed class LoggingInterceptor : IRequestInterceptor
             logger.Info(
                 $"Запрос по адресу '{request.Uri}' " +
                 $"вернул код '{responseMessage.StatusCode}' в '{Now.ToString(LogDateLongFormat)}'. " +
-                GetElapsedTimeLogString(Context.Current.ElapsedMilliseconds));
+                GetElapsedTimeLogString(clock.ElapsedMilliseconds));
         }
 
         return responseMessage;
