@@ -183,6 +183,62 @@ public static class ResponseExtensions
 
     #endregion
 
+    #region Receive Response Bytes
+
+    /// <summary>
+    /// Возвращает массив байтов из ответа
+    /// </summary>
+    /// <param name="validation">Объект Validation с Http ответом</param>
+    /// <returns></returns>
+    public static async Task<Validation<Error, byte[]>> ReceiveBytesAsync(
+        this Validation<Error, IResponse> validation)
+    {
+        return await validation
+            .BindAsync(async response =>
+                await response.ResponseMessage.ReceiveBytesAsync(response).ConfigureAwait(false))
+            .ConfigureAwait(false);
+    }
+    
+    /// <summary>
+    /// Возвращает массив байтов из ответа
+    /// </summary>
+    /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
+    /// <returns></returns>
+    public static async Task<Validation<Error, byte[]>> ReceiveBytesAsync(
+        this Task<Validation<Error, IResponse>> task)
+    {
+        var validation = await task.ConfigureAwait(false);
+        return await validation.ReceiveBytesAsync().ConfigureAwait(false);
+    }
+    
+    /// <summary>
+    /// Возвращает массив байтов из ответа
+    /// </summary>
+    /// <param name="validation">Объект Validation с Http ответом</param>
+    /// <returns></returns>
+    public static async Task<byte[]?> ReceiveBytesUnsafeAsync(
+        this Validation<Error, IResponse> validation)
+    {
+        return await validation
+            .ReceiveBytesAsync()
+            .MatchUnsafeAsync(bytes => bytes, _ => null)
+            .ConfigureAwait(false);
+    }
+    
+    /// <summary>
+    /// Возвращает массив байтов из ответа
+    /// </summary>
+    /// <param name="task">Задача на получение объекта Validation с Http ответом</param>
+    /// <returns></returns>
+    public static async Task<byte[]?> ReceiveBytesUnsafeAsync(
+        this Task<Validation<Error, IResponse>> task)
+    {
+        var validation = await task.ConfigureAwait(false);
+        return await validation.ReceiveBytesUnsafeAsync().ConfigureAwait(false);
+    }
+
+    #endregion
+
     #region Receive Response Content
     
     /// <summary>
