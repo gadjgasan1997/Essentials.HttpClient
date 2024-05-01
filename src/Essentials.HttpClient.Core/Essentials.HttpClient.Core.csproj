@@ -9,7 +9,7 @@
 
     <PropertyGroup>
         <PackageId>Essentials.HttpClient</PackageId>
-        <Version>3.3.6.0</Version>
+        <Version>3.3.7.0</Version>
         <Authors>Gadzhinskiy</Authors>
         <Product>Essentials.HttpClient</Product>
         <Description>

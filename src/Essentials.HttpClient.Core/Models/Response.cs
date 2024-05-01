@@ -27,7 +27,7 @@ internal record Response : IResponse
             .Append("\"Полученный ответ\": ")
             .Append("{ ")
             .Append("\"Id запроса\": \"")
-            .Append(Request.Id)
+            .Append(Request.Id.Value)
             .Append("\", ")
             .Append("\"Код ответа\": \"")
             .Append(ResponseMessage.StatusCode)

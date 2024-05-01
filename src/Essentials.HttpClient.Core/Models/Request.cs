@@ -70,7 +70,7 @@ internal record Request : IRequest
         builder
             .Append("{ ")
             .Append("\"Id запроса\": \"")
-            .Append(Id)
+            .Append(Id.Value)
             .Append("\", ")
             .Append("\"Название http клиента\": \"")
             .Append(ClientName)

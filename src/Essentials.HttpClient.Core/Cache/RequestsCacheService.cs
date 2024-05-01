@@ -34,9 +34,11 @@ internal static class RequestsCacheService
 
         if (_requests.TryGetValue(id, out var cachedRequest))
         {
-            MainLogger.Trace($"Запрос с Id '{id}' был успешно получен из кеша");
-            
             cachedRequest.Id.RefreshIdIfDefault();
+            
+            MainLogger.Trace(
+                $"Запрос по CacheId '{id}' был успешно получен из кеша. " +
+                $"Запросу был присвоен новый RequestId: '{cachedRequest.Id.Value}'");
             
             return Validation<Error, IRequest>.Success(cachedRequest);
         }
