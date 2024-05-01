@@ -51,6 +51,26 @@ internal static class HttpResponseMessageExtensions
                 Fail: exception => OnFail(exception))
             .ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Возвращает массив байтов из Http ответа
+    /// </summary>
+    /// <param name="message">Http ответ</param>
+    /// <param name="response">Ответ</param>
+    /// <returns></returns>
+    public static async Task<Validation<Error, byte[]>> ReceiveBytesAsync(
+        this HttpResponseMessage message,
+        IResponse response)
+    {
+        using var scope = HttpRequestContext.RestoreContext(response);
+
+        return await TryOptionAsync(() => message.Content.ReadAsByteArrayAsync())
+            .Match(
+                Some: Validation<Error, byte[]>.Success,
+                None: () => OnNone(),
+                Fail: exception => OnFail(exception))
+            .ConfigureAwait(false);
+    }
     
     private static Error OnNone()
     {

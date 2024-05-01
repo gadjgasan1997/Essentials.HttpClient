@@ -141,6 +141,39 @@ public static class HttpClientsExtensions
     {
         return await httpClient.GetStreamAsync(new Uri(address), token).ConfigureAwait(false);
     }
+    
+    /// <summary>
+    /// Отправляет Get запрос по указанному адресу и возвращает массив байтов
+    /// </summary>
+    /// <param name="httpClient">Http клиент</param>
+    /// <param name="uri">Адрес запроса</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Массив байтов</returns>
+    public static async Task<byte[]?> GetBytesAsync(
+        this IEssentialsHttpClient httpClient,
+        Uri uri,
+        CancellationToken? token = null)
+    {
+        return await httpClient
+            .GetAsync(uri, token)
+            .ReceiveBytesUnsafeAsync()
+            .ConfigureAwait(false);
+    }
+    
+    /// <summary>
+    /// Отправляет Get запрос по указанному адресу и возвращает массив байтов
+    /// </summary>
+    /// <param name="httpClient">Http клиент</param>
+    /// <param name="address">Адрес запроса</param>
+    /// <param name="token">Токен отмены</param>
+    /// <returns>Массив байтов</returns>
+    public static async Task<byte[]?> GetBytesAsync(
+        this IEssentialsHttpClient httpClient,
+        string address,
+        CancellationToken? token = null)
+    {
+        return await httpClient.GetBytesAsync(new Uri(address), token).ConfigureAwait(false);
+    }
 
     #endregion
 
