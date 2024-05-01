@@ -29,7 +29,7 @@ public sealed class LoggingInterceptor : IRequestInterceptor
         var logger = GetCurrentRequestLogger();
         if (logger.IsDebugEnabled)
         {
-            requestString ??= await ReadRequestDataAsync(requestMessage);
+            requestString ??= await ReadRequestDataAsync(requestMessage).ConfigureAwait(false);
 
             logger.Debug(
                 $"Происходит отправка '{requestMessage.Method}' " +
@@ -49,11 +49,11 @@ public sealed class LoggingInterceptor : IRequestInterceptor
         HttpResponseMessage responseMessage;
         try
         {
-            responseMessage = await next();
+            responseMessage = await next().ConfigureAwait(false);
         }
         catch (Exception exception)
         {
-            requestString ??= await ReadRequestDataAsync(requestMessage);
+            requestString ??= await ReadRequestDataAsync(requestMessage).ConfigureAwait(false);
             
             logger.Error(
                 exception,
@@ -68,7 +68,7 @@ public sealed class LoggingInterceptor : IRequestInterceptor
         
         if (!responseMessage.IsSuccessStatusCode)
         {
-            requestString ??= await ReadRequestDataAsync(requestMessage);
+            requestString ??= await ReadRequestDataAsync(requestMessage).ConfigureAwait(false);
 
             logger.Error(
                 $"В ответ на Http запрос был получен ошибочный Http код ответа: '{responseMessage.StatusCode}'" +
@@ -83,7 +83,7 @@ public sealed class LoggingInterceptor : IRequestInterceptor
 
         if (logger.IsDebugEnabled)
         {
-            var responseString = await responseMessage.Content.ReadAsStringAsync();
+            var responseString = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             
             logger.Debug(
                 $"Запрос по адресу '{request.Uri}' " +
@@ -106,7 +106,7 @@ public sealed class LoggingInterceptor : IRequestInterceptor
     private static async Task<string> ReadRequestDataAsync(HttpRequestMessage requestMessage) =>
         requestMessage.Content is null
             ? "No http content"
-            : await requestMessage.Content.ReadAsStringAsync();
+            : await requestMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
     
     private static string GetElapsedTimeLogString(long? elapsedMilliseconds) =>
         string.IsNullOrWhiteSpace(elapsedMilliseconds?.ToString())

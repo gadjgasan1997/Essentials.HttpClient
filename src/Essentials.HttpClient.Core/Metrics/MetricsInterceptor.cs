@@ -40,7 +40,7 @@ public sealed class MetricsInterceptor : IRequestInterceptor
         HttpResponseMessage responseMessage;
         try
         {
-            responseMessage = await next();
+            responseMessage = await next().ConfigureAwait(false);
         }
         catch
         {

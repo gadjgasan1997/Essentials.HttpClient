@@ -20,7 +20,7 @@ public sealed class RequestsTimerInterceptor : IRequestInterceptor
 
         try
         {
-            var responseMessage = await next();
+            var responseMessage = await next().ConfigureAwait(false);
             
             clock.Stop();
             Context.Current.SetElapsedTime(clock.ElapsedMilliseconds);

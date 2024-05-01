@@ -170,7 +170,8 @@ internal sealed class EssentialsHttpClient : IEssentialsHttpClient
                 .Aggregate(
                     (NextRequestDelegate) SeedAsync,
                     (next, interceptor) => () => NextAsync(next, interceptor))
-                .Invoke();
+                .Invoke()
+                .ConfigureAwait(false);
 
             // ReSharper disable once AccessToDisposedClosure
             async Task<HttpResponseMessage> SeedAsync() =>
