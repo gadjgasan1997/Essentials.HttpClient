@@ -1,15 +1,10 @@
-﻿using LanguageExt;
+﻿using System.Text;
+using LanguageExt;
 using LanguageExt.Common;
-using System.Text;
-using System.Net.Http.Headers;
 using System.Diagnostics.CodeAnalysis;
 using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Logging;
-using Essentials.HttpClient.Models;
 using Essentials.HttpClient.RequestsInterception;
-using static LanguageExt.Prelude;
-using static Essentials.HttpClient.Dictionaries.KnownAuthenticationSchemes;
-// ReSharper disable ConvertToLambdaExpression
 
 namespace Essentials.HttpClient.Extensions;
 
@@ -22,518 +17,340 @@ public static class RequestBuilderExtensions
     /// <summary>
     /// Устанавливает Id для запроса
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <param name="requestId">Id запроса</param>
     /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> WithRequestId(
-        this Validation<Error, HttpRequestBuilder> validation,
+    public static Try<HttpRequestBuilder> WithRequestId(
+        this Try<HttpRequestBuilder> @try,
         string requestId)
     {
-        return string.IsNullOrWhiteSpace(requestId)
-            ? validation
-            : validation.ModifyRequest(builder => () => builder.Id = requestId);
-    }
-    
-    /// <summary>
-    /// Добавляет заголовок к запросу
-    /// </summary>
-    /// <param name="validation"></param>
-    /// <param name="name">Название заголовка</param>
-    /// <param name="values">Значения заголовка</param>
-    /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> WithHeader(
-        this Validation<Error, HttpRequestBuilder> validation,
-        string name,
-        params string?[] values)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            return validation;
-
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                builder.Actions.Add(message => message.Headers.Add(name, values));
-            });
-    }
-    
-    /// <summary>
-    /// Добавляет заголовок к запросу, если его значение не пустое
-    /// </summary>
-    /// <param name="validation"></param>
-    /// <param name="name">Название заголовка</param>
-    /// <param name="values">Значения заголовка</param>
-    /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> WithNotEmptyHeader(
-        this Validation<Error, HttpRequestBuilder> validation,
-        string name,
-        params string?[] values)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            return validation;
-
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                builder.Actions.Add(message =>
-                {
-                    message.Headers.Add(name, values.Where(@string => !string.IsNullOrWhiteSpace(@string)));
-                });
-            });
-    }
-    
-    /// <summary>
-    /// Добавляет заголовки к запросу
-    /// </summary>
-    /// <param name="validation"></param>
-    /// <param name="headers">Список заголовков</param>
-    /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> WithHeaders(
-        this Validation<Error, HttpRequestBuilder> validation,
-        params (string Name, IEnumerable<string?> Value)[] headers)
-    {
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                foreach (var tuple in headers)
-                {
-                    if (string.IsNullOrWhiteSpace(tuple.Name))
-                        continue;
-                    
-                    builder.Actions.Add(message => message.Headers.Add(tuple.Name, tuple.Value));
-                }
-            });
-    }
-    
-    /// <summary>
-    /// Добавляет заголовки к запросу, если их значения не пустые
-    /// </summary>
-    /// <param name="validation"></param>
-    /// <param name="headers">Список заголовков</param>
-    /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> WithNotEmptyHeaders(
-        this Validation<Error, HttpRequestBuilder> validation,
-        params (string Name, IEnumerable<string?> Value)[] headers)
-    {
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                foreach (var tuple in headers)
-                {
-                    if (string.IsNullOrWhiteSpace(tuple.Name))
-                        continue;
-                    
-                    builder.Actions.Add(message =>
-                    {
-                        message.Headers.Add(
-                            tuple.Name,
-                            tuple.Value.Where(@string => !string.IsNullOrWhiteSpace(@string)));
-                    });
-                }
-            });
-    }
-
-    /// <summary>
-    /// Устанавливает заголовок с типом содержимого запроса
-    /// </summary>
-    /// <param name="validation"></param>
-    /// <param name="mediaType">Тип содержимого</param>
-    /// <param name="encoding">Кодировка</param>
-    /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> SetMediaTypeHeader(
-        this Validation<Error, HttpRequestBuilder> validation,
-        string mediaType,
-        Encoding? encoding = null)
-    {
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                if (string.IsNullOrWhiteSpace(mediaType))
-                    return;
-            
-                encoding ??= Encoding.Default;
-                builder.MediaType = new MediaTypeHeaderValue(mediaType)
-                {
-                    CharSet = encoding.WebName
-                };
-            });
-    }
-
-    /// <summary>
-    /// Настраивает Basic авторизацию
-    /// </summary>
-    /// <param name="validation"></param>
-    /// <param name="userName">Логин</param>
-    /// <param name="password">Пароль</param>
-    /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> WithBasicAuthentication(
-        this Validation<Error, HttpRequestBuilder> validation,
-        string userName,
-        string password)
-    {
-        if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(password))
-            return validation;
-        
-        string authenticationString;
-        try
-        {
-            var bytes = Encoding.ASCII.GetBytes($"{userName}:{password}");
-            authenticationString = Convert.ToBase64String(bytes);
-        }
-        catch (Exception ex)
-        {
-            return Error.New(ex);
-        }
-        
-        return validation.WithAuthentication(BASIC, authenticationString);
-    }
-
-    /// <summary>
-    /// Настраивает авторизацию на Jwt токенах
-    /// </summary>
-    /// <param name="validation"></param>
-    /// <param name="token">Токен</param>
-    /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> WithJwtAuthentication(
-        this Validation<Error, HttpRequestBuilder> validation,
-        string token)
-    {
-        return validation.WithAuthentication(JWT, token);
-    }
-
-    /// <summary>
-    /// Настраивает авторизацию
-    /// </summary>
-    /// <param name="validation"></param>
-    /// <param name="scheme">Схема авторизации</param>
-    /// <param name="parameter">Параметр</param>
-    /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> WithAuthentication(
-        this Validation<Error, HttpRequestBuilder> validation,
-        string scheme,
-        string parameter)
-    {
-        if (string.IsNullOrWhiteSpace(scheme) || string.IsNullOrWhiteSpace(parameter))
-            return validation;
-        
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                builder.Actions.Add(message =>
-                    message.Headers.Authorization = new AuthenticationHeaderValue(scheme, parameter));
-            });
-    }
-
-    /// <summary>
-    /// Устанавливает таймаут запроса
-    /// </summary>
-    /// <param name="validation"></param>
-    /// <param name="timeout">Таймаут</param>
-    /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> SetTimeout(
-        this Validation<Error, HttpRequestBuilder> validation,
-        TimeSpan timeout)
-    {
-        return validation.ModifyRequest(builder => () => builder.Timeout = timeout);
-    }
-
-    /// <summary>
-    /// Устанавливает метрики для запроса
-    /// </summary>
-    /// <param name="validation"></param>
-    /// <param name="metricsOptions">Опции метрик</param>
-    /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> WithRequestMetrics(
-        this Validation<Error, HttpRequestBuilder> validation,
-        RequestMetricsOptions metricsOptions)
-    {
-        return validation.ModifyRequest(builder => () => builder.MetricsOptions = metricsOptions);
+        return @try.Bind(builder => builder.WithRequestId(requestId));
     }
 
     /// <summary>
     /// Устанавливает Id типа запроса
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <param name="typeId">Id типа</param>
     /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> SetTypeId(
-        this Validation<Error, HttpRequestBuilder> validation,
+    public static Try<HttpRequestBuilder> SetTypeId(
+        this Try<HttpRequestBuilder> @try,
         string typeId)
     {
-        return string.IsNullOrWhiteSpace(typeId)
-            ? validation
-            : validation.ModifyRequest(builder => () => builder.TypeId = typeId);
+        return @try.Bind(builder => builder.SetTypeId(typeId));
+    }
+
+    /// <summary>
+    /// Устанавливает таймаут запроса
+    /// </summary>
+    /// <param name="try"></param>
+    /// <param name="timeout">Таймаут</param>
+    /// <returns>Билдер</returns>
+    public static Try<HttpRequestBuilder> SetTimeout(
+        this Try<HttpRequestBuilder> @try,
+        TimeSpan timeout)
+    {
+        return @try.Bind(builder => builder.SetTimeout(timeout));
+    }
+
+    /// <summary>
+    /// Устанавливает метрики для запроса
+    /// </summary>
+    /// <param name="try"></param>
+    /// <param name="metricsOptions">Опции метрик</param>
+    /// <returns>Билдер</returns>
+    public static Try<HttpRequestBuilder> WithRequestMetrics(
+        this Try<HttpRequestBuilder> @try,
+        RequestMetricsOptions metricsOptions)
+    {
+        return @try.Bind(builder => builder.WithRequestMetrics(metricsOptions));
+    }
+   
+    /// <summary>
+    /// Добавляет заголовок к запросу
+    /// </summary>
+    /// <param name="try"></param>
+    /// <param name="name">Название заголовка</param>
+    /// <param name="values">Значения заголовка</param>
+    /// <returns>Билдер</returns>
+    public static Try<HttpRequestBuilder> WithHeader(
+        this Try<HttpRequestBuilder> @try,
+        string name,
+        params string?[] values)
+    {
+        return @try.Bind(builder => builder.WithHeader(name, values));
+    }
+    
+    /// <summary>
+    /// Добавляет заголовок к запросу, если его значение не пустое
+    /// </summary>
+    /// <param name="try"></param>
+    /// <param name="name">Название заголовка</param>
+    /// <param name="values">Значения заголовка</param>
+    /// <returns>Билдер</returns>
+    public static Try<HttpRequestBuilder> WithNotEmptyHeader(
+        this Try<HttpRequestBuilder> @try,
+        string name,
+        params string?[] values)
+    {
+        return @try.Bind(builder => builder.WithNotEmptyHeader(name, values));
+    }
+    
+    /// <summary>
+    /// Добавляет заголовки к запросу
+    /// </summary>
+    /// <param name="try"></param>
+    /// <param name="headers">Список заголовков</param>
+    /// <returns>Билдер</returns>
+    public static Try<HttpRequestBuilder> WithHeaders(
+        this Try<HttpRequestBuilder> @try,
+        params (string Name, IEnumerable<string?> Value)[] headers)
+    {
+        return @try.Bind(builder => builder.WithHeaders(headers));
+    }
+    
+    /// <summary>
+    /// Добавляет заголовки к запросу, если их значения не пустые
+    /// </summary>
+    /// <param name="try"></param>
+    /// <param name="headers">Список заголовков</param>
+    /// <returns>Билдер</returns>
+    public static Try<HttpRequestBuilder> WithNotEmptyHeaders(
+        this Try<HttpRequestBuilder> @try,
+        params (string Name, IEnumerable<string?> Value)[] headers)
+    {
+        return @try.Bind(builder => builder.WithNotEmptyHeaders(headers));
+    }
+
+    /// <summary>
+    /// Устанавливает заголовок с типом содержимого запроса
+    /// </summary>
+    /// <param name="try"></param>
+    /// <param name="mediaType">Тип содержимого</param>
+    /// <param name="encoding">Кодировка</param>
+    /// <returns>Билдер</returns>
+    public static Try<HttpRequestBuilder> SetMediaTypeHeader(
+        this Try<HttpRequestBuilder> @try,
+        string mediaType,
+        Encoding? encoding = null)
+    {
+        return @try.Bind(builder => builder.SetMediaTypeHeader(mediaType, encoding));
+    }
+
+    /// <summary>
+    /// Настраивает авторизацию
+    /// </summary>
+    /// <param name="try"></param>
+    /// <param name="scheme">Схема авторизации</param>
+    /// <param name="parameter">Параметр</param>
+    /// <returns>Билдер</returns>
+    public static Try<HttpRequestBuilder> WithAuthentication(
+        this Try<HttpRequestBuilder> @try,
+        string scheme,
+        string parameter)
+    {
+        return @try.Bind(builder => builder.WithAuthentication(scheme, parameter));
+    }
+
+    /// <summary>
+    /// Настраивает Basic авторизацию
+    /// </summary>
+    /// <param name="try"></param>
+    /// <param name="userName">Логин</param>
+    /// <param name="password">Пароль</param>
+    /// <returns>Билдер</returns>
+    public static Try<HttpRequestBuilder> WithBasicAuthentication(
+        this Try<HttpRequestBuilder> @try,
+        string userName,
+        string password)
+    {
+        return @try.Bind(builder => builder.WithBasicAuthentication(userName, password));
+    }
+
+    /// <summary>
+    /// Настраивает авторизацию на Jwt токенах
+    /// </summary>
+    /// <param name="try"></param>
+    /// <param name="token">Токен</param>
+    /// <returns>Билдер</returns>
+    public static Try<HttpRequestBuilder> WithJwtAuthentication(
+        this Try<HttpRequestBuilder> @try,
+        string token)
+    {
+        return @try.Bind(builder => builder.WithJwtAuthentication(token));
     }
 
     /// <summary>
     /// Добавляет интерсептор к запросу
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
     /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> WithInterceptor<TInterceptor>(
-        this Validation<Error, HttpRequestBuilder> validation)
+    public static Try<HttpRequestBuilder> WithInterceptor<TInterceptor>(
+        this Try<HttpRequestBuilder> @try)
         where TInterceptor : IRequestInterceptor
     {
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                InterceptorsStorage.CheckInterceptorIsRegistered<TInterceptor>();
-                builder.Interceptors.Add(typeof(TInterceptor));
-            });
+        return @try.Bind(builder => builder.WithInterceptor<TInterceptor>());
     }
 
     /// <summary>
     /// Отключает глобальный интерсептор для запроса
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
     /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> DisableGlobalInterceptor<TInterceptor>(
-        this Validation<Error, HttpRequestBuilder> validation)
+    public static Try<HttpRequestBuilder> DisableGlobalInterceptor<TInterceptor>(
+        this Try<HttpRequestBuilder> @try)
+        where TInterceptor : IRequestInterceptor
     {
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                builder.IgnoredGlobalInterceptors.Add(typeof(TInterceptor));
-            });
+        return @try.Bind(builder => builder.DisableGlobalInterceptor<TInterceptor>());
     }
 
     /// <summary>
     /// Устанавливает обработчик события ошибки сериализации объекта
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <param name="handler">Обработчик</param>
     /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> OnSerializeError(
-        this Validation<Error, HttpRequestBuilder> validation,
+    public static Try<HttpRequestBuilder> OnSerializeError(
+        this Try<HttpRequestBuilder> @try,
         Handler handler)
     {
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                builder.SetHandler(nameof(EventsStorage.OnSerializeError), handler);
-            });
+        return @try.Bind(builder => builder.OnSerializeError(handler));
     }
 
     /// <summary>
     /// Устанавливает обработчик события перед отправкой запроса
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <param name="handler">Обработчик</param>
     /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> OnBeforeSend(
-        this Validation<Error, HttpRequestBuilder> validation,
+    public static Try<HttpRequestBuilder> OnBeforeSend(
+        this Try<HttpRequestBuilder> @try,
         Handler handler)
     {
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                builder.SetHandler(nameof(EventsStorage.OnBeforeSend), handler);
-            });
+        return @try.Bind(builder => builder.OnBeforeSend(handler));
     }
 
     /// <summary>
     /// Устанавливает обработчик события успеха отправки запроса
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <param name="handler">Обработчик</param>
     /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> OnSuccessSend(
-        this Validation<Error, HttpRequestBuilder> validation,
+    public static Try<HttpRequestBuilder> OnSuccessSend(
+        this Try<HttpRequestBuilder> @try,
         Handler handler)
     {
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                builder.SetHandler(nameof(EventsStorage.OnSuccessSend), handler);
-            });
+        return @try.Bind(builder => builder.OnSuccessSend(handler));
     }
 
     /// <summary>
     /// Устанавливает обработчик события ошибки отправки запроса
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <param name="handler">Обработчик</param>
     /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> OnErrorSend(
-        this Validation<Error, HttpRequestBuilder> validation,
+    public static Try<HttpRequestBuilder> OnErrorSend(
+        this Try<HttpRequestBuilder> @try,
         Handler handler)
     {
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                builder.SetHandler(nameof(EventsStorage.OnErrorSend), handler);
-            });
+        return @try.Bind(builder => builder.OnErrorSend(handler));
     }
 
     /// <summary>
     /// Устанавливает обработчик события ошибочного Http кода ответа
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <param name="handler">Обработчик</param>
     /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> OnBadStatusCode(
-        this Validation<Error, HttpRequestBuilder> validation,
+    public static Try<HttpRequestBuilder> OnBadStatusCode(
+        this Try<HttpRequestBuilder> @try,
         Handler handler)
     {
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                builder.SetHandler(nameof(EventsStorage.OnBadStatusCode), handler);
-            });
+        return @try.Bind(builder => builder.OnBadStatusCode(handler));
     }
 
     /// <summary>
     /// Устанавливает обработчик события ошибки при чтении содержимого из Http ответа
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <param name="handler">Обработчик</param>
     /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> OnErrorReadContent(
-        this Validation<Error, HttpRequestBuilder> validation,
+    public static Try<HttpRequestBuilder> OnErrorReadContent(
+        this Try<HttpRequestBuilder> @try,
         Handler handler)
     {
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                builder.SetHandler(nameof(EventsStorage.OnErrorReadContent), handler);
-            });
+        return @try.Bind(builder => builder.OnErrorReadContent(handler));
     }
 
     /// <summary>
     /// Устанавливает обработчик события ошибки десериализации строки ответа
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <param name="handler">Обработчик</param>
     /// <returns>Билдер</returns>
-    public static Validation<Error, HttpRequestBuilder> OnDeserializeError(
-        this Validation<Error, HttpRequestBuilder> validation,
+    public static Try<HttpRequestBuilder> OnDeserializeError(
+        this Try<HttpRequestBuilder> @try,
         Handler handler)
     {
-        return validation.ModifyRequest(builder =>
-            () =>
-            {
-                builder.SetHandler(nameof(EventsStorage.OnDeserializeError), handler);
-            });
+        return @try.Bind(builder => builder.OnDeserializeError(handler));
     }
 
     /// <summary>
     /// Создает запрос
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <param name="clientName">Название http клиента</param>
     /// <returns>Запрос</returns>
     public static Validation<Error, IRequest> Build(
-        this Validation<Error, HttpRequestBuilder> validation,
+        this Try<HttpRequestBuilder> @try,
         string? clientName = null)
     {
-        return validation.Bind(builder =>
-            BuildPrivate(
-                builder,
-                string.IsNullOrWhiteSpace(clientName) ? LogManager.MainLogger.Name : clientName));
+        return @try
+            .Map(builder =>
+                builder.Build(
+                    string.IsNullOrWhiteSpace(clientName)
+                        ? LogManager.MainLogger.Name
+                        : clientName))
+            .ToValidation(Error.New)
+            .Bind(data => data);
     }
 
     /// <summary>
     /// Создает запрос
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <param name="clientName">Название http клиента</param>
     /// <returns>Запрос</returns>
     public static Task<Validation<Error, IRequest>> BuildAsync(
-        this Validation<Error, HttpRequestBuilder> validation,
+        this Try<HttpRequestBuilder> @try,
         string? clientName = null)
     {
-        return validation.Build(clientName).AsTask();
+        return @try.Build(clientName).AsTask();
     }
 
     /// <summary>
     /// Создает запрос
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <typeparam name="TClient">Тип клиента</typeparam>
     /// <returns>Запрос</returns>
     public static Validation<Error, IRequest> Build<TClient>(
-        this Validation<Error, HttpRequestBuilder> validation)
+        this Try<HttpRequestBuilder> @try)
     {
-        return validation.Build(typeof(TClient).Name);
+        return @try.Build(typeof(TClient).Name);
     }
 
     /// <summary>
     /// Создает запрос
     /// </summary>
-    /// <param name="validation"></param>
+    /// <param name="try"></param>
     /// <typeparam name="TClient">Тип клиента</typeparam>
     /// <returns>Запрос</returns>
     public static Task<Validation<Error, IRequest>> BuildAsync<TClient>(
-        this Validation<Error, HttpRequestBuilder> validation)
+        this Try<HttpRequestBuilder> @try)
     {
-        return validation.Build<TClient>().AsTask();
-    }
-
-    /// <summary>
-    /// Изменяет запрос
-    /// </summary>
-    /// <param name="validation"></param>
-    /// <param name="func">Действие по изменению запроса</param>
-    /// <returns>Билдер</returns>
-    private static Validation<Error, HttpRequestBuilder> ModifyRequest(
-        this Validation<Error, HttpRequestBuilder> validation,
-        Func<HttpRequestBuilder, Action> func)
-    {
-        return validation.Bind(builder =>
-        {
-            return Try(() =>
-                {
-                    var action = func(builder);
-                    action();
-                    return builder;
-                })
-                .Match(
-                    Succ: Success<Error, HttpRequestBuilder>,
-                    Fail: exception =>
-                    {
-                        return Error.New(
-                            "Во время изменения запроса произошла ошибка",
-                            exception);
-                    });
-        });
-    }
-
-    /// <summary>
-    /// Создает запрос
-    /// </summary>
-    /// <param name="builder">Билдер</param>
-    /// <param name="clientName">Название http клиента</param>
-    /// <returns>Билдер</returns>
-    private static Validation<Error, IRequest> BuildPrivate(
-        HttpRequestBuilder builder,
-        string clientName)
-    {
-        var interceptors = InterceptorsStorage.GetInterceptorsToAttach(
-            builder.Interceptors,
-            builder.IgnoredGlobalInterceptors);
-
-        var requestId = string.IsNullOrWhiteSpace(builder.Id)
-            ? RequestId.CreateDefault()
-            : RequestId.CreateManual(builder.Id);
-
-        return Try(() =>
-            {
-                return new Request(
-                    requestId,
-                    clientName,
-                    builder.TypeId,
-                    builder.Uri,
-                    builder.MediaType,
-                    Optional(builder.Timeout),
-                    Optional(builder.MetricsOptions),
-                    builder.Actions,
-                    interceptors,
-                    builder.EventsHandlers);
-            })
-            .Try()
-            .Match(
-                Succ: request => request,
-                Fail: exception => Fail<Error, IRequest>(exception));
+        return @try.Build<TClient>().AsTask();
     }
 }

@@ -1,4 +1,4 @@
 set projectName=Essentials.HttpClient.Core
 set packageName=Essentials.HttpClient
-set packageVersion=3.3.9
+set packageVersion=3.4.0
 set configuration=Release
