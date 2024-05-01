@@ -1,6 +1,7 @@
 ﻿using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Logging;
 using Essentials.HttpClient.Metrics;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Essentials.HttpClient.RequestsInterception;
 
@@ -9,25 +10,29 @@ namespace Essentials.HttpClient.RequestsInterception;
 /// </summary>
 internal static class InterceptorsStorage
 {
+    private static ServiceLifetime DefaultServiceLifetime => ServiceLifetime.Singleton;
+    
     private static readonly List<Type> _globalInterceptors = [];
     
-    private static readonly List<Type> _interceptorsToRegister = [
-        typeof(RequestsTimerInterceptor),
-        typeof(LoggingInterceptor),
-        typeof(MetricsInterceptor)
-    ];
+    private static readonly Dictionary<Type, ServiceLifetime> _interceptorsToRegister = new()
+    {
+        [typeof(RequestsTimerInterceptor)] = DefaultServiceLifetime,
+        [typeof(LoggingInterceptor)] = DefaultServiceLifetime,
+        [typeof(MetricsInterceptor)] = DefaultServiceLifetime
+    };
     
     /// <summary>
     /// Пытается добавить по-умолчанию, который будет автоматически добавляться ко всем запросам
     /// </summary>
+    /// <param name="serviceLifetime">Требуемое время жизни интерсептора, по-умолчанию <see cref="ServiceLifetime.Singleton" /></param>
     /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
-    public static void TryAttachGlobalInterceptor<TInterceptor>()
+    public static void TryAttachGlobalInterceptor<TInterceptor>(ServiceLifetime? serviceLifetime = null)
         where TInterceptor : IRequestInterceptor
     {
         if (_globalInterceptors.Contains(typeof(TInterceptor)))
             return;
         
-        TryAddInterceptorToRegister<TInterceptor>();
+        TryAddInterceptorToRegister<TInterceptor>(serviceLifetime);
         
         _globalInterceptors.Add(typeof(TInterceptor));
     }
@@ -35,14 +40,15 @@ internal static class InterceptorsStorage
     /// <summary>
     /// Пытается добавить интерсептор для регистрации, если он еще не был добавлен
     /// </summary>
+    /// <param name="serviceLifetime">Требуемое время жизни интерсептора, по-умолчанию <see cref="ServiceLifetime.Singleton" /></param>
     /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
-    public static void TryAddInterceptorToRegister<TInterceptor>()
+    public static void TryAddInterceptorToRegister<TInterceptor>(ServiceLifetime? serviceLifetime = null)
         where TInterceptor : IRequestInterceptor
     {
-        if (_interceptorsToRegister.Contains(typeof(TInterceptor)))
+        if (_interceptorsToRegister.ContainsKey(typeof(TInterceptor)))
             return;
         
-        _interceptorsToRegister.Add(typeof(TInterceptor));
+        _interceptorsToRegister.Add(typeof(TInterceptor), serviceLifetime ?? DefaultServiceLifetime);
     }
 
     /// <summary>
@@ -53,7 +59,7 @@ internal static class InterceptorsStorage
     public static void CheckInterceptorIsRegistered<TInterceptor>()
         where TInterceptor : IRequestInterceptor
     {
-        if (_interceptorsToRegister.Contains(typeof(TInterceptor)))
+        if (_interceptorsToRegister.ContainsKey(typeof(TInterceptor)))
             return;
         
         throw new KeyNotFoundException(
@@ -82,5 +88,5 @@ internal static class InterceptorsStorage
     /// Возвращает список интерсепторов для регистрации
     /// </summary>
     /// <returns>Список интерсепторов</returns>
-    public static List<Type> GetInterceptorsToRegister() => _interceptorsToRegister;
+    public static List<Type> GetInterceptorsToRegister() => _interceptorsToRegister.Keys.ToList();
 }

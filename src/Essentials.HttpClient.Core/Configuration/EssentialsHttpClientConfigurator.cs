@@ -2,6 +2,7 @@
 using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Serialization;
 using Essentials.HttpClient.RequestsInterception;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Essentials.HttpClient.Configuration;
 
@@ -42,24 +43,26 @@ public class EssentialsHttpClientConfigurator
     /// <summary>
     /// Добавляет глобальный интерсептор, который будет автоматически добавляться ко всем запросам
     /// </summary>
+    /// <param name="serviceLifetime">Требуемое время жизни интерсептора, по-умолчанию <see cref="ServiceLifetime.Singleton" /></param>
     /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
     /// <returns>Конфигуратор http клиента</returns>
-    public EssentialsHttpClientConfigurator AttachGlobalInterceptor<TInterceptor>()
+    public EssentialsHttpClientConfigurator AttachGlobalInterceptor<TInterceptor>(ServiceLifetime? serviceLifetime = null)
         where TInterceptor : IRequestInterceptor
     {
-        InterceptorsStorage.TryAttachGlobalInterceptor<TInterceptor>();
+        InterceptorsStorage.TryAttachGlobalInterceptor<TInterceptor>(serviceLifetime);
         return this;
     }
 
     /// <summary>
     /// Регистрирует интерсептор
     /// </summary>
+    /// <param name="serviceLifetime">Требуемое время жизни интерсептора, по-умолчанию <see cref="ServiceLifetime.Singleton" /></param>
     /// <typeparam name="TInterceptor">Тип интерсептора</typeparam>
     /// <returns>Конфигуратор http клиента</returns>
-    public EssentialsHttpClientConfigurator RegisterInterceptor<TInterceptor>()
+    public EssentialsHttpClientConfigurator RegisterInterceptor<TInterceptor>(ServiceLifetime? serviceLifetime = null)
         where TInterceptor : IRequestInterceptor
     {
-        InterceptorsStorage.TryAddInterceptorToRegister<TInterceptor>();
+        InterceptorsStorage.TryAddInterceptorToRegister<TInterceptor>(serviceLifetime);
         return this;
     }
 }
