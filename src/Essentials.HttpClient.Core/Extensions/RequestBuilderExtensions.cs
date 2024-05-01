@@ -488,11 +488,14 @@ public static class RequestBuilderExtensions
                     action();
                     return builder;
                 })
-                .Try()
                 .Match(
-                    Succ: uriBuilder => uriBuilder,
-                    Fail: exception => Fail<Error, HttpRequestBuilder>(
-                        Error.New("Во время изменения запроса произошла ошибка", exception)));
+                    Succ: Success<Error, HttpRequestBuilder>,
+                    Fail: exception =>
+                    {
+                        return Error.New(
+                            "Во время изменения запроса произошла ошибка",
+                            exception);
+                    });
         });
     }
 
