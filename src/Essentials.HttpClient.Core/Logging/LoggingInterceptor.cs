@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using Essentials.HttpClient.Extensions;
 using Essentials.HttpClient.RequestsInterception;
 using static System.Environment;
 using static System.DateTime;
@@ -63,7 +64,7 @@ public sealed class LoggingInterceptor : IRequestInterceptor
             
             logger.Error(
                 exception,
-                exception.Message +
+                exception.ToHttpRequestExceptionMessage(request) +
                 $"{NewLine}Дата и время получения исключения: '{Now.ToString(LogDateLongFormat)}'. " +
                 GetElapsedTimeLogString(clock.ElapsedMilliseconds) +
                 $"{NewLine}Запрос: '{Serialize(requestMessage)}'" +
