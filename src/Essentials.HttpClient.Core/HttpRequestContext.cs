@@ -36,7 +36,7 @@ public static class HttpRequestContext
             
             return GetCurrentRequestLogger().PushScopeProperties(new []
             {
-                new KeyValuePair<string, object>("http_request_id", request.Id),
+                new KeyValuePair<string, object>("http_request_id", request.Id.Value),
                 new KeyValuePair<string, object>("http_request_client_name", request.ClientName),
                 new KeyValuePair<string, object>("http_request_type_id", request.TypeId)
             });

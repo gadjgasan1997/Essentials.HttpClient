@@ -1,8 +1,9 @@
-﻿using System.Net.Http.Headers;
-using App.Metrics;
+﻿using App.Metrics;
 using LanguageExt;
-using Essentials.HttpClient.Events;
+using System.Net.Http.Headers;
 using Essentials.Utils.Extensions;
+using Essentials.HttpClient.Events;
+using Essentials.HttpClient.Models;
 
 namespace Essentials.HttpClient;
 
@@ -14,7 +15,7 @@ public interface IRequest
     /// <summary>
     /// Id запроса
     /// </summary>
-    string Id { get; }
+    RequestId Id { get; }
     
     /// <summary>
     /// Название Http клиента, с помощью которого отправляется запрос

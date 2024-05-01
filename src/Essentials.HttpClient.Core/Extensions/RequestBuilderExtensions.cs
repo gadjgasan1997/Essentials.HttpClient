@@ -513,10 +513,14 @@ public static class RequestBuilderExtensions
             builder.Interceptors,
             builder.IgnoredGlobalInterceptors);
 
+        var requestId = string.IsNullOrWhiteSpace(builder.Id)
+            ? RequestId.CreateDefault()
+            : RequestId.CreateManual(builder.Id);
+
         return Try(() =>
             {
                 return new Request(
-                    builder.Id ?? Guid.NewGuid().ToString(),
+                    requestId,
                     clientName,
                     builder.TypeId,
                     builder.Uri,
