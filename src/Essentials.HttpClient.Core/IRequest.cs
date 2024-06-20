@@ -1,6 +1,8 @@
 ﻿using App.Metrics;
 using LanguageExt;
+using LanguageExt.Common;
 using System.Net.Http.Headers;
+using Essentials.Serialization;
 using Essentials.Utils.Extensions;
 using Essentials.HttpClient.Events;
 using Essentials.HttpClient.Models;
@@ -69,6 +71,19 @@ public interface IRequest
     [Newtonsoft.Json.JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
     Dictionary<string, Handler> EventsHandlers { get; }
+
+    /// <summary>
+    /// Создает содержимое запроса с потоком из данных
+    /// </summary>
+    /// <param name="data">Данные</param>
+    /// <param name="serializerKey">Ключ сериалайзера</param>
+    /// <typeparam name="TData">Тип данных</typeparam>
+    /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
+    /// <returns></returns>
+    Validation<Error, StreamContent> BuildStreamContent<TData, TSerializer>(
+        TData data,
+        string? serializerKey = null)
+        where TSerializer : IEssentialsSerializer;
 }
 
 /// <summary>

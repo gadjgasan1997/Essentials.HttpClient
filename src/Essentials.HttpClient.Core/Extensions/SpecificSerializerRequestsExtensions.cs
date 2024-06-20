@@ -30,8 +30,7 @@ public static class SpecificSerializerRequestsExtensions
         CancellationToken? token = null)
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.PostJsonStringAsync(request, content, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.PostJsonStringAsync(request, content, token))
             .ConfigureAwait(false);
     }
     
@@ -70,8 +69,7 @@ public static class SpecificSerializerRequestsExtensions
         CancellationToken? token = null)
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.PostJsonDataAsync(request, data, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.PostJsonDataAsync(request, data, token))
             .ConfigureAwait(false);
     }
 
@@ -115,8 +113,7 @@ public static class SpecificSerializerRequestsExtensions
         CancellationToken? token = null)
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.PostNativeJsonDataAsync(request, data, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.PostNativeJsonDataAsync(request, data, token))
             .ConfigureAwait(false);
     }
 
@@ -160,8 +157,7 @@ public static class SpecificSerializerRequestsExtensions
         CancellationToken? token = null)
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.PostXmlStringAsync(request, content, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.PostXmlStringAsync(request, content, token))
             .ConfigureAwait(false);
     }
     
@@ -198,8 +194,7 @@ public static class SpecificSerializerRequestsExtensions
         CancellationToken? token = null)
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.PostXmlDataAsync(request, data, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.PostXmlDataAsync(request, data, token))
             .ConfigureAwait(false);
     }
 

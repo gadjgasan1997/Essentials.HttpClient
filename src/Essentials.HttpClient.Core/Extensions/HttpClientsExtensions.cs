@@ -1,10 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Essentials.Functional.Extensions;
-using Essentials.HttpClient.Serialization;
-using Essentials.HttpClient.Serialization.Extensions;
-using LanguageExt;
+﻿using LanguageExt;
 using LanguageExt.Common;
 using Essentials.Serialization;
+using Essentials.Functional.Extensions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Essentials.HttpClient.Extensions;
 
@@ -30,8 +28,7 @@ public static class HttpClientsExtensions
         CancellationToken? token = default)
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.GetAsync(request, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.GetAsync(request, token))
             .ConfigureAwait(false);
     }
     
@@ -50,8 +47,7 @@ public static class HttpClientsExtensions
         return await HttpRequestBuilder
             .CreateBuilder(uri)
             .BuildAsync()
-            .BindAsync(async request =>
-                await httpClient.GetAsync(request, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.GetAsync(request, token))
             .ConfigureAwait(false);
     }
     
@@ -192,8 +188,7 @@ public static class HttpClientsExtensions
         CancellationToken? token = default)
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.HeadAsync(request, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.HeadAsync(request, token))
             .ConfigureAwait(false);
     }
 
@@ -235,8 +230,7 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.PostStringAsync(request, content, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.PostStringAsync(request, content, token))
             .ConfigureAwait(false);
     }
 
@@ -274,8 +268,7 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.PostStreamAsync(request, content, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.PostStreamAsync(request, content, token))
             .ConfigureAwait(false);
     }
 
@@ -296,9 +289,9 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
-        return await BuildStreamContent<TData, TSerializer>(request, data)
-            .BindAsync(async content =>
-                await httpClient.PostAsync(request, content, token).ConfigureAwait(false))
+        return await request
+            .BuildStreamContent<TData, TSerializer>(data)
+            .BindAsync(content => httpClient.PostAsync(request, content, token))
             .ConfigureAwait(false);
     }
 
@@ -320,8 +313,7 @@ public static class HttpClientsExtensions
         where TSerializer : IEssentialsSerializer
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.PostDataAsync<TData, TSerializer>(request, data, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.PostDataAsync<TData, TSerializer>(request, data, token))
             .ConfigureAwait(false);
     }
 
@@ -344,9 +336,9 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
-        return await BuildStreamContent<TData, TSerializer>(request, data, serializerKey)
-            .BindAsync(async content =>
-                await httpClient.PostAsync(request, content, token).ConfigureAwait(false))
+        return await request
+            .BuildStreamContent<TData, TSerializer>(data, serializerKey)
+            .BindAsync(content => httpClient.PostAsync(request, content, token) )
             .ConfigureAwait(false);
     }
 
@@ -370,9 +362,7 @@ public static class HttpClientsExtensions
         where TSerializer : IEssentialsSerializer
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.PostDataAsync<TData, TSerializer>(serializerKey, request, data, token)
-                    .ConfigureAwait(false))
+            .BindAsync(request => httpClient.PostDataAsync<TData, TSerializer>(serializerKey, request, data, token))
             .ConfigureAwait(false);
     }
     
@@ -414,8 +404,7 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.PutStringAsync(request, content, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.PutStringAsync(request, content, token))
             .ConfigureAwait(false);
     }
 
@@ -436,9 +425,9 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
-        return await BuildStreamContent<TData, TSerializer>(request, data)
-            .BindAsync(async content =>
-                await httpClient.PutAsync(request, content, token).ConfigureAwait(false))
+        return await request
+            .BuildStreamContent<TData, TSerializer>(data)
+            .BindAsync(content => httpClient.PutAsync(request, content, token))
             .ConfigureAwait(false);
     }
 
@@ -460,8 +449,7 @@ public static class HttpClientsExtensions
         where TSerializer : IEssentialsSerializer
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.PutDataAsync<TData, TSerializer>(request, data, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.PutDataAsync<TData, TSerializer>(request, data, token))
             .ConfigureAwait(false);
     }
     
@@ -503,8 +491,7 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.PatchStringAsync(request, content, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.PatchStringAsync(request, content, token))
             .ConfigureAwait(false);
     }
 
@@ -525,9 +512,9 @@ public static class HttpClientsExtensions
         CancellationToken? token = null)
         where TSerializer : IEssentialsSerializer
     {
-        return await BuildStreamContent<TData, TSerializer>(request, data)
-            .BindAsync(async content =>
-                await httpClient.PatchAsync(request, content, token).ConfigureAwait(false))
+        return await request
+            .BuildStreamContent<TData, TSerializer>(data)
+            .BindAsync(content => httpClient.PatchAsync(request, content, token))
             .ConfigureAwait(false);
     }
 
@@ -549,8 +536,7 @@ public static class HttpClientsExtensions
         where TSerializer : IEssentialsSerializer
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.PatchDataAsync<TData, TSerializer>(request, data, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.PatchDataAsync<TData, TSerializer>(request, data, token))
             .ConfigureAwait(false);
     }
     
@@ -571,71 +557,8 @@ public static class HttpClientsExtensions
         CancellationToken? token = default)
     {
         return await validation
-            .BindAsync(async request =>
-                await httpClient.DeleteAsync(request, token).ConfigureAwait(false))
+            .BindAsync(request => httpClient.DeleteAsync(request, token))
             .ConfigureAwait(false);
-    }
-
-    #endregion
-
-    #region Private
-    
-    /// <summary>
-    /// Создает содержимое запроса с потоком из данных
-    /// </summary>
-    /// <param name="request">Запрос</param>
-    /// <param name="data">Данные</param>
-    /// <typeparam name="TData">Тип данных</typeparam>
-    /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
-    /// <returns></returns>
-    private static Validation<Error, StreamContent> BuildStreamContent<TData, TSerializer>(
-        IRequest request,
-        TData data)
-        where TSerializer : IEssentialsSerializer
-    {
-        return SerializersManager
-            .GetSerializer<TSerializer>()
-            .Bind(serializer => BuildStreamContent(serializer, request, data));
-    }
-
-    /// <summary>
-    /// Создает содержимое запроса с потоком из данных
-    /// </summary>
-    /// <param name="request">Запрос</param>
-    /// <param name="data">Данные</param>
-    /// <param name="serializerKey">Ключ сериалайзера</param>
-    /// <typeparam name="TData">Тип данных</typeparam>
-    /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
-    /// <returns></returns>
-    private static Validation<Error, StreamContent> BuildStreamContent<TData, TSerializer>(
-        IRequest request,
-        TData data,
-        string serializerKey)
-        where TSerializer : IEssentialsSerializer
-    {
-        return SerializersManager
-            .GetSerializer<TSerializer>(serializerKey)
-            .Bind(serializer => BuildStreamContent(serializer, request, data));
-    }
-    
-    /// <summary>
-    /// Создает содержимое запроса с потоком из данных
-    /// </summary>
-    /// <param name="serializer">Сериалайзер</param>
-    /// <param name="request">Запрос</param>
-    /// <param name="data">Данные</param>
-    /// <typeparam name="TData">Тип данных</typeparam>
-    /// <typeparam name="TSerializer">Тип сериалайзера</typeparam>
-    /// <returns></returns>
-    private static Validation<Error, StreamContent> BuildStreamContent<TData, TSerializer>(
-        TSerializer serializer,
-        IRequest request,
-        TData data)
-        where TSerializer : IEssentialsSerializer
-    {
-        return serializer.SerializeObject(request, data)
-            .Bind<MemoryStream>(bytes => new MemoryStream(bytes))
-            .Bind<StreamContent>(stream => new StreamContent(stream));
     }
 
     #endregion

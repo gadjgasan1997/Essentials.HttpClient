@@ -1,13 +1,21 @@
 ﻿using LanguageExt;
-using System.Net.Http.Headers;
+using LanguageExt.Common;
 using System.Text;
+using System.Net.Http.Headers;
+using System.Diagnostics.Contracts;
+using Essentials.Serialization;
 using Essentials.Utils.Extensions;
 using Essentials.HttpClient.Events;
+using Essentials.HttpClient.Extensions;
+using Essentials.HttpClient.Serialization;
+using static LanguageExt.Prelude;
+using static Essentials.HttpClient.Events.EventsStorage;
+using static Essentials.HttpClient.Dictionaries.ErrorMessages;
 
 namespace Essentials.HttpClient.Models;
 
 /// <inheritdoc cref="IRequest" />
-internal record Request : IRequest
+internal class Request : IRequest
 {
     public Request(
         RequestId id,
@@ -28,8 +36,8 @@ internal record Request : IRequest
         MediaType = mediaType;
         Timeout = timeout;
         MetricsOptions = metricsOptions;
-        ModifyRequestActions = modifyRequestActions ?? Array.Empty<Action<HttpRequestMessage>>();
-        Interceptors = interceptors ?? Array.Empty<Type>();
+        ModifyRequestActions = modifyRequestActions ?? System.Array.Empty<Action<HttpRequestMessage>>();
+        Interceptors = interceptors ?? System.Array.Empty<Type>();
         EventsHandlers = eventsHandlers ?? new Dictionary<string, Handler>();
     }
     
@@ -62,6 +70,56 @@ internal record Request : IRequest
 
     /// <inheritdoc cref="IRequest.EventsHandlers" />
     public Dictionary<string, Handler> EventsHandlers { get; }
+
+    /// <inheritdoc cref="IRequest.BuildStreamContent{TData, TSerializer}" />
+    public Validation<Error, StreamContent> BuildStreamContent<TData, TSerializer>(
+        TData data,
+        string? serializerKey = null)
+        where TSerializer : IEssentialsSerializer
+    {
+        var validation = string.IsNullOrWhiteSpace(serializerKey)
+            ? SerializersManager.GetSerializer<TSerializer>()
+            : SerializersManager.GetSerializer<TSerializer>(serializerKey);
+        
+        return validation
+            .Bind(serializer =>
+                SerializeObject(serializer, data)
+                    .Map(bytes => new MemoryStream(bytes))
+                    .Map(stream => new StreamContent(stream)));
+    }
+    
+    private Validation<Error, byte[]> SerializeObject<T>(
+        IEssentialsSerializer serializer,
+        T content)
+    {
+        using var scope = HttpRequestContext.CreateContext(this);
+
+        return TryOption(() => serializer.Serialize(content))
+            .Match(
+                Success<Error, byte[]>,
+                None: () => OnNone(),
+                Fail: exception => OnFail(exception));
+
+        Error OnNone()
+        {
+            Contract.Assert(HttpRequestContext.Current is not null);
+            
+            HttpRequestContext.Current.SetError(new InvalidOperationException(SerializeNull), SerializeNull);
+            HttpRequestContext.Current.Request.RaiseEvent(nameof(OnSerializeError), RaiseOnSerializeError);
+            
+            return Error.New(SerializeNull);
+        }
+
+        Error OnFail(Exception exception)
+        {
+            Contract.Assert(HttpRequestContext.Current is not null);
+            
+            HttpRequestContext.Current.SetError(exception, SerializeError);
+            HttpRequestContext.Current.Request.RaiseEvent(nameof(OnSerializeError), RaiseOnSerializeError);
+            
+            return Error.New(exception);
+        }
+    }
 
     public override string ToString()
     {

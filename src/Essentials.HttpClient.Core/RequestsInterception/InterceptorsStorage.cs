@@ -45,10 +45,7 @@ internal static class InterceptorsStorage
     public static void TryAddInterceptorToRegister<TInterceptor>(ServiceLifetime? serviceLifetime = null)
         where TInterceptor : IRequestInterceptor
     {
-        if (_interceptorsToRegister.ContainsKey(typeof(TInterceptor)))
-            return;
-        
-        _interceptorsToRegister.Add(typeof(TInterceptor), serviceLifetime ?? DefaultServiceLifetime);
+        _interceptorsToRegister.TryAdd(typeof(TInterceptor), serviceLifetime ?? DefaultServiceLifetime);
     }
 
     /// <summary>

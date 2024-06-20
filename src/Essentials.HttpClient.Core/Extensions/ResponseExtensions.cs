@@ -1,11 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Essentials.Functional.Extensions;
-using Essentials.HttpClient.Errors;
-using Essentials.HttpClient.Serialization;
-using Essentials.HttpClient.Serialization.Extensions;
-using LanguageExt;
+﻿using LanguageExt;
 using LanguageExt.Common;
 using Essentials.Serialization;
+using Essentials.HttpClient.Errors;
+using Essentials.Functional.Extensions;
+using System.Diagnostics.CodeAnalysis;
 using static LanguageExt.Prelude;
 
 namespace Essentials.HttpClient.Extensions;
@@ -82,8 +80,7 @@ public static class ResponseExtensions
         this Validation<Error, IResponse> validation)
     {
         return await validation
-            .BindAsync(async response =>
-                await response.ResponseMessage.ReceiveStringAsync(response).ConfigureAwait(false))
+            .BindAsync(response => response.ReceiveStringAsync())
             .ConfigureAwait(false);
     }
     
@@ -138,8 +135,7 @@ public static class ResponseExtensions
         this Validation<Error, IResponse> validation)
     {
         return await validation
-            .BindAsync(async response =>
-                await response.ResponseMessage.ReceiveStreamAsync(response).ConfigureAwait(false))
+            .BindAsync(response => response.ReceiveStreamAsync())
             .ConfigureAwait(false);
     }
     
@@ -194,8 +190,7 @@ public static class ResponseExtensions
         this Validation<Error, IResponse> validation)
     {
         return await validation
-            .BindAsync(async response =>
-                await response.ResponseMessage.ReceiveBytesAsync(response).ConfigureAwait(false))
+            .BindAsync(response => response.ReceiveBytesAsync())
             .ConfigureAwait(false);
     }
     
@@ -255,8 +250,7 @@ public static class ResponseExtensions
         where TDeserializer : IEssentialsDeserializer
     {
         return await validation
-            .BindAsync(async response =>
-                await DeserializeResponseAsync<TData, TDeserializer>(response, deserializerKey).ConfigureAwait(false))
+            .BindAsync(response => response.ReceiveContentAsync<TData, TDeserializer>(deserializerKey))
             .ConfigureAwait(false);
     }
 
@@ -311,53 +305,6 @@ public static class ResponseExtensions
     {
         var validation = await task.ConfigureAwait(false);
         return await validation.ReceiveContentUnsafeAsync<TData, TDeserializer>(deserializerKey).ConfigureAwait(false);
-    }
-
-    #endregion
-
-    #region Private
-    
-    /// <summary>
-    /// Десерилизует ответ в объект
-    /// </summary>
-    /// <param name="response">Ответ</param>
-    /// <param name="deserializerKey">Ключ десериалайзера</param>
-    /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
-    /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
-    /// <returns></returns>
-    private static async Task<Validation<Error, TData>> DeserializeResponseAsync<TData, TDeserializer>(
-        this IResponse response,
-        string? deserializerKey = null)
-        where TDeserializer : IEssentialsDeserializer
-    {
-        if (!string.IsNullOrWhiteSpace(deserializerKey))
-        {
-            return await response.DeserializeResponseAsync<TData, TDeserializer>(
-                SerializersManager.GetDeserializer<TDeserializer>(deserializerKey));
-        }
-                
-        return await response.DeserializeResponseAsync<TData, TDeserializer>(
-            SerializersManager.GetDeserializer<TDeserializer>());
-    }
-    
-    /// <summary>
-    /// Десерилизует ответ в объект
-    /// </summary>
-    /// <param name="response">Ответ</param>
-    /// <param name="deserializerValidation">Десериалайзер</param>
-    /// <typeparam name="TData">Тип данных, в который потребуется десерилизовать ответ</typeparam>
-    /// <typeparam name="TDeserializer">Тип десериалайзера</typeparam>
-    /// <returns></returns>
-    private static async Task<Validation<Error, TData>> DeserializeResponseAsync<TData, TDeserializer>(
-        this IResponse response,
-        Validation<Error, TDeserializer> deserializerValidation)
-        where TDeserializer : IEssentialsDeserializer
-    {
-        return (
-                await response.ResponseMessage.ReceiveStreamAsync(response).ConfigureAwait(false),
-                deserializerValidation)
-            .Apply((stream, deserializer) => deserializer.DeserializeStream<TData>(response, stream))
-            .Bind(validation => validation);
     }
 
     #endregion
